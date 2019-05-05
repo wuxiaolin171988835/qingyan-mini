@@ -3,7 +3,8 @@
 		{
 			"path": "pages/news/news",
 			"style": {
-				"navigationBarTitleText": "全部公告"
+				"navigationBarTitleText": "全部公告",
+				"enablePullDownRefresh": true
 			}
 		},
 		{

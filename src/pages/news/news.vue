@@ -16,18 +16,60 @@
           <template v-if="!TabCur">
             <view class="search-box">
               <mSearch
+                placeholder="输入你想找的关键字"
                 :mode="2"
                 button="inside"
-                placeholder="输入你想找的关键字"
-                @search="doSearch(false)"
-                @input="inputChange"
-                @confirm="doSearch(false)"
-                v-model="keyword"
-                class="search-block"
+                @search="doSearch($event)"
+                class="input-block"
               ></mSearch>
+              <text @click="resetSearch" class="btn-reset">重置</text>
             </view>
             <!-- <ChooseLits :list="list" :arr="arr" @chooseLike="chooseLike"></ChooseLits> -->
-            <div class="data-list"></div>
+            <!-- tab项 -->
+            <view>
+              <view class="fixedit" :style="{top:top}">
+                <scroll-view
+                  class="grace-tab-title grace-center"
+                  scroll-x="true"
+                  id="grace-tab-title"
+                >
+                  <view
+                    v-for="(cate, index) in categories"
+                    :key="index"
+                    :data-cateid="cate.cateid"
+                    :data-index="index"
+                    :class="[cateCurrentIndex == index ? 'grace-tab-current' : '']"
+                    @tap="tabChange"
+                  >{{cate.name}}</view>
+                </scroll-view>
+              </view>
+              <!-- 文章内容区 -->
+              <view class="grace-news-list">
+                <block v-for="(item, index) in artList" :key="index">
+                  <navigator
+                    url="../article-info/article-info"
+                    open-type="navigate"
+                    class="grace-news-list-items"
+                  >
+                    <view class="grace-news-list-img-news">
+                      <view class="grace-news-list-img-big">
+                        <image src="../../static/demo.jpg" mode="widthFix">
+                      </view>
+                      <view class="grace-news-list-info">
+                        <text class="grace-news-list-title-main">{{item.title}}</text>
+                        <text class="grace-news-list-title-desc">{{item.title}}</text>
+                      </view>
+                    </view>
+                    <view class="grace-news-list-btn">
+                      <text>东北证券</text>
+                      <text>王悦</text>
+                      <text>25P</text>
+                      <text>2019-03-01</text>
+                    </view>
+                  </navigator>
+                </block>
+              </view>
+            </view>
           </template>
           <!-- 研报精选 -->
           <template v-else>
@@ -42,8 +84,9 @@
 import cmdTransition from "@/components/cmd-transition/cmd-transition.vue";
 import wucTab from "@/components/wuc-tab/wuc-tab.vue";
 import ChooseLits from "@/components/choose-Cade/choose-Cade.vue";
-import mSearch from "@/components/mehaotian-search-revision/mehaotian-search-revision.vue";
-
+import mSearch from "@/components/mehaotian-search/mehaotian-search.vue";
+let page = 1,
+  cate = 0;
 export default {
   components: {
     cmdTransition,
@@ -55,18 +98,48 @@ export default {
     return {
       tabList: [{ name: "研报查询" }, { name: "研报精选" }], //顶级tab
       TabCur: 0, //当前选中的tab
-      // list: ["行业", "类别", "机构", "日期", "页数"], //select选项卡
-      // arr: [
-      //   ["全部", "石油石化", "石油石化", "石油石化", "石油石化"],
-      //   ["全部", "晨会", "周报", "东北证券", "东北证券"],
-      //   ["全部", "5k以下", "5k-10k", "10k以上"],
-      //   ["全部", "1个月内", "3个月内", "6个月内", "1年以内"],
-      //   ["全部", "1-5页", "6-20页", "20页以上"]
-      // ], //select选项值
-      keyword: "" //搜索关键字
+      list: ["行业", "类别", "机构", "日期", "页数"], //select选项卡
+      arr: [
+        ["全部", "石油石化", "石油石化", "石油石化", "石油石化"],
+        ["全部", "晨会", "周报", "东北证券", "东北证券"],
+        ["全部", "5k以下", "5k-10k", "10k以上"],
+        ["全部", "1个月内", "3个月内", "6个月内", "1年以内"],
+        ["全部", "1-5页", "6-20页", "20页以上"]
+      ], //select选项值
+      keyword: "", //搜索关键字
+      top: 0,
+      //分类信息
+      categories: [
+        { cateid: 0, name: "标题" },
+        { cateid: 1, name: "要点" },
+        { cateid: 2, name: "图标" },
+        { cateid: 3, name: "正文" }
+      ],
+      // 当前选择的分类
+      cateCurrentIndex: 0,
+      // 演示文章数据
+      artList: []
     };
   },
-  onLoad() {},
+  onLoad() {
+    // #ifdef H5
+    this.top = "44px";
+    // #endif
+    page = 1;
+    artList: [];
+    this.getNewsList();
+  },
+  //下拉刷新
+  onPullDownRefresh: function() {
+    // 重置分页及数据
+    page = 1;
+    this.artList = [];
+    this.getNewsList();
+  },
+  // 加载更多
+  onReachBottom: function() {
+    this.getNewsList();
+  },
   methods: {
     /**
      * tab切换
@@ -83,11 +156,62 @@ export default {
     /**
      * 确认搜索框
      */
-    doSearch() {},
+    doSearch(e) {
+      this.keyword = e;
+    },
     /**
-     * 搜索框
+     * 重置搜索项
      */
-    inputChange() {}
+    resetSearch() {
+      this.keyword = "";
+    },
+    // 数据和分页是模拟的，实际也是这样写
+    getNewsList: function() {
+      uni.showLoading({});
+      // 假设已经到底，实际根据api接口返回值判断
+      if (page >= 3) {
+        uni.showToast({ title: "已经加载全部", icon: "none" });
+        return;
+      }
+      uni.request({
+        url:
+          "https://www.easy-mock.com/mock/5cb9655c01e2e57715d324b0/example/imgnewlist?page=" +
+          page +
+          "#!method=get&cate=" +
+          cate,
+        method: "GET",
+        data: {},
+        success: res => {
+          console.log(res);
+          var newsList = res.data.data;
+          this.artList = this.artList.concat(newsList);
+          uni.hideLoading();
+          page++;
+        },
+        complete: res => {
+          uni.hideLoading();
+          uni.stopPullDownRefresh();
+        }
+      });
+    },
+
+    tabChange: function(e) {
+      // 选中的索引
+      var index = e.currentTarget.dataset.index;
+      // 具体的分类id
+      var cateid = e.currentTarget.dataset.cateid;
+      this.cateCurrentIndex = index;
+      // 动态替换内容
+      this.content = this.categories[index].name;
+
+      // 读取分类数据
+      cate = cateid; //把分类信息发送给api接口即可读取对应分类的数据
+      // 重置分页及数据
+      page = 1;
+      this.artList = [];
+      // 加载对应分类数据覆盖上一个分类的展示数据 加载更多是继续使用这个分类
+      this.getNewsList();
+    }
   }
 };
 </script>
@@ -120,20 +244,33 @@ export default {
   }
 }
 </style>
-<style>
-/* 搜索框 */
-.search-block {
-  width: 100%;
+<style lang="scss">
+.search {
+  background: none !important;
+  border-bottom: none !important;
+  .content {
+    height: 70upx !important;
+  }
 }
-.serach .content .content-box .input.center {
+.search .content .content-box .input.center {
   width: 100% !important;
+  height: 70upx !important;
+  line-height: 70upx !important;
+  transition: none !important;
 }
 .search-box {
-  width: 95%;
-  background-color: rgb(242, 242, 242);
-  padding: 7.5px 2.5%;
   display: flex;
-  justify-content: space-between;
+  background-color: rgba(98, 183, 233, 1);
+  padding: 23upx 40upx 20upx;
+  .input-block {
+    flex: 1;
+  }
+  .btn-reset {
+    padding-left: 30upx;
+    line-height: 95upx;
+    font-size: 28upx;
+    color: rgba(155, 155, 155, 1);
+  }
 }
 .search-box .input-box {
   width: 85%;

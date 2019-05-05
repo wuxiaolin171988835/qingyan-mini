@@ -43,6 +43,7 @@ export default {
 </script>
 
 <style>
+@import "../graceUI/graceUI.css";
 /* uni.css - 通用组件、模板样式库，可以当作一套ui库应用 */
 @import "./common/uni.css";
 
@@ -51,8 +52,6 @@ page {
   background-color: #f4f5f6;
   font-size: 28upx;
   line-height: 1.8;
-  padding: 0 20upx 100upx 20upx;
-  box-sizing: border-box;
 }
 
 .uni-header-logo {
