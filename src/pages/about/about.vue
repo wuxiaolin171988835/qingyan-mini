@@ -1,71 +1,149 @@
 <template>
-  <view class="about">
-    <cmd-transition name="fade-up">
-      <wuc-tab
-        :tab-list="tabList"
-        :tabCur.sync="TabCur"
-        tab-class="text-center bg-white"
-        select-class="tab-selected"
-        @change="tabChange"
-      ></wuc-tab>
-      <div class="cu-bar bg-white solid-bottom" style="margin-top:100upx;">
-        <template v-if="!TabCur">
-          <navigator url="../position/position" open-type="navigate">
-            <cmd-cell-item
-              v-for="i in 10"
-              :key="i"
-              title="销售经理"
-              brief="职位类别：采销类"
-              addon="2019-03-01"
-              arrow
-            />
-          </navigator>
-        </template>
-        <template v-else>
-          <h3 class="title">公司简介</h3>
-          <p class="desc">
-            北京青彦科技有限公司投身于金融科技领域，致力于为金融投资研究工作提供只会分析的服务与工具，北京青彦科技有限公司投身于金融科技领域，致力于为金融投资研究工作提供只会分析的服务与工具北京青彦科技有限公司投身于金融科技领域，
-            致力于为金融投资研究工作提供只会分析的服务与工具北京青彦科技有限公司投身于金融科技领域，致力于为金融投资研究工作提供只会分析的服务与工具北京青彦科技有限公司投身于金融科技领域，致力于为金融投资研究工作提供只会分析的服务与
-            工具北京青彦科技有限公司投身于金融科技领域，致力于为金融投资研究工作提供只会分析的服务与工具北京青彦科技有限公司投身于金融科技领域，致力于为金融投资研究工作提供只会分析的服务与工具
-          </p>
-          <p class="desc">
-            北京青彦科技有限公司投身于金融科技领域，致力于为金融投资研究工作提供只会分析的服务与工具，北京青彦科技有限公司投身于金融科技领域，致力于为金融投资研究工作提供只会分析的服务与工具北京青彦科技有限公司投身于金融科技领域，
-            致力于为金融投资研究工作提供只会分析的服务与工具北京青彦科技有限公司投身于金融科技领域，致力于为金融投资研究工作提供只会分析的服务与工具北京青彦科技有限公司投身于金融科技领域，致力于为金融投资研究工作提供只会分析的服务与
-            工具北京青彦科技有限公司投身于金融科技领域，致力于为金融投资研究工作提供只会分析的服务与工具北京青彦科技有限公司投身于金融科技领域，致力于为金融投资研究工作提供只会分析的服务与工具
-          </p>
-          <h3 class="title">公司团队</h3>
-          <p class="desc">
-            北京青彦科技有限公司投身于金融科技领域，致力于为金融投资研究工作提供只会分析的服务与工具，北京青彦科技有限公司投身于金融科技领域，致力于为金融投资研究工作提供只会分析的服务与工具北京青彦科技有限公司投身于金融科技领域，
-            致力于为金融投资研究工作提供只会分析的服务与工具北京青彦科技有限公司投身于金融科技领域，致力于为金融投资研究工作提供只会分析的服务与工具北京青彦科技有限公司投身于金融科技领域，致力于为金融投资研究工作提供只会分析的服务与
-            工具北京青彦科技有限公司投身于金融科技领域，致力于为金融投资研究工作提供只会分析的服务与工具北京青彦科技有限公司投身于金融科技领域，致力于为金融投资研究工作提供只会分析的服务与工具
-          </p>
-        </template>
-      </div>
-    </cmd-transition>
-  </view>
+  <cmd-page-body>
+    <view class="about">
+      <view>
+        <view class="fixedit" :style="{top:top}">
+          <scroll-view class="grace-tab-title grace-center" scroll-x="true" id="grace-tab-title">
+            <view
+              v-for="(cate, index) in categories"
+              :key="index"
+              :data-cateid="cate.cateid"
+              :data-index="index"
+              :class="[cateCurrentIndex == index ? 'grace-tab-current' : '']"
+              @tap="tabChange"
+            >{{cate.name}}</view>
+          </scroll-view>
+        </view>
+        <!-- 内容区 -->
+        <view class="grace-news-list">
+          <view v-if="!cateCurrentIndex" class="position-container">
+            <view class="title-hot">
+              <text>热招职位</text>
+            </view>
+            <navigator url="../position/position" open-type="navigate">
+              <cmd-cell-item
+                v-for="i in 10"
+                :key="i"
+                title="销售经理"
+                brief="职位类别：采销类"
+                addon="2019-03-01"
+                arrowDefined
+              ></cmd-cell-item>
+            </navigator>
+          </view>
+          <view v-else class="produce-container">
+            <view class="title">
+              <text>公司简介</text>
+            </view>
+            <text class="desc">
+              北京青彦科技有限公司投身于金融科技（Fintech）领域，矢志于为金融投资研究工作提供智慧分析的服务与工具。公司口号为“让投资更智慧”，通过大数据分析、人工智能、知识图谱等IT技术赋能金融投资，让投资经理与分析师们能够更高效、更便捷的获取价值数据及深度分析结果，从而领先市场一步。
+              \n
+              公司坐落于北京市朝阳区三元桥曙光大厦，毗邻三元桥地铁站。公司是新型创业型公司，已获得种子轮融资，创始人为在金融投资领域浸淫多年的投资专家，对金融投资行业的趋势变化有着深刻的行业理解。
+            </text>
+            <view class="title">
+              <text>公司团队</text>
+            </view>
+            <text class="desc">
+              龙红亮，创始人：\n
+              CFA，中国社科院金融系博士，中科院数学院硕士。商业银行多年的FICC投资管理经验，管理规模超过500亿元；亦曾服务于汤森路透世界级的金融资讯集团。积累了丰富的金融投资行业经验，对Fintech领域有着深刻的理解。出版个人专著《债券投资实战》。
+            </text>
+            <view class="logo">
+              <img src="../../static/demo.jpg">
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </cmd-page-body>
 </template>
 
 <script>
-import cmdTransition from "@/components/cmd-transition/cmd-transition.vue";
+import cmdPageBody from "@/components/cmd-page-body/cmd-page-body.vue";
 import wucTab from "@/components/wuc-tab/wuc-tab.vue";
 import cmdCellItem from "@/components/cmd-cell-item/cmd-cell-item.vue";
-
+let page = 1,
+  cate = 0;
 export default {
   components: {
-    cmdTransition,
+    cmdPageBody,
     wucTab,
     cmdCellItem
   },
   data() {
     return {
-      tabList: [{ name: "加入我们" }, { name: "关于我们" }],
-      TabCur: 0
+      //tab
+      categories: [
+        { cateid: 0, name: "加入我们" },
+        { cateid: 1, name: "关于我们" }
+      ],
+      // 当前选中tab
+      cateCurrentIndex: 0
     };
   },
-  onLoad() {},
+  onLoad() {
+    this.top = "44px";
+    page = 1;
+    // artList: [];
+    this.getNewsList();
+  },
+  //下拉刷新
+  onPullDownRefresh: function() {
+    // 重置分页及数据
+    page = 1;
+    this.artList = [];
+    this.getNewsList();
+  },
+  // 加载更多
+  onReachBottom: function() {
+    this.getNewsList();
+  },
   methods: {
-    tabChange(index) {
-      this.TabCur = index;
+    // 数据和分页是模拟的，实际也是这样写
+    getNewsList: function() {
+      // uni.showLoading({});
+      // // 假设已经到底，实际根据api接口返回值判断
+      // if (page >= 3) {
+      //   uni.showToast({ title: "已经加载全部", icon: "none" });
+      //   return;
+      // }
+      // uni.request({
+      //   url:
+      //     "https://www.easy-mock.com/mock/5cb9655c01e2e57715d324b0/example/imgnewlist?page=" +
+      //     page +
+      //     "#!method=get&cate=" +
+      //     cate,
+      //   method: "GET",
+      //   data: {},
+      //   success: res => {
+      //     console.log(res);
+      //     var newsList = res.data.data;
+      //     this.artList = this.artList.concat(newsList);
+      //     uni.hideLoading();
+      //     page++;
+      //   },
+      //   complete: res => {
+      //     uni.hideLoading();
+      //     uni.stopPullDownRefresh();
+      //   }
+      // });
+    },
+
+    tabChange: function(e) {
+      // 选中的索引
+      var index = e.currentTarget.dataset.index;
+      // 具体的分类id
+      var cateid = e.currentTarget.dataset.cateid;
+      this.cateCurrentIndex = index;
+      // 动态替换内容
+      this.content = this.categories[index].name;
+
+      // 读取分类数据
+      cate = cateid; //把分类信息发送给api接口即可读取对应分类的数据
+      // 重置分页及数据
+      page = 1;
+      // this.artList = [];
+      // 加载对应分类数据覆盖上一个分类的展示数据 加载更多是继续使用这个分类
+      // this.getNewsList();
     }
   }
 };
@@ -73,30 +151,111 @@ export default {
 
 <style lang="scss">
 .about {
+  padding-bottom: 75upx;
+  background: #fff;
+  //加入我们
   .navigator-hover {
     background-color: initial;
     opacity: initial;
   }
-  .cu-bar {
-    margin-top: 20upx !important;
+  .grace-tab-title {
+    height: 80upx;
+    line-height: 80upx;
+    background: rgba(246, 246, 246, 1);
+    margin-top: 0;
+    view {
+      height: 80upx;
+      line-height: 80upx;
+      box-sizing: border-box;
+      border-bottom: none;
+    }
   }
-  .text-center {
-    text-align: center;
+  .grace-news-list {
+    &-items {
+      background: initial;
+    }
+    .title-hot {
+      text-align: center;
+      font-size: 34upx;
+      color: #4a4a4a;
+      padding: 77upx 0 30upx;
+      position: relative;
+      text {
+        border-bottom: 2upx solid rgba(74, 74, 74, 1);
+        padding-bottom: 20upx;
+      }
+    }
+    & > navigator {
+      &:first-child {
+        margin-top: 0;
+      }
+    }
+    .cmd-cell-item {
+      &-hover {
+        background: initial;
+      }
+      &-body {
+        padding: 22upx 0;
+        margin: 0 47upx 0 40upx;
+      }
+      &-title {
+        color: $uni-color-primary;
+        font-size: 32upx;
+        line-height: 45upx;
+      }
+      &-brief {
+        margin-top: 20upx;
+        color: #4a4a4a;
+        font-size: 24upx;
+      }
+      &-right {
+        display: block;
+        text {
+          color: #4a4a4a;
+          font-size: 24upx;
+        }
+        .cmd-cell-icon-arrow-right {
+          text-align: right;
+          .cmd-icon {
+            display: inline-block;
+            width: 32upx;
+            height: 32upx;
+            background: $uni-color-primary;
+            color: #fff;
+            font-size: 24upx;
+            border-radius: 50%;
+          }
+        }
+      }
+    }
   }
-  .hot {
-    padding: 40upx 0;
-  }
-  .title {
-    font-size: 40upx;
-    text-align: center;
-  }
-  .desc {
-    line-height: 1.6;
-    padding-bottom: 80upx;
-  }
-  .tab-selected {
-    color: $uni-color-primary;
-    border-bottom: 1px solid $uni-color-primary;
+  //关于我们
+  .produce-container {
+    padding: 0 40upx;
+    .title {
+      padding: 77upx 0 29upx;
+      text-align: center;
+      color: #4a4a4a;
+      text {
+        color: 34upx;
+        border-bottom: 2upx solid #4a4a4a;
+        padding-bottom: 20upx;
+      }
+    }
+    .desc {
+      font-size: 24upx;
+      line-height: 40upx;
+    }
+    .logo {
+      width: 285upx;
+      height: 66upx;
+      margin: 78upx auto 0;
+      image {
+        width: 100%;
+        height: 100%;
+        vertical-align: middle;
+      }
+    }
   }
 }
 </style>

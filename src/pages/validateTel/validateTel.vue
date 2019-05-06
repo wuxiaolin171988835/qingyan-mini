@@ -1,16 +1,22 @@
 <template>
-  <view class="validate">
-    <cmd-transition name="fade-up">
+  <cmd-page-body :backgroundColor="$uni-bg-color">
+    <view class="validate">
       <view v-if="status">
         <view class="validate-phone">
-          <cmd-input value="13812345678" type="number" focus maxlength="11" disabled></cmd-input>
+          <view class="label">手机号</view>
+          <input value="13812345678" type="number" focus maxlength="11" disabled>
+          <view style="width:180upx;"></view>
+        </view>
+        <view class="validate-code">
+          <view class="label">验证码</view>
+          <input v-model="mobile.code" type="number" maxlength="6" placeholder="请输入验证码">
           <view
-            class="validate-phone-getcode"
+            class="validate-code-getcode"
             @tap="!safety.state ? fnGetPhoneCode() : ''"
           >{{!safety.state&&'获取验证码'||(safety.time+' s')}}</view>
         </view>
-        <view class="validate-code">
-          <cmd-input v-model="mobile.code" type="number" maxlength="6" placeholder="请输入短信验证码"></cmd-input>
+        <view class="tips">
+          <text>请先进行手机验证，然后绑定新手机</text>
         </view>
         <button
           class="btn-validate"
@@ -19,18 +25,16 @@
           @tap="fnRegister"
         >下一步</button>
       </view>
-    </cmd-transition>
-  </view>
+    </view>
+  </cmd-page-body>
 </template>
 
 <script>
-import cmdTransition from "@/components/cmd-transition/cmd-transition.vue";
-import cmdInput from "@/components/cmd-input/cmd-input.vue";
+import cmdPageBody from "@/components/cmd-page-body/cmd-page-body.vue";
 
 export default {
   components: {
-    cmdTransition,
-    cmdInput
+    cmdPageBody
   },
   data() {
     return {
@@ -146,14 +150,20 @@ export default {
 </script>
 
 <style lang="scss">
-$validate-margin-h: 72upx;
-$validate-margin-v: 56upx;
-
 .validate {
-  margin-top: $validate-margin-v;
-  margin-right: $validate-margin-h;
-  margin-left: $validate-margin-h;
-
+  margin-top: 25upx;
+  .tips {
+    height: 37upx;
+    color: rgba(155, 155, 155, 1);
+    font-size: 26upx;
+    font-family: PingFangSC-Regular;
+    padding: 29upx 40upx 35upx;
+  }
+  input {
+    height: 100upx;
+    color: #b9b9b9;
+    font-size: 28upx;
+  }
   &-title {
     font-size: 56upx;
     font-weight: 500;
@@ -165,27 +175,36 @@ $validate-margin-v: 56upx;
   }
 
   &-phone {
+    border-bottom: 2upx #dedede solid;
+  }
+  &-phone,
+  &-code {
+    padding: 0 46upx 0 34upx;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    background: #fff;
+    .label {
+      color: #4a4a4a;
+      font-size: 34upx;
+      width: 157upx;
+    }
+  }
+  &-code {
     border-bottom: 2upx #dedede solid;
-    margin-top: $validate-margin-v;
-    margin-bottom: 40upx;
-
     &-getcode {
-      color: #3f51b5;
+      width: 180upx;
+      height: 64upx;
+      line-height: 64upx;
+      border-radius: 32upx;
+      background-color: $uni-color-primary;
+      color: #fff;
       text-align: center;
-      min-width: 140upx;
     }
   }
 
-  &-code {
-    border-bottom: 2upx #dedede solid;
-  }
-
   &-username {
-    margin-top: $validate-margin-v;
     margin-bottom: 40upx;
     border-bottom: 2upx #dedede solid;
   }
@@ -195,18 +214,18 @@ $validate-margin-v: 56upx;
   }
 
   .btn-validate {
-    margin-top: 100upx;
     border-radius: 50upx;
-    font-size: 16px;
+    font-size: 36upx;
+    margin: 0 40upx;
     color: #fff;
-    background: linear-gradient(to right, #88a1f9, #9ac6ff);
+    background: $uni-color-primary;
 
     &-active {
-      background: linear-gradient(to right, #365fff, #36bbff);
+      background: $uni-color-primary;
     }
 
     &-hover {
-      background: linear-gradient(to right, #365fdd, #36bbfa);
+      background: $uni-color-primary;
     }
   }
 

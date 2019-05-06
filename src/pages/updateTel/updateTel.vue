@@ -1,86 +1,80 @@
 <template>
-  <view class="update">
-    <cmd-transition name="fade-up">
+  <cmd-page-body :backgroundColor="$uni-bg-color">
+    <view class="update">
       <view v-if="status">
         <view class="update-phone">
-          <cmd-input
-            v-model="mobile.phone"
-            type="number"
-            focus
-            maxlength="11"
-            placeholder="请输入新手机号"
-          ></cmd-input>
+          <view class="label">新手机号</view>
+          <input type="number" focus maxlength="11" placeholder="请输入手机号">
+          <view style="width:180upx;"></view>
+        </view>
+        <view class="update-code">
+          <view class="label">验证码</view>
+          <input v-model="mobile.code" type="number" maxlength="6" placeholder="请输入验证码">
           <view
-            class="update-phone-getcode"
+            class="update-code-getcode"
             @tap="!safety.state ? fnGetPhoneCode() : ''"
           >{{!safety.state&&'获取验证码'||(safety.time+' s')}}</view>
         </view>
-        <view class="update-code">
-          <cmd-input v-model="mobile.code" type="number" maxlength="6" placeholder="请输入短信验证码"></cmd-input>
+        <view class="tips">
+          <text>重新绑定后，原手机号码将不能用于登录</text>
         </view>
         <button
           class="btn-update"
-          :class="loginMobile ? 'btn-login-active':''"
-          :disabled="!loginMobile"
+          :class="registerMobile ? 'btn-update-active':''"
           hover-class="btn-update-hover"
-          @tap="fnLogin"
+          @tap="fnRegister"
         >确定</button>
       </view>
-    </cmd-transition>
-  </view>
+    </view>
+  </cmd-page-body>
 </template>
 
 <script>
-import cmdTransition from "@/components/cmd-transition/cmd-transition.vue";
-import cmdInput from "@/components/cmd-input/cmd-input.vue";
+import cmdPageBody from "@/components/cmd-page-body/cmd-page-body.vue";
 
 export default {
   components: {
-    cmdTransition,
-    cmdInput
+    cmdPageBody
   },
   data() {
     return {
-      // 账号登录部分数据
       account: {
         username: "",
         password: ""
       },
       usernameReg: /^[A-Za-z0-9]+$/,
       passwordReg: /^\w+$/,
-      loginAccount: false,
-      // 手机登录部分数据
+      registerAccount: false,
       mobile: {
         phone: "",
         code: ""
       },
       phoneReg: /^[1](([3][0-9])|([4][5-9])|([5][0-3,5-9])|([6][5,6])|([7][0-8])|([8][0-9])|([9][1,8,9]))[0-9]{8}$/,
-      loginMobile: false,
-      // 验证码
+      registerMobile: false,
       safety: {
         time: 60,
         state: false,
         interval: ""
       },
-      status: true // true手机登录,false账号登录
+      status: true // true手机注册,false账号注册
     };
   },
   watch: {
     /**
-     * 监听手机登录数值
+     * 监听手机注册数值
      */
     mobile: {
       handler(newValue) {
         if (this.phoneReg.test(newValue.phone) && newValue.code.length === 6) {
-          this.loginMobile = true;
+          this.registerMobile = true;
         } else {
-          this.loginMobile = false;
+          this.registerMobile = false;
         }
       },
       deep: true
     },
     /**
-     * 监听账号登录数值
+     * 监听账号注册数值
      */
     account: {
       handler(newValue) {
@@ -90,9 +84,9 @@ export default {
           (this.passwordReg.test(newValue.password) &&
             newValue.password.length >= 8)
         ) {
-          this.loginAccount = true;
+          this.registerAccount = true;
         } else {
-          this.loginAccount = false;
+          this.registerAccount = false;
         }
       },
       deep: true
@@ -100,9 +94,15 @@ export default {
   },
   methods: {
     /**
-     * 登录按钮点击执行
+     * 注册按钮点击执行
      */
-    fnLogin() {
+    fnRegister() {
+      uni.showToast({ title: "手机号修改成功", icon: "success" });
+      setTimeout(() => {
+        uni.reLaunch({
+          url: "/pages/user/user"
+        });
+      }, 500);
       if (this.status) {
         console.log(JSON.stringify(this.mobile));
       } else {
@@ -140,43 +140,6 @@ export default {
           icon: "none"
         });
       }
-    },
-    /**
-     * 改变登录方式状态 reset作为重置标识
-     */
-    fnChangeStatus(reset) {
-      // 手机登录部分
-      this.mobile = {
-        phone: "",
-        code: ""
-      };
-      this.loginMobile = false;
-      // 账号登录部分
-      this.account = {
-        username: "",
-        password: ""
-      };
-      this.loginAccount = false;
-      // 验证码时间状态还原
-      clearInterval(this.safety.interval);
-      this.safety.time = 60;
-      this.safety.state = false;
-      if (!reset) {
-        // 可以延迟3毫秒后切换
-        this.status = !this.status;
-      }
-    },
-    /**
-     * 跳转注册页面
-     */
-    fnRegisterWin() {
-      uni.navigateTo({
-        url: "/pages/user/register/register"
-      });
-      /**
-       * 改变状态重置，跳转不会摧毁实例
-       */
-      this.fnChangeStatus(true);
     }
   },
   beforeDestroy() {
@@ -189,35 +152,61 @@ export default {
 </script>
 
 <style lang="scss">
-$update-margin-h: 72upx;
-$update-margin-v: 56upx;
-
 .update {
-  margin-top: $update-margin-v;
-  margin-right: $update-margin-h;
-  margin-left: $update-margin-h;
+  margin-top: 25upx;
+  .tips {
+    height: 37upx;
+    color: rgba(155, 155, 155, 1);
+    font-size: 26upx;
+    font-family: PingFangSC-Regular;
+    padding: 29upx 40upx 35upx;
+  }
+  input {
+    height: 100upx;
+    color: #b9b9b9;
+    font-size: 28upx;
+  }
+  &-title {
+    font-size: 56upx;
+    font-weight: 500;
+  }
+
+  &-explain {
+    font-size: 28upx;
+    color: #9e9e9e;
+  }
+
   &-phone {
+    border-bottom: 2upx #dedede solid;
+  }
+  &-phone,
+  &-code {
+    background: #fff;
+    padding: 0 46upx 0 34upx;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    .label {
+      color: #4a4a4a;
+      font-size: 34upx;
+      width: 157upx;
+    }
+  }
+  &-code {
     border-bottom: 2upx #dedede solid;
-    margin-top: $update-margin-v;
-    margin-bottom: 40upx;
-
     &-getcode {
-      color: #3f51b5;
+      width: 180upx;
+      height: 64upx;
+      line-height: 64upx;
+      border-radius: 32upx;
+      background-color: $uni-color-primary;
+      color: #fff;
       text-align: center;
-      min-width: 140upx;
     }
   }
 
-  &-code {
-    border-bottom: 2upx #dedede solid;
-  }
-
   &-username {
-    margin-top: $update-margin-v;
     margin-bottom: 40upx;
     border-bottom: 2upx #dedede solid;
   }
@@ -227,18 +216,18 @@ $update-margin-v: 56upx;
   }
 
   .btn-update {
-    margin-top: 100upx;
     border-radius: 50upx;
-    font-size: 16px;
+    font-size: 36upx;
+    margin: 0 40upx;
     color: #fff;
-    background: linear-gradient(to right, #88a1f9, #9ac6ff);
+    background: $uni-color-primary;
 
     &-active {
-      background: linear-gradient(to right, #365fff, #36bbff);
+      background: $uni-color-primary;
     }
 
     &-hover {
-      background: linear-gradient(to right, #365fdd, #36bbfa);
+      background: $uni-color-primary;
     }
   }
 

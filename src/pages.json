@@ -8,6 +8,12 @@
 			}
 		},
 		{
+			"path": "pages/news/detail",
+			"style": {
+				"navigationBarTitleText": "内容详情"
+			}
+		},
+		{
 			"path": "pages/user/user",
 			"style": {
 				"navigationBarTitleText": "个人中心"
@@ -16,7 +22,8 @@
 		{
 			"path": "pages/about/about",
 			"style": {
-				"navigationBarTitleText": "关于我们"
+				"navigationBarTitleText": "关于我们",
+				"enablePullDownRefresh": true
 			}
 		},
 		{

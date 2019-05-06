@@ -1,103 +1,123 @@
 <template>
-  <view class="news">
-    <cmd-transition name="fade-up">
-      <!-- 顶级tab -->
-      <wuc-tab
-        :tab-list="tabList"
-        :tabCur.sync="TabCur"
-        tab-class="text-center"
-        select-class="tab-selected"
-        @change="tabChange"
-      ></wuc-tab>
-      <!-- tab内容区 -->
-      <div class="cu-bar bg-white solid-bottom" style="margin-top:100upx">
-        <div class="content">
-          <!-- 研报查询 -->
-          <template v-if="!TabCur">
-            <view class="search-box">
-              <mSearch
-                placeholder="输入你想找的关键字"
-                :mode="2"
-                button="inside"
-                @search="doSearch($event)"
-                class="input-block"
-              ></mSearch>
-              <text @click="resetSearch" class="btn-reset">重置</text>
-            </view>
-            <!-- <ChooseLits :list="list" :arr="arr" @chooseLike="chooseLike"></ChooseLits> -->
-            <!-- tab项 -->
-            <view>
-              <view class="fixedit" :style="{top:top}">
-                <scroll-view
-                  class="grace-tab-title grace-center"
-                  scroll-x="true"
-                  id="grace-tab-title"
-                >
-                  <view
-                    v-for="(cate, index) in categories"
-                    :key="index"
-                    :data-cateid="cate.cateid"
-                    :data-index="index"
-                    :class="[cateCurrentIndex == index ? 'grace-tab-current' : '']"
-                    @tap="tabChange"
-                  >{{cate.name}}</view>
-                </scroll-view>
+  <cmd-page-body :backgroundColor="$uni-bg-color">
+    <view class="news">
+        <!-- 顶级tab -->
+        <wuc-tab
+          :tab-list="tabList"
+          :tabCur.sync="TabCur"
+          tab-class="text-center"
+          select-class="tab-selected"
+          @change="tabChangeTop"
+        ></wuc-tab>
+        <!-- tab内容区 -->
+        <div class="cu-bar bg-white solid-bottom" style="margin-top:100upx">
+          <div class="content">
+            <block>
+              <view class="search-box">
+                <mSearch
+                  placeholder="输入你想找的关键字"
+                  :mode="2"
+                  button="inside"
+                  @search="doSearch($event)"
+                  class="input-block"
+                ></mSearch>
+                <text @click="resetSearch" class="btn-reset">重置</text>
               </view>
-              <!-- 文章内容区 -->
-              <view class="grace-news-list">
-                <block v-for="(item, index) in artList" :key="index">
-                  <navigator
-                    url="../article-info/article-info"
-                    open-type="navigate"
-                    class="grace-news-list-items"
+              <!-- <ChooseLits :list="list" :arr="arr" @chooseLike="chooseLike"></ChooseLits> -->
+              <!-- tab项 -->
+              <view>
+                <view class="fixedit" :style="{top:top}">
+                  <scroll-view
+                    class="grace-tab-title grace-center"
+                    scroll-x="true"
+                    id="grace-tab-title"
                   >
-                    <view class="grace-news-list-img-news">
-                      <view class="grace-news-list-img-big">
-                        <image src="../../static/demo.jpg" mode="widthFix">
+                    <view
+                      v-for="(cate, index) in categories"
+                      :key="index"
+                      :data-cateid="cate.cateid"
+                      :data-index="index"
+                      :class="[cateCurrentIndex == index ? 'grace-tab-current' : '']"
+                      @tap="tabChangeBottom"
+                    >{{cate.name}}</view>
+                  </scroll-view>
+                </view>
+                <!-- 内容区 -->
+                <view class="grace-news-list">
+                  <block v-for="(item, index) in artList" :key="index">
+                    <navigator url="./detail" open-type="navigate" class="grace-news-list-items">
+                      <view class="grace-news-list-img-news">
+                        <view class="grace-news-list-img-big">
+                          <image src="../../static/demo.jpg" mode="widthFix" class="img"></image>
+                          <image
+                            src="../../static/icon_magnifier.png"
+                            class="icon_magnifier"
+                            @click.stop="magnifierImg"
+                          ></image>
+                        </view>
+                        <view class="grace-news-list-info">
+                          <text class="grace-news-list-title-main">{{item.title}}</text>
+                          <text class="grace-news-list-title-desc">{{item.desc}}</text>
+                        </view>
                       </view>
-                      <view class="grace-news-list-info">
-                        <text class="grace-news-list-title-main">{{item.title}}</text>
-                        <text class="grace-news-list-title-desc">{{item.title}}</text>
+                      <view class="flex-items">
+                        <view class="item">
+                          <image src="../../static/icon_building.png" class="item-img"></image>
+                          <text class="item-text">东北证券</text>
+                        </view>
+                        <view class="item">
+                          <image src="../../static/icon_person.png" class="item-img"></image>
+                          <text class="item-text">王悦</text>
+                        </view>
+                        <view class="item">
+                          <image src="../../static/icon_page.png" class="item-img"></image>
+                          <text class="item-text">25P</text>
+                        </view>
+                        <view class="item">
+                          <text class="item-text">2019-03-01</text>
+                        </view>
                       </view>
-                    </view>
-                    <view class="grace-news-list-btn">
-                      <text>东北证券</text>
-                      <text>王悦</text>
-                      <text>25P</text>
-                      <text>2019-03-01</text>
-                    </view>
-                  </navigator>
-                </block>
+                    </navigator>
+                  </block>
+                </view>
               </view>
-            </view>
-          </template>
-          <!-- 研报精选 -->
-          <template v-else>
-            <div>研报精选</div>
-          </template>
+            </block>
+            
+          </div>
         </div>
-      </div>
-    </cmd-transition>
-  </view>
+      <!-- 图片放大弹窗 -->
+      <min-modal ref="modal">
+        <img
+          src="../../static/demo.jpg"
+          alt
+          srcset="../../static/demo.jpg"
+          style="width:100%;height:100%;"
+        >
+      </min-modal>
+    </view>
+  </cmd-page-body>
 </template>
 <script>
-import cmdTransition from "@/components/cmd-transition/cmd-transition.vue";
+import cmdPageBody from "@/components/cmd-page-body/cmd-page-body.vue";
 import wucTab from "@/components/wuc-tab/wuc-tab.vue";
 import ChooseLits from "@/components/choose-Cade/choose-Cade.vue";
 import mSearch from "@/components/mehaotian-search/mehaotian-search.vue";
+import minModal from "@/components/min-modal/min-modal";
+
 let page = 1,
   cate = 0;
 export default {
   components: {
-    cmdTransition,
+    cmdPageBody,
     wucTab,
     ChooseLits,
-    mSearch
+    mSearch,
+    minModal
   },
   data() {
     return {
       tabList: [{ name: "研报查询" }, { name: "研报精选" }], //顶级tab
-      TabCur: 0, //当前选中的tab
+      TabCur: 0, //一级tab选中项
       list: ["行业", "类别", "机构", "日期", "页数"], //select选项卡
       arr: [
         ["全部", "石油石化", "石油石化", "石油石化", "石油石化"],
@@ -108,25 +128,48 @@ export default {
       ], //select选项值
       keyword: "", //搜索关键字
       top: 0,
-      //分类信息
+      
       categories: [
         { cateid: 0, name: "标题" },
         { cateid: 1, name: "要点" },
         { cateid: 2, name: "图标" },
         { cateid: 3, name: "正文" }
-      ],
-      // 当前选择的分类
-      cateCurrentIndex: 0,
-      // 演示文章数据
-      artList: []
+      ],//二级tab
+      cateCurrentIndex: 0,//二级tab选中项
+      // mock数据
+      artList: [
+        {
+          id: 0,
+          title: "预收账款靓丽，管理效率提升",
+          desc: "事件：公司发布年报，18年公司实现营收19.58亿元，同比...."
+        },
+        {
+          id: 1,
+          title: "预收账款靓丽，管理效率提升",
+          desc: "事件：公司发布年报，18年公司实现营收19.58亿元，同比...."
+        },
+        {
+          id: 2,
+          title: "预收账款靓丽，管理效率提升",
+          desc: "事件：公司发布年报，18年公司实现营收19.58亿元，同比...."
+        },
+        {
+          id: 3,
+          title: "预收账款靓丽，管理效率提升",
+          desc: "事件：公司发布年报，18年公司实现营收19.58亿元，同比...."
+        },
+        {
+          id: 4,
+          title: "预收账款靓丽，管理效率提升",
+          desc: "事件：公司发布年报，18年公司实现营收19.58亿元，同比...."
+        }
+      ]
     };
   },
   onLoad() {
-    // #ifdef H5
     this.top = "44px";
-    // #endif
     page = 1;
-    artList: [];
+    // artList: [];
     this.getNewsList();
   },
   //下拉刷新
@@ -144,8 +187,11 @@ export default {
     /**
      * tab切换
      */
-    tabChange(index) {
+    tabChangeTop(index) {
       this.TabCur = index;
+      if(index===1){
+        this.cateCurrentIndex=0;
+      }
     },
     /**
      * select选择
@@ -167,35 +213,35 @@ export default {
     },
     // 数据和分页是模拟的，实际也是这样写
     getNewsList: function() {
-      uni.showLoading({});
-      // 假设已经到底，实际根据api接口返回值判断
-      if (page >= 3) {
-        uni.showToast({ title: "已经加载全部", icon: "none" });
-        return;
-      }
-      uni.request({
-        url:
-          "https://www.easy-mock.com/mock/5cb9655c01e2e57715d324b0/example/imgnewlist?page=" +
-          page +
-          "#!method=get&cate=" +
-          cate,
-        method: "GET",
-        data: {},
-        success: res => {
-          console.log(res);
-          var newsList = res.data.data;
-          this.artList = this.artList.concat(newsList);
-          uni.hideLoading();
-          page++;
-        },
-        complete: res => {
-          uni.hideLoading();
-          uni.stopPullDownRefresh();
-        }
-      });
+      // uni.showLoading({});
+      // // 假设已经到底，实际根据api接口返回值判断
+      // if (page >= 3) {
+      //   uni.showToast({ title: "已经加载全部", icon: "none" });
+      //   return;
+      // }
+      // uni.request({
+      //   url:
+      //     "https://www.easy-mock.com/mock/5cb9655c01e2e57715d324b0/example/imgnewlist?page=" +
+      //     page +
+      //     "#!method=get&cate=" +
+      //     cate,
+      //   method: "GET",
+      //   data: {},
+      //   success: res => {
+      //     console.log(res);
+      //     var newsList = res.data.data;
+      //     this.artList = this.artList.concat(newsList);
+      //     uni.hideLoading();
+      //     page++;
+      //   },
+      //   complete: res => {
+      //     uni.hideLoading();
+      //     uni.stopPullDownRefresh();
+      //   }
+      // });
     },
 
-    tabChange: function(e) {
+    tabChangeBottom: function(e) {
       // 选中的索引
       var index = e.currentTarget.dataset.index;
       // 具体的分类id
@@ -208,9 +254,21 @@ export default {
       cate = cateid; //把分类信息发送给api接口即可读取对应分类的数据
       // 重置分页及数据
       page = 1;
-      this.artList = [];
+      // this.artList = [];
       // 加载对应分类数据覆盖上一个分类的展示数据 加载更多是继续使用这个分类
-      this.getNewsList();
+      // this.getNewsList();
+    },
+    /**
+     * 图片放大
+     */
+    magnifierImg(e) {
+      this.$refs.modal.handleShow({
+        title: "",
+        maskClose: "true",
+        success: res => {
+          console.log(res);
+        }
+      });
     }
   }
 };
@@ -218,6 +276,37 @@ export default {
 
 <style lang="scss">
 .news {
+  .flex-items {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-top: 1upx solid #e3e3e3;
+    .item {
+      height: 82upx;
+      flex: 1;
+      position: relative;
+      padding-left: 36upx;
+      font-size: 24upx;
+      color: #9b9b9b;
+      text-align: center;
+      &:first-child {
+        color: #4a4a4a;
+      }
+      &:nth-child(3) {
+        color: $uni-color-primary;
+      }
+      &-text {
+        line-height: 82upx;
+      }
+      &-img {
+        width: 31upx;
+        height: 31upx;
+        display: inline-block;
+        margin-right: 8upx;
+        vertical-align: middle;
+      }
+    }
+  }
   .text-center {
     text-align: center;
   }
