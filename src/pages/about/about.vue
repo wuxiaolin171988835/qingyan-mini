@@ -20,7 +20,7 @@
             <view class="title-hot">
               <text>热招职位</text>
             </view>
-            <navigator url="../position/position" open-type="navigate">
+            <navigator url="../about/position" open-type="navigate">
               <cmd-cell-item
                 v-for="i in 10"
                 :key="i"
@@ -48,7 +48,7 @@
               CFA，中国社科院金融系博士，中科院数学院硕士。商业银行多年的FICC投资管理经验，管理规模超过500亿元；亦曾服务于汤森路透世界级的金融资讯集团。积累了丰富的金融投资行业经验，对Fintech领域有着深刻的理解。出版个人专著《债券投资实战》。
             </text>
             <view class="logo">
-              <img src="../../static/demo.jpg">
+              <image src="../../static/logo.png"></image>
             </view>
           </view>
         </view>
@@ -247,13 +247,11 @@ export default {
       line-height: 40upx;
     }
     .logo {
-      width: 285upx;
-      height: 66upx;
       margin: 78upx auto 0;
-      image {
-        width: 100%;
-        height: 100%;
-        vertical-align: middle;
+      text-align: center;
+      image{
+        width:252upx;
+        height:58upx;
       }
     }
   }

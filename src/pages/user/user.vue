@@ -6,13 +6,13 @@
           <cmd-avatar src="https://avatar.bbs.miui.com/images/noavatar_small.gif"></cmd-avatar>
         </cmd-cell-item>
       </view>
-      <navigator url="../updateName/updateName" open-type="navigate">
-        <cmd-cell-item title="姓名" addon="胡凯" arrow></cmd-cell-item>
+      <navigator url="../user/updateName" open-type="navigate">
+        <cmd-cell-item title="姓名" addon="某某" arrow></cmd-cell-item>
       </navigator>
       <cmd-cell-item title="公司名称" addon="青彦科技" arrow/>
       <view style="margin-top:20upx">
         <cmd-cell-item title="邮箱" addon="HR@QINGYAN.COM" arrow/>
-        <navigator url="../validateTel/validateTel" open-type="navigate">
+        <navigator url="../user/validateTel" open-type="navigate">
           <cmd-cell-item title="手机" addon="13812345678" arrow/>
         </navigator>
       </view>

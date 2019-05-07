@@ -26,7 +26,7 @@
             <image src="https://avatar.bbs.miui.com/images/noavatar_small.gif" class="icon"></image>
             <text class="item-text">王悦</text>
           </view>
-          <button type="default" class="btn">查看原文</button>
+          <button type="default" class="btn" @click="checkResource">查看原文</button>
         </view>
         <view class="desc">
           关注增长的预期差经济在一季度企稳，已经是既定事实。现在市场的关注点是，企稳能持续 多久、力度有多强，目前似乎有不少分歧。
@@ -51,7 +51,29 @@ export default {
     return {};
   },
   onLoad() {},
-  methods: {}
+  methods: {
+    /**
+     * 查看原文
+     */
+    checkResource(){
+      uni.downloadFile({
+        url: 'https://sz-preview-ftn.weiyun.com:8443/ftn_doc_previewer/weiyun_previewer.html?rkey=90b2e256ffee447a6fa450cf1ea3b6dc6e3e70a6e6cef220edae248c549f77a77ab575fb5f40e5f00e213a40ca72d714e68d06724d69cf5c7849864b8f46232d&filetype=8&fname=%E6%AC%A2%E8%BF%8E%E4%BD%BF%E7%94%A8%E5%BE%AE%E4%BA%91.pdf',
+        success: function (res) {
+          var filePath = res.tempFilePath;
+          uni.openDocument({
+            filePath: filePath,
+            fileType: "pdf",
+            success: function (res) {
+              console.log('打开文档成功');
+            },
+            fail: function(res){
+              console.log(res);
+            }
+          });
+        }
+      });
+    }
+  }
 };
 </script>
 
@@ -123,6 +145,7 @@ export default {
         font-size: 26upx;
         background-color: $uni-color-primary;
         color: #fff;
+        text-align: center;
       }
     }
     .desc {
