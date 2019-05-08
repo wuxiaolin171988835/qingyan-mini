@@ -4,18 +4,25 @@
 			<block v-for="(item,i) in newlist" :key="i">
 				<view class="ibox" @tap="alertnum(i)" :class="[i== i1?'actives':'']">
 					<text class="uni_14">{{item}}</text>
-					<image v-if="i != i1" class="ii" src="/static/choose-Cade/choose-Cadex.png" mode=""></image>
-					<image v-else class="ii" src="/static/choose-Cade/choose-Cades.png" mode=""></image>
+					<image v-if="i != i1" class="ii" src="../../static/icon_arrow_b.png" mode=""></image>
+					<image v-else class="ii" src="../../static/icon_arrow_b_selected.png" mode=""></image>
 				</view>
 			</block>
 		</view>
 		<view  :class="[show?'list_boxs2':'list_boxs']">
 			<view class="lione">
-				<block v-for="(item,i) in listchild" :key="i">
-					<view class="mli" @tap="chooseOne(i)">
-						<text :class="[i== i2?'actives':'']" class="uni_14">{{item}}</text>
-						<image v-if="i == i2" class="ii" src="/static/choose-Cade/choose-Cadecc.png" mode=""></image>
+				<block v-if="i1===2">
+					<view>
+						<phone-search-list :phones="phones" @paramClick="paramClick"></phone-search-list>
 					</view>
+				</block>
+				<block v-else>
+					<block v-for="(item,i) in listchild" :key="i">
+						<view class="mli" @tap="chooseOne(i)">
+							<text :class="[i== i2?'actives':'']" class="uni_14">{{item}}</text>
+							<image v-if="i == i2" class="ii" src="/static/choose-Cade/choose-Cadecc.png" mode=""></image>
+						</view>
+					</block>
 				</block>
 			</view>
 			<view class="hideA" @tap="hide">
@@ -25,6 +32,7 @@
 </template>
 
 <script>
+	import phoneSearchList from '@/components/phone-directory/phone-search-list.vue'
 	export default {
 		props: ['list', 'arr'], //数组  arr
 		data() {
@@ -33,10 +41,108 @@
 				i2: null,
 				show: false,
 				listchild: [],
-				newlist: this.list
+				newlist: this.list,
+				phones:{
+					"A": [{
+							"id": 56,
+							"spell": "aba",
+							"name": "阿坝"
+					}, {
+							"id": 57,
+							"spell": "akesu",
+							"name": "阿克苏"
+					}, {
+							"id": 58,
+							"spell": "alashanmeng",
+							"name": "阿拉善盟"
+					}, {
+							"id": 59,
+							"spell": "aletai",
+							"name": "阿勒泰"
+					}, {
+							"id": 60,
+							"spell": "ali",
+							"name": "阿里"
+					}, {
+							"id": 61,
+							"spell": "ankang",
+							"name": "安康"
+					}, {
+							"id": 62,
+							"spell": "anqing",
+							"name": "安庆"
+					}, {
+							"id": 63,
+							"spell": "anshan",
+							"name": "鞍山"
+					}, {
+							"id": 64,
+							"spell": "anshun",
+							"name": "安顺"
+					}, {
+							"id": 65,
+							"spell": "anyang",
+							"name": "安阳"
+					}, {
+							"id": 338,
+							"spell": "acheng",
+							"name": "阿城"
+					}, {
+							"id": 339,
+							"spell": "anfu",
+							"name": "安福"
+					}, {
+							"id": 340,
+							"spell": "anji",
+							"name": "安吉"
+					}, {
+							"id": 341,
+							"spell": "anning",
+							"name": "安宁"
+					}, {
+							"id": 342,
+							"spell": "anqiu",
+							"name": "安丘"
+					}, {
+							"id": 343,
+							"spell": "anxi",
+							"name": "安溪"
+					}, {
+							"id": 344,
+							"spell": "anyi",
+							"name": "安义"
+					}, {
+							"id": 345,
+							"spell": "anyuan",
+							"name": "安远"
+					}],
+					"B": [{
+							"id": 1,
+							"spell": "beijing",
+							"name": "北京"
+					}, {
+							"id": 66,
+							"spell": "baicheng",
+							"name": "白城"
+					}, {
+							"id": 67,
+							"spell": "baise",
+							"name": "百色"
+					}, {
+							"id": 68,
+							"spell": "baishan",
+							"name": "白山"
+					}]
+				}
 			}
 		},
+		components:{
+			phoneSearchList
+		},
 		methods: {
+			paramClick (e) {
+				console.log(e)
+			},
 			alertnum(i) {
 				if (this.i1 != i) {
 					this.listchild = [];
@@ -49,11 +155,10 @@
 						this.i2 = ins
 					}
 				}
-
 			},
 			chooseOne(i) {
 				this.i2 = i;
-				this.newlist[this.i1] = this.listchild[i];
+				// this.newlist[this.i1] = this.listchild[i];
 				this.$emit('chooseLike', [this.i1, this.i2])
 			},
 			hide() {
@@ -105,8 +210,8 @@
 	}
 
 	.ii {
-		width: 30upx;
-		height: 30upx;
+		width: 16upx;
+		height: 11upx;
 		display: block;
 		margin-left: 12upx;
 	}
@@ -126,16 +231,9 @@
 		align-items: center;
 		background-color: #FFFFFF;
 		padding: 28upx 5%;
-		position: fixed;
-		top: 88upx;
 		width: 90%;
-		z-index: 99;
-		/* #ifdef APP-PLUS */
-		top: 0;
-		/* #endif */
 	}
 	.boxa{
-		padding-top: 84upx;
 		position: relative;
 	}
 </style>

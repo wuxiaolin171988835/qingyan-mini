@@ -23,7 +23,7 @@
                 ></mSearch>
                 <text @click="resetSearch" class="btn-reset">重置</text>
               </view>
-              <!-- <ChooseLits :list="list" :arr="arr" @chooseLike="chooseLike"></ChooseLits> -->
+              <ChooseLits :list="list" :arr="arr" @chooseLike="chooseLike"></ChooseLits>
               <!-- tab项 -->
               <view>
                 <view class="fixedit" :style="{top:top}">
@@ -120,11 +120,11 @@ export default {
       TabCur: 0, //一级tab选中项
       list: ["行业", "类别", "机构", "日期", "页数"], //select选项卡
       arr: [
-        ["全部", "石油石化", "石油石化", "石油石化", "石油石化"],
-        ["全部", "晨会", "周报", "东北证券", "东北证券"],
-        ["全部", "5k以下", "5k-10k", "10k以上"],
-        ["全部", "1个月内", "3个月内", "6个月内", "1年以内"],
-        ["全部", "1-5页", "6-20页", "20页以上"]
+        ["全部行业", "石油石化", "石油石化", "石油石化", "石油石化"],
+        ["全部类别", "晨会", "周报", "东北证券", "东北证券"],
+        ["全部机构", "5k以下", "5k-10k", "10k以上"],
+        ["全部日期", "1个月内", "3个月内", "6个月内", "1年以内"],
+        ["全部页数", "1-5页", "6-20页", "20页以上"]
       ], //select选项值
       keyword: "", //搜索关键字
       top: 0,
@@ -196,9 +196,9 @@ export default {
     /**
      * select选择
      */
-    // chooseLike(key) {
-    //   console.log(key[0], key[1]);
-    // },
+    chooseLike(key) {
+      console.log(key[0], key[1]);
+    },
     /**
      * 确认搜索框
      */
