@@ -130,10 +130,9 @@ export default {
       top: 0,
       
       categories: [
-        { cateid: 0, name: "标题" },
-        { cateid: 1, name: "要点" },
-        { cateid: 2, name: "图标" },
-        { cateid: 3, name: "正文" }
+        { cateid: 0, name: "摘要" },
+        { cateid: 1, name: "正文" },
+        { cateid: 2, name: "图表" }
       ],//二级tab
       cateCurrentIndex: 0,//二级tab选中项
       // mock数据
