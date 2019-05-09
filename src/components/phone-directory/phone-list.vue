@@ -6,7 +6,6 @@
       scroll-y="true"
       :scroll-with-animation="scrollAnimationOFF"
       :scroll-into-view="scrollViewId"
-      :style="{height:winHeight + 'px'}"
       @scroll="handleScroll"
     >
       <view class="phone-list">
@@ -99,7 +98,11 @@ export default {
         }
       });
     }
-  }
+  },
+  /**
+   * 确定
+   */
+  confirm() {}
 };
 </script>
 
@@ -110,8 +113,9 @@ export default {
 
 .scroll-list {
   flex: 1;
-  height: 100vh;
-  overflow-y: hidden;
+  max-height: 400upx;
+  overflow: auto;
+  padding: 20upx 40upx 0;
 }
 
 .phone-list {
@@ -147,6 +151,8 @@ export default {
   top: 0;
   left: 0;
   line-height: 92upx;
+  color: #4a4a4a;
+  font-size: 28upx;
 }
 
 /* .list-item-title, */

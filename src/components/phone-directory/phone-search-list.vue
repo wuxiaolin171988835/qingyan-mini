@@ -15,6 +15,7 @@
         @handleClick="handleClick"
       ></phone-list>
     </view>
+    <button @click="confirm" class="btn-confirm">确定</button>
   </view>
 </template>
 
@@ -49,12 +50,10 @@ export default {
   },
   watch: {
     keyword() {
-      console.log(this.phones);
       if (this.timer) {
         clearTimeout(this.timer);
       }
       if (!this.keyword) {
-        debugger;
         this.phonesCopy = JSON.parse(JSON.stringify(this.phones));
         console.log("清空筛选：", this.phonesCopy);
         return;
@@ -72,9 +71,10 @@ export default {
           });
         }
         if (result.length > 0) {
-          debugger;
           this.phoneListIndex = result[0].spell.slice(0, 1).toUpperCase();
           this.phonesCopy = { [this.phoneListIndex]: result };
+        } else {
+          this.phonesCopy = {};
         }
       }, 100);
     }
@@ -110,7 +110,7 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 .hover {
   background-color: #eee;
 }
@@ -142,6 +142,22 @@ export default {
   height: 100%;
   background-color: #fff;
   overflow: hidden;
-  padding: 20upx 40upx 0;
+  &-errtitle {
+    height: 100upx;
+    line-height: 100upx;
+    text-align: center;
+    color: #4a4a4a;
+    display: block;
+    width: 100%;
+  }
+}
+.btn-confirm {
+  width: 100%;
+  height: 102upx;
+  line-height: 102upx;
+  background-color: #f4f5f6;
+  color: $uni-color-primary;
+  font-size: 32upx;
+  border: none;
 }
 </style>

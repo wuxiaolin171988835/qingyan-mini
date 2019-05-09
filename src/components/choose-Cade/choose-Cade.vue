@@ -2,7 +2,7 @@
 	<view class="boxa">
 		<view class="top_kbox">
 			<block v-for="(item,i) in newlist" :key="i">
-				<view class="ibox" @tap="alertnum(i)" :class="[i== i1?'actives':'']">
+				<view class="ibox" @tap="alertnum(i)" :class="[i== i1?'actives-title':'']">
 					<text class="uni_14">{{item}}</text>
 					<image v-if="i != i1" class="ii" src="../../static/icon_arrow_b.png" mode=""></image>
 					<image v-else class="ii" src="../../static/icon_arrow_b_selected.png" mode=""></image>
@@ -16,14 +16,14 @@
 						<phone-search-list :phones="phones" @paramClick="paramClick"></phone-search-list>
 					</view>
 				</block>
-				<block v-else>
+				<view v-else class="lione-items">
 					<block v-for="(item,i) in listchild" :key="i">
-						<view class="mli" @tap="chooseOne(i)">
-							<text :class="[i== i2?'actives':'']" class="uni_14">{{item}}</text>
+						<view class="mli" @tap="chooseOne(i)" :class="[i== i2?'actives':'']">
+							<text class="uni_14">{{item}}</text>
 							<image v-if="i == i2" class="ii" src="/static/choose-Cade/choose-Cadecc.png" mode=""></image>
 						</view>
 					</block>
-				</block>
+				</view>
 			</view>
 			<view class="hideA" @tap="hide">
 			</view>
@@ -170,7 +170,7 @@
 	}
 </script>
 
-<style>
+<style lang="scss">
 	.hideA {
 		height: calc(100% - 310upx);
 	}
@@ -181,10 +181,14 @@
 		justify-content: space-between;
 		align-items: center;
 		padding: 22upx 0;
+		border-bottom: 1px solid #d5d5d5;
 	}
 
 	.lione {
 		background-color: #fff;
+		&-items{
+			padding: 0 70upx 0 20upx;
+		}
 		/* height: 262upx; */
 	}
 
@@ -217,7 +221,12 @@
 	}
 
 	.actives {
-		color: #F0AD4E;
+		color: $uni-color-primary;
+		border-color: $uni-color-primary;
+		&-title{
+			color: #F5A623;
+			border-bottom: none;
+		}
 	}
 
 	.ibox {
