@@ -1,22 +1,11 @@
 <template>
   <view>
     <view class="search">
-      <input @input="handleInput" class="search-input" type="text" focus placeholder="请输入要搜索的联系人">
+      <text class="searc-desc">请选择机构，支持多选</text>
+      <input @input="handleInput" class="search-input" type="text">
     </view>
-    <view class="search-main" v-if="keyword" style="display: flex;">
+    <view class="search-main" style="display: flex;">
       <view class="search-main-errtitle" v-if="hasNoData">无搜索结果</view>
-      <!-- <view class="search-main-title"
-			hover-class="hover" 
-			@click="handleClick"
-			:hover-start-time="20" 
-			:hover-stay-time="70" 
-			v-for="item of list" 
-			:key="item.id"
-			:data-name="item.name"
-			:data-id="item.id"
-			:data-phoneNumber="item.phoneNumber">
-				{{item.name}}
-      </view>-->
       <phone-list
         :phones="phonesCopy"
         :letter="letter"
@@ -25,13 +14,6 @@
         @reset="handleReset"
         @handleClick="handleClick"
       ></phone-list>
-      <phone-alphabet
-        :phones="phonesCopy"
-        :phoneListIndex="phoneListIndex"
-        @change="handleDatasetKey"
-        @scrollAnimationOFF="handleScrollAnimationOFF"
-        @reset="handleReset"
-      ></phone-alphabet>
     </view>
   </view>
 </template>
@@ -39,6 +21,7 @@
 <script>
 import phoneList from "./phone-list.vue";
 import phoneAlphabet from "./phone-alphabet.vue";
+import { constants } from "crypto";
 export default {
   name: "phone-search-list",
   props: {
@@ -50,7 +33,7 @@ export default {
   },
   data() {
     return {
-      phonesCopy: {},
+      phonesCopy: JSON.parse(JSON.stringify(this.phones)),
       keyword: "",
       timer: null,
       letter: "A",
@@ -66,11 +49,14 @@ export default {
   },
   watch: {
     keyword() {
+      console.log(this.phones);
       if (this.timer) {
         clearTimeout(this.timer);
       }
       if (!this.keyword) {
-        this.phonesCopy = Object.assign(this.phones, this.phonesCopy);
+        debugger;
+        this.phonesCopy = JSON.parse(JSON.stringify(this.phones));
+        console.log("清空筛选：", this.phonesCopy);
         return;
       }
       this.timer = setTimeout(() => {
@@ -78,18 +64,18 @@ export default {
         for (let i in this.phones) {
           this.phones[i].forEach(item => {
             if (
-              item.spell.indexOf(this.keyword) > -1 ||
-              item.name.indexOf(this.keyword) > -1
+              item.spell.indexOf(this.keyword) === 0 ||
+              item.name.indexOf(this.keyword) === 0
             ) {
               result.push(item);
             }
           });
         }
         if (result.length > 0) {
+          debugger;
           this.phoneListIndex = result[0].spell.slice(0, 1).toUpperCase();
           this.phonesCopy = { [this.phoneListIndex]: result };
         }
-        console.log("搜索结果：", this.phonesCopy);
       }, 100);
     }
   },
@@ -130,31 +116,32 @@ export default {
 }
 .search {
   background-color: #fff;
-  padding: 10upx 20upx;
+  padding: 0 36upx 0 40upx;
   border-bottom: 1px solid #e5e5e5;
+  display: flex;
+  background-color: #f4f5f6;
+  height: 98upx;
+  line-height: 98upx;
 }
 
 .search-input {
   font-size: 28upx;
   border: 1px solid #e5e5e5;
   border-radius: 3px;
-  padding: 10upx 20upx 10upx 20upx;
+  padding: 0 20upx;
+  height: 36upx;
+  font-size: 26upx;
+  color: #b2b2b2;
+  margin-left: 38upx;
+  margin-top: 31upx;
+  background: #fff;
+  flex: 1;
 }
 
 .search-main {
   height: 100%;
-  padding-bottom: 20upx;
   background-color: #fff;
   overflow: hidden;
-}
-
-.search-main-errtitle,
-.search-main-title {
-  width: 100%;
-  height: 92upx;
-  line-height: 92upx;
-  font-size: 32upx;
-  padding: 0 20upx;
-  border-bottom: 1px solid #e5e5e5;
+  padding: 20upx 40upx 0;
 }
 </style>

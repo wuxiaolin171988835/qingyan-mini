@@ -186,8 +186,6 @@
 	.lione {
 		background-color: #fff;
 		/* height: 262upx; */
-		padding: 10upx 40upx;
-
 	}
 
 	.list_boxs {
@@ -201,12 +199,14 @@
 	}
 	.list_boxs2{
 		background-color: rgba(84, 80, 80, 0.48);
-		position: fixed;
+		position: absolute;
 		height: calc(100%);
 		width: 100%;
 		z-index: 88;
 		transform: translateY(0);
 		transition: all .5s;
+		left:0;
+		top: 105rpx;
 	}
 
 	.ii {

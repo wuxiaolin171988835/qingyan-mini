@@ -11,19 +11,26 @@
     >
       <view class="phone-list">
         <view class="list-item" v-for="(item, key) of phones" :key="key" :id="key">
-          <view class="list-item-title">{{key}}</view>
-          <view
-            class="list-item-phone"
-            @click="handleClick"
-            hover-class="commonly-hover"
-            :hover-start-time="20"
-            :hover-stay-time="70"
-            v-for="innerItem in item"
-            :key="innerItem.id"
-            :data-name="innerItem.name"
-            :data-id="innerItem.id"
-            :data-phoneNumber="innerItem.phoneNumber"
-          >{{innerItem.name}}</view>
+          <view class="list-item-content">
+            <view class="list-item-title">{{key}}</view>
+            <checkbox-group>
+              <label
+                class="list-item-phone"
+                @click="handleClick"
+                hover-class="commonly-hover"
+                :hover-start-time="20"
+                :hover-stay-time="70"
+                v-for="innerItem in item"
+                :key="innerItem.id"
+                :data-name="innerItem.name"
+                :data-id="innerItem.id"
+                :data-phoneNumber="innerItem.phoneNumber"
+              >
+                <checkbox value/>
+                {{innerItem.name}}
+              </label>
+            </checkbox-group>
+          </view>
         </view>
       </view>
     </scroll-view>
@@ -96,7 +103,7 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 .commonly-hover {
   background-color: #eee;
 }
@@ -117,12 +124,18 @@ export default {
 
 .list-item {
   width: 100%;
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
   height: 92upx;
   background-color: #fff;
   height: 100%;
+  &-content {
+    width: 100%;
+    padding-left: 56upx;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    position: relative;
+    box-sizing: border-box;
+  }
 }
 
 .list-item > .list-item-phone {
@@ -130,17 +143,19 @@ export default {
 }
 
 .list-item-title {
-  background-color: #eee;
+  position: absolute;
+  top: 0;
+  left: 0;
+  line-height: 92upx;
 }
 
-.list-item-title,
+/* .list-item-title, */
 .list-item-phone {
-  width: 100%;
   height: 92upx;
   line-height: 92upx;
-  font-size: 32upx;
+  font-size: 28upx;
   font-weight: bold;
-  padding: 0 20upx;
-  border-bottom: 1px solid #e5e5e5;
+  color: #4a4a4a;
+  padding-right: 40upx;
 }
 </style>

@@ -334,19 +334,6 @@ export default {
 }
 </style>
 <style lang="scss">
-.search {
-  background: none !important;
-  border-bottom: none !important;
-  .content {
-    height: 70upx !important;
-  }
-}
-.search .content .content-box .input.center {
-  width: 100% !important;
-  height: 70upx !important;
-  line-height: 70upx !important;
-  transition: none !important;
-}
 .search-box {
   display: flex;
   background-color: rgba(98, 183, 233, 1);
