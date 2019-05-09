@@ -31,7 +31,7 @@
             @change="$_switch"
           />
           <cmd-icon v-if="arrow" type="chevron-right" size="24" color="#C5CAD5"></cmd-icon>
-          <image v-if="arrowDefined" src="../../static/icon_arrow.png" style="width:32upx;height:32upx;margin-top: 20upx;"></image>
+          <image v-if="arrowDefined" src="../../static/icon_arrow_r.png" style="width:32upx;height:32upx;margin-top: 20upx;"></image>
         </view>
       </view>
     </view>
