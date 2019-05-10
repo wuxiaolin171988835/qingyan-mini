@@ -107,26 +107,26 @@
     },
 
     // #ifdef H5
-    mounted() { //分平台吧，在h5的时候走mounted，app和小程序走onReady
-      // 当前对象el
-      let view = uni.createSelectorQuery().select(`#${this.elId}`);
-      view.fields({
-        size: true
-      }, data => {
-        this.iconSize = data.width / 2;
-      }).exec();
-    },
-    // #endif
-    // #ifndef H5
-    onReady() {
-      // 当前对象el
-      let view = uni.createSelectorQuery().select(`#${this.elId}`);
-      view.fields({
-        size: true
-      }, data => {
-        this.iconSize = data.width / 2;
-      }).exec();
-    },
+    // mounted() { //分平台吧，在h5的时候走mounted，app和小程序走onReady
+    //   // 当前对象el
+    //   let view = uni.createSelectorQuery().select(`#${this.elId}`);
+    //   view.fields({
+    //     size: true
+    //   }, data => {
+    //     this.iconSize = data.width / 2;
+    //   }).exec();
+    // },
+    // // #endif
+    // // #ifndef H5
+    // onReady() {
+    //   // 当前对象el
+    //   let view = uni.createSelectorQuery().select(`#${this.elId}`);
+    //   view.fields({
+    //     size: true
+    //   }, data => {
+    //     this.iconSize = data.width / 2;
+    //   }).exec();
+    // },
     // #endif
 
     methods: {
