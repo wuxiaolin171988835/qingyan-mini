@@ -6,7 +6,6 @@
           :tab-list="tabList"
           :tabCur.sync="TabCur"
           tab-class="text-center"
-          select-class="tab-selected"
           @change="tabChangeTop"
         ></wuc-tab>
         <!-- tab内容区 -->
@@ -15,7 +14,7 @@
             <block>
               <view class="search-box">
                 <mSearch
-                  placeholder="输入你想找的关键字"
+                  placeholder="输入您想找的关键字"
                   :mode="2"
                   button="inside"
                   @search="doSearch($event)"
@@ -32,22 +31,29 @@
                     scroll-x="true"
                     id="grace-tab-title"
                   >
-                    <view
-                      v-for="(cate, index) in categories"
-                      :key="index"
-                      :data-cateid="cate.cateid"
-                      :data-index="index"
-                      :class="[cateCurrentIndex == index ? 'grace-tab-current' : '']"
-                      @tap="tabChangeBottom"
-                    >{{cate.name}}</view>
+                    <view class="grace-view-tab">
+                      <view
+                        v-for="(cate, index) in categories"
+                        :key="index"
+                        :data-cateid="cate.cateid"
+                        :data-index="index"
+                        :class="[cateCurrentIndex == index ? 'grace-tab-current' : '']"
+                        @tap="tabChangeBottom"
+                      >
+                        <text class="grace-tab-text">
+                          {{cate.name}}
+                        </text>
+                      </view>
+                    </view>
                   </scroll-view>
+
                 </view>
                 <!-- 内容区 -->
                 <view class="grace-news-list">
                   <block v-for="(item, index) in artList" :key="index">
                     <navigator url="./detail" open-type="navigate" class="grace-news-list-items">
                       <view class="grace-news-list-img-news">
-                        <view class="grace-news-list-img-big">
+                        <view class="grace-news-list-img-big"  v-if="cateCurrentIndex===2">
                           <image src="../../static/demo.jpg" mode="widthFix" class="img"></image>
                           <image
                             src="../../static/icon_magnifier.png"
@@ -56,8 +62,11 @@
                           ></image>
                         </view>
                         <view class="grace-news-list-info">
-                          <text class="grace-news-list-title-main">{{item.title}}</text>
-                          <text class="grace-news-list-title-desc">{{item.desc}}</text>
+                          <text class="grace-news-list-title-main">
+                            {{item.title}}
+                          </text>
+                          <text class="grace-news-list-title-desc" v-if="cateCurrentIndex!==1">{{item.desc}}</text>
+                          <span class="btn">宏观研究</span>
                         </view>
                       </view>
                       <view class="flex-items">
@@ -140,27 +149,27 @@ export default {
         {
           id: 0,
           title: "预收账款靓丽，管理效率提升",
-          desc: "事件：公司发布年报，18年公司实现营收19.58亿元，同比...."
+          desc: "事件：公司发布年报，18年公司实现营收19.58亿元，同比增涨10.18%； 实现"
         },
         {
           id: 1,
           title: "预收账款靓丽，管理效率提升",
-          desc: "事件：公司发布年报，18年公司实现营收19.58亿元，同比...."
+          desc: "事件：公司发布年报，18年公司实现营收19.58亿元，同比增涨10.18%； 实现"
         },
         {
           id: 2,
           title: "预收账款靓丽，管理效率提升",
-          desc: "事件：公司发布年报，18年公司实现营收19.58亿元，同比...."
+          desc: "事件：公司发布年报，18年公司实现营收19.58亿元，同比增涨10.18%； 实现"
         },
         {
           id: 3,
           title: "预收账款靓丽，管理效率提升",
-          desc: "事件：公司发布年报，18年公司实现营收19.58亿元，同比...."
+          desc: "事件：公司发布年报，18年公司实现营收19.58亿元，同比增涨10.18%； 实现"
         },
         {
           id: 4,
           title: "预收账款靓丽，管理效率提升",
-          desc: "事件：公司发布年报，18年公司实现营收19.58亿元，同比...."
+          desc: "事件：公司发布年报，18年公司实现营收19.58亿元，同比增涨10.18%； 实现"
         }
       ]
     };
@@ -326,10 +335,7 @@ export default {
   .list_boxs2 {
     transform: none;
   }
-  .tab-selected {
-    color: $uni-color-primary;
-    border-bottom: 1px solid $uni-color-primary;
-  }
+ 
 }
 </style>
 <style lang="scss">

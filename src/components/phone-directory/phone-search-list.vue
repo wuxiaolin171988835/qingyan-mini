@@ -2,7 +2,10 @@
   <view>
     <view class="search">
       <text class="searc-desc">请选择机构，支持多选</text>
-      <input @input="handleInput" class="search-input" type="text">
+      <view class="search-block">
+        <span class="icon-search"></span>
+        <input @input="handleInput" class="search-input" type="text">
+      </view>
     </view>
     <view class="search-main" style="display: flex;">
       <view class="search-main-errtitle" v-if="hasNoData">无搜索结果</view>
@@ -105,6 +108,9 @@ export default {
         this.letter = "";
       }
       this.reset = val;
+    },
+    confirm() {
+      this.$emit("confirm");
     }
   }
 };
@@ -122,6 +128,24 @@ export default {
   background-color: #f4f5f6;
   height: 98upx;
   line-height: 98upx;
+  &-block {
+    display: flex;
+    height: 60upx;
+    margin-left: 38upx;
+    margin-top: 18upx;
+    background: #fff;
+    left: 382px;
+    border-radius: 5px;
+    border: 1px solid rgba(231, 230, 230, 1);
+    .icon-search {
+      display: inline-block;
+      width: 32upx;
+      height: 32upx;
+      margin: 13upx 31upx 0 27upx;
+      background-image: url("../../static/icon_search.png");
+      background-size: cover;
+    }
+  }
 }
 
 .search-input {
@@ -129,13 +153,10 @@ export default {
   border: 1px solid #e5e5e5;
   border-radius: 3px;
   padding: 0 20upx;
-  height: 36upx;
   font-size: 26upx;
   color: #b2b2b2;
-  margin-left: 38upx;
-  margin-top: 31upx;
-  background: #fff;
-  flex: 1;
+  height: 60upx;
+  border: none;
 }
 
 .search-main {

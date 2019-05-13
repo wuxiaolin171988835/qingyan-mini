@@ -9,11 +9,11 @@
 				</view>
 			</block>
 		</view>
-		<view  :class="[show?'list_boxs2':'list_boxs']">
+		<view  :style="{display:show?'block':'none'}" class="list_boxs2">
 			<view class="lione">
 				<block v-if="i1===2">
 					<view>
-						<phone-search-list :phones="phones" @paramClick="paramClick"></phone-search-list>
+						<phone-search-list :phones="phones" @paramClick="paramClick" @confirm="confirm"></phone-search-list>
 					</view>
 				</block>
 				<view v-else class="lione-items">
@@ -38,7 +38,7 @@
 		data() {
 			return {
 				i1: null,
-				i2: null,
+				i2: 0,
 				show: false,
 				listchild: [],
 				newlist: this.list,
@@ -148,7 +148,7 @@
 					this.listchild = [];
 					this.i1 = i;
 					this.listchild = this.arr[i];
-					this.i2 = null;
+					this.i2 = 0;
 					this.show = true;
 					let ins = this.listchild.indexOf(this.newlist[i]);
 					if (ins > -1) {
@@ -158,13 +158,19 @@
 			},
 			chooseOne(i) {
 				this.i2 = i;
+				setTimeout(() => {
+					this.show = false;
+				}, 300);
 				// this.newlist[this.i1] = this.listchild[i];
 				this.$emit('chooseLike', [this.i1, this.i2])
 			},
 			hide() {
 				this.show = false;
 				this.i1 = null;
-				this.i2 = null;
+				this.i2 = 0;
+			},
+			confirm(){
+				this.show = false
 			}
 		}
 	}
@@ -182,6 +188,7 @@
 		align-items: center;
 		padding: 22upx 0;
 		border-bottom: 1px solid #d5d5d5;
+		color: #4a4a4a;
 	}
 
 	.lione {

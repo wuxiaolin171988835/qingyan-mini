@@ -2,24 +2,23 @@
   <view class="search">
     <view class="content" :style="{ 'border-radius': radius + 'px', border: border }">
       <view class="content-box" :class="{ center: mode === 2 }">
-        <text class="icon icon-search">&#xe61c;</text>
+        <i class="icon-search"></i>
         <input
           class="input"
           :class="{ center: !active && mode === 2 }"
           :focus="isFocus"
           :placeholder="placeholder"
           v-model="inputVal"
-          @focus="focus"
           @blur="blur"
         >
         <!-- <view v-if="!active && mode === 2" class="input sub" @click="getFocus">请输入搜索内容</view> -->
         <text v-if="isDelShow" class="icon icon-del" @click="clear">&#xe644;</text>
       </view>
-      <view
+      <!-- <view
         v-show="(active && show && button === 'inside') || (isDelShow && button === 'inside')"
         class="searchBtn"
         @click="search"
-      >搜索</view>
+      >搜索</view>-->
     </view>
     <view
       v-if="button === 'outside'"
@@ -125,6 +124,8 @@ export default {
     overflow: hidden;
     transition: all 0.2s linear;
     border-radius: 30px;
+    padding-left: 84upx;
+    position: relative;
 
     .content-box {
       width: 100%;
@@ -138,6 +139,15 @@ export default {
         &.icon-del {
           font-size: 38upx;
         }
+      }
+      .icon-search {
+        position: absolute;
+        display: inline-block;
+        width: 40upx;
+        height: 40upx;
+        left: 26upx;
+        background-image: url("../../static/icon_search.png");
+        background-size: cover;
       }
       .input {
         width: 100%;

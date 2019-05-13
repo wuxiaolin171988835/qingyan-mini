@@ -4,14 +4,20 @@
       <view>
         <view class="fixedit" :style="{top:top}">
           <scroll-view class="grace-tab-title grace-center" scroll-x="true" id="grace-tab-title">
-            <view
-              v-for="(cate, index) in categories"
-              :key="index"
-              :data-cateid="cate.cateid"
-              :data-index="index"
-              :class="[cateCurrentIndex == index ? 'grace-tab-current' : '']"
-              @tap="tabChange"
-            >{{cate.name}}</view>
+            <view class=grace-view-tab>
+              <view
+                v-for="(cate, index) in categories"
+                :key="index"
+                :data-cateid="cate.cateid"
+                :data-index="index"
+                :class="[cateCurrentIndex == index ? 'grace-tab-current' : '']"
+                @tap="tabChange"
+              >
+                <text class="grace-tab-text">
+                {{cate.name}}
+                </text>
+              </view>
+            </view>
           </scroll-view>
         </view>
         <!-- 内容区 -->
@@ -37,14 +43,17 @@
             </view>
             <text class="desc">
               北京青彦科技有限公司投身于金融科技（Fintech）领域，矢志于为金融投资研究工作提供智慧分析的服务与工具。公司口号为“让投资更智慧”，通过大数据分析、人工智能、知识图谱等IT技术赋能金融投资，让投资经理与分析师们能够更高效、更便捷的获取价值数据及深度分析结果，从而领先市场一步。
-              \n
+            </text>
+            \n 
+            <text class="desc" style="margin-top: 50upx;">
               公司坐落于北京市朝阳区三元桥曙光大厦，毗邻三元桥地铁站。公司是新型创业型公司，已获得种子轮融资，创始人为在金融投资领域浸淫多年的投资专家，对金融投资行业的趋势变化有着深刻的行业理解。
             </text>
             <view class="title">
               <text>公司团队</text>
             </view>
-            <text class="desc">
-              龙红亮，创始人：\n
+            <span>龙红亮，创始人：</span>
+              \n
+            <text class="desc"  style="margin-top: 50upx;">
               CFA，中国社科院金融系博士，中科院数学院硕士。商业银行多年的FICC投资管理经验，管理规模超过500亿元；亦曾服务于汤森路透世界级的金融资讯集团。积累了丰富的金融投资行业经验，对Fintech领域有着深刻的理解。出版个人专著《债券投资实战》。
             </text>
             <view class="logo">
@@ -168,6 +177,10 @@ export default {
       line-height: 80upx;
       box-sizing: border-box;
       border-bottom: none;
+      font-size: 32upx;
+    }
+    .grace-tab-current text{
+      line-height: 70upx;
     }
   }
   .grace-news-list {
@@ -199,7 +212,7 @@ export default {
         margin: 0 47upx 0 40upx;
       }
       &-title {
-        color: $uni-color-primary;
+        color: #38466E;
         font-size: 32upx;
         line-height: 45upx;
       }
@@ -245,6 +258,8 @@ export default {
     .desc {
       font-size: 24upx;
       line-height: 40upx;
+      text-indent: 80upx;
+      display: block;
     }
     .logo {
       margin: 78upx auto 0;

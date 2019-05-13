@@ -60,7 +60,7 @@
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "Hello uniapp",
-		"navigationBarBackgroundColor": "#F8F8F8",
+		"navigationBarBackgroundColor": "#fff",
 		"backgroundColor": "#F8F8F8",
 		"mp-alipay": {
 			"titleBarColor": "#FFFFFF"
@@ -69,7 +69,7 @@
 	"tabBar": {
 		"color": "#7A7E83",
 		"selectedColor": "#007AFF",
-		"borderStyle": "black",
+		"borderStyle": "none",
 		"backgroundColor": "#F8F8F8",
 		"list": [
 			{

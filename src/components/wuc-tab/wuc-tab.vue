@@ -7,7 +7,7 @@
     scroll-x
     :scroll-left="scrollLeft"
   >
-    <div v-if="!textFlex">
+    <div v-if="!textFlex" style="display: flex;width:100%;">
       <div
         class="cu-item"
         :class="index === tabCur ? selectClass + ' cur':''"
@@ -127,11 +127,16 @@ image {
   display: inline-block;
   line-height: 90upx;
   margin: 0 10upx;
-  padding: 0 20upx;
+  /* padding: 0 20upx; */
+  flex: 1;
+  position: relative;
 }
 
-.nav .cu-item.cur {
-  border-bottom: 4upx solid;
+.nav .cu-item.cur span {
+  border-bottom: 7upx solid #3b8fd1;
+  display: inline-block;
+  line-height: 77upx;
+  color: #3b8fd1;
 }
 
 .nav.fixed {

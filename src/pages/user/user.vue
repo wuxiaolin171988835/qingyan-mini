@@ -12,6 +12,9 @@
       <cmd-cell-item title="公司名称" addon="青彦科技" arrow/>
       <view style="margin-top:20upx">
         <cmd-cell-item title="邮箱" addon="HR@QINGYAN.COM" arrow/>
+        <navigator url="../user/validateTel" open-type="navigate">
+          <cmd-cell-item title="手机" addon="13812345678" arrow/>
+        </navigator>
         <block>
           <navigator url="../user/validateTel" open-type="navigate" v-if="userInfo.tel">
             <cmd-cell-item title="手机" addon="13812345678" arrow/>
