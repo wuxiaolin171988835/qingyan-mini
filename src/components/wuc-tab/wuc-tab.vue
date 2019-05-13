@@ -135,7 +135,7 @@ image {
 .nav .cu-item.cur span {
   border-bottom: 7upx solid #3b8fd1;
   display: inline-block;
-  line-height: 77upx;
+  line-height: 80upx;
   color: #3b8fd1;
 }
 

@@ -1,7 +1,7 @@
 <template>
   <view>
     <view class="search">
-      <text class="searc-desc">请选择机构，支持多选</text>
+      <text class="searc-desc" style="display: inline-block;width:304upx;">请选择机构，支持多选</text>
       <view class="search-block">
         <span class="icon-search"></span>
         <input @input="handleInput" class="search-input" type="text">
@@ -139,11 +139,11 @@ export default {
     border: 1px solid rgba(231, 230, 230, 1);
     .icon-search {
       display: inline-block;
-      width: 32upx;
+      width: 34upx;
       height: 32upx;
-      margin: 13upx 31upx 0 27upx;
+      margin: 13upx 29upx 0 27upx;
       background-image: url("../../static/icon_search.png");
-      background-size: cover;
+      background-size: 100% 100%;
     }
   }
 }
