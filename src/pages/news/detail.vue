@@ -57,7 +57,7 @@ export default {
      */
     checkResource(){
       uni.downloadFile({
-        url: 'https://sz-preview-ftn.weiyun.com:8443/ftn_doc_previewer/weiyun_previewer.html?rkey=90b2e256ffee447a6fa450cf1ea3b6dc6e3e70a6e6cef220edae248c549f77a77ab575fb5f40e5f00e213a40ca72d714e68d06724d69cf5c7849864b8f46232d&filetype=8&fname=%E6%AC%A2%E8%BF%8E%E4%BD%BF%E7%94%A8%E5%BE%AE%E4%BA%91.pdf',
+        url: 'http://www.gov.cn/zhengce/pdfFile/2019_PDF.pdf',
         success: function (res) {
           var filePath = res.tempFilePath;
           uni.openDocument({

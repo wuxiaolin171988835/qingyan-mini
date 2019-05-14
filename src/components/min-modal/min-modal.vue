@@ -213,7 +213,6 @@ export default {
   color: #80848f;
   height: 100%;
   line-height: 1.5;
-  overflow: auto;
 }
 .min-modal-item {
   position: relative;

@@ -36,7 +36,14 @@ view{font-size:28upx;}
 .grace-news-list-items{width:94%; padding: 0 3%!important;display:flex; flex-wrap:nowrap; position:relative;background: #fff;}
 .grace-news-list-img{width:200upx; flex-shrink:0;}
 .grace-news-list-title{width:100%; overflow:hidden;}
-.grace-news-list-title-main{ font-size:32upx; width:100%;line-height: 45upx;color: rgba(56, 70, 110, 1);overflow: hidden;text-overflow:ellipsis;white-space: nowrap;}
+.grace-news-list-title-main{ font-size:32upx; 
+  max-width:70%;
+  display: inline-block;
+  line-height: 45upx;
+  color: rgba(56, 70, 110, 1);
+  overflow: hidden;
+  text-overflow:ellipsis;
+  white-space: nowrap;}
 .grace-news-list-title-desc{font-size:24upx; display:block; color:#666; margin-top:22upx;display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
@@ -46,6 +53,18 @@ view{font-size:28upx;}
 .grace-news-list-info{ width:100%;flex:1; margin-top:10upx; line-height:36upx; font-size:24upx; color:#666; justify-content:space-between;padding-left: 14upx;box-sizing: border-box;overflow: hidden;}
 .grace-news-list-info view{font-size:24upx; color:#666;}
 .grace-news-list-info text{font-size:24upx; }
+.grace-news-list-info text.btn{
+  position: relative;
+  top:-10upx;
+  display: inline-block;
+  font-size:22upx; 
+  color: rgba(59, 143, 209, 1);
+  width: 124upx;
+  height: 36upx;
+  border-radius: 18upx;
+  text-align: center;
+  line-height: 36upx;
+  border: 1px solid rgba(59, 143, 209, 1);}
 .grace-news-list-img-news{width:100%; flex-wrap:wrap; display: flex; padding: 40upx 0 20upx;}
 .grace-news-list-imgs{justify-content:space-between; width:100%; display:flex; margin:18upx 0; align-items:flex-start;}
 .grace-news-list-imgs image{width:31.3%; margin:0 1%;}

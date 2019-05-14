@@ -1,99 +1,103 @@
 <template>
   <cmd-page-body :backgroundColor="$uni-bg-color">
-    <view class="news">
-        <!-- 顶级tab -->
-        <wuc-tab
-          :tab-list="tabList"
-          :tabCur.sync="TabCur"
-          tab-class="text-center fixedit"
-          @change="tabChangeTop"
-        ></wuc-tab>
-        <!-- tab内容区 -->
-        <div class="cu-bar bg-white solid-bottom" style="margin-top:100upx">
-          <div class="content">
-            <block>
-              <view class="search-box fixedit">
-                <mSearch
-                  placeholder="输入您想找的关键字"
-                  :mode="2"
-                  button="inside"
-                  @search="doSearch($event)"
-                  class="input-block"
-                ></mSearch>
-                <text @click="resetSearch" class="btn-reset">重置</text>
+    <view class="news" :class="{'no-scroll':isSelectDialogShow}"> 
+      <!-- 顶级tab -->
+      <wuc-tab
+        :tab-list="tabList"
+        :tabCur.sync="TabCur"
+        tab-class="text-center fixedit"
+        style="position: relative;"
+        @change="tabChangeTop"
+      ></wuc-tab>
+      <!-- tab内容区 -->
+      <div class="cu-bar bg-white solid-bottom" style="margin-top:100upx">
+        <div class="content">
+          <block>
+            <view class="search-box fixedit">
+              <mSearch
+                placeholder="输入您想找的关键字"
+                :mode="2"
+                button="inside"
+                @search="doSearch($event)"
+                class="input-block"
+              ></mSearch>
+              <text @click="resetSearch" class="btn-reset">重置</text>
+            </view>
+            <ChooseLits :list="list" :arr="arr" @chooseLike="chooseLike" @onSelectDialog="onSelectDialog"></ChooseLits>
+            <!-- tab项 -->
+            <view>
+              <view class="fixedit" :style="{top:top}">
+                <scroll-view
+                  class="grace-tab-title grace-center"
+                  scroll-x="true"
+                  id="grace-tab-title"
+                >
+                  <view class="grace-view-tab">
+                    <view
+                      v-for="(cate, index) in categories"
+                      :key="index"
+                      :data-cateid="cate.cateid"
+                      :data-index="index"
+                      :class="[cateCurrentIndex == index ? 'grace-tab-current' : '']"
+                      @tap="tabChangeBottom"
+                    >
+                      <text class="grace-tab-text">
+                        {{cate.name}}
+                      </text>
+                    </view>
+                  </view>
+                </scroll-view>
+
               </view>
-              <ChooseLits :list="list" :arr="arr" @chooseLike="chooseLike"></ChooseLits>
-              <!-- tab项 -->
-              <view>
-                <view class="fixedit" :style="{top:top}">
-                  <scroll-view
-                    class="grace-tab-title grace-center"
-                    scroll-x="true"
-                    id="grace-tab-title"
-                  >
-                    <view class="grace-view-tab">
-                      <view
-                        v-for="(cate, index) in categories"
-                        :key="index"
-                        :data-cateid="cate.cateid"
-                        :data-index="index"
-                        :class="[cateCurrentIndex == index ? 'grace-tab-current' : '']"
-                        @tap="tabChangeBottom"
-                      >
-                        <text class="grace-tab-text">
-                          {{cate.name}}
+              <!-- 内容区 -->
+              <view class="grace-news-list">
+                <block v-for="(item, index) in artList" :key="index">
+                  <navigator url="./detail" open-type="navigate" class="grace-news-list-items">
+                    <view class="grace-news-list-img-news">
+                      <view class="grace-news-list-img-big"  v-if="cateCurrentIndex===2">
+                        <image src="../../static/demo.jpg" mode="widthFix" class="img"></image>
+                        <image
+                          src="../../static/icon_magnifier.png"
+                          class="icon_magnifier"
+                          @click.stop="magnifierImg"
+                        ></image>
+                      </view>
+                      <view class="grace-news-list-info" :style="{'margin-top': cateCurrentIndex!==2?0:'10upx'}">
+                        <view>
+                          <text class="grace-news-list-title-main">{{item.title}}</text>
+                          <text class="btn" v-if="cateCurrentIndex===1" style="margin-left: 31upx;">宏观研究</text>
+                        </view>
+                        <text class="grace-news-list-title-desc" v-if="cateCurrentIndex!==1">
+                          {{item.desc}}
+                          <text class="btn" v-if="cateCurrentIndex!==1" style="margin-left: 20upx;top:0;">宏观研究</text>
                         </text>
                       </view>
                     </view>
-                  </scroll-view>
-
-                </view>
-                <!-- 内容区 -->
-                <view class="grace-news-list">
-                  <block v-for="(item, index) in artList" :key="index">
-                    <navigator url="./detail" open-type="navigate" class="grace-news-list-items">
-                      <view class="grace-news-list-img-news">
-                        <view class="grace-news-list-img-big"  v-if="cateCurrentIndex===2">
-                          <image src="../../static/demo.jpg" mode="widthFix" class="img"></image>
-                          <image
-                            src="../../static/icon_magnifier.png"
-                            class="icon_magnifier"
-                            @click.stop="magnifierImg"
-                          ></image>
-                        </view>
-                        <view class="grace-news-list-info">
-                          <text class="grace-news-list-title-main">
-                            {{item.title}}
-                          </text>
-                          <text class="grace-news-list-title-desc" v-if="cateCurrentIndex!==1">{{item.desc}}</text>
-                          <span class="btn">宏观研究</span>
-                        </view>
+                    <view class="flex-items">
+                      <view class="item">
+                        <image src="../../static/icon_building.png" class="item-img"></image>
+                        <text class="item-text">东北证券</text>
                       </view>
-                      <view class="flex-items">
-                        <view class="item">
-                          <image src="../../static/icon_building.png" class="item-img"></image>
-                          <text class="item-text">东北证券</text>
-                        </view>
-                        <view class="item">
-                          <image src="../../static/icon_person.png" class="item-img"></image>
-                          <text class="item-text">王悦</text>
-                        </view>
-                        <view class="item">
-                          <image src="../../static/icon_page.png" class="item-img"></image>
-                          <text class="item-text">25P</text>
-                        </view>
-                        <view class="item">
-                          <text class="item-text">2019-03-01</text>
-                        </view>
+                      <view class="item">
+                        <image src="../../static/icon_person.png" class="item-img"></image>
+                        <text class="item-text">王悦</text>
                       </view>
-                    </navigator>
-                  </block>
-                </view>
+                      <view class="item">
+                        <image src="../../static/icon_page.png" class="item-img"></image>
+                        <text class="item-text">25P</text>
+                      </view>
+                      <view class="item">
+                        <text class="item-text">2019-03-01</text>
+                      </view>
+                    </view>
+                  </navigator>
+                </block>
               </view>
-            </block>
-            
-          </div>
+            </view>
+          </block>
+          
         </div>
+      </div>
       <!-- 图片放大弹窗 -->
       <min-modal ref="modal">
         <img
@@ -125,6 +129,7 @@ export default {
   },
   data() {
     return {
+      isSelectDialogShow: false,
       tabList: [{ name: "研报查询" }, { name: "研报精选" }], //顶级tab
       TabCur: 0, //一级tab选中项
       list: ["行业", "类别", "机构", "日期", "页数"], //select选项卡
@@ -149,27 +154,27 @@ export default {
         {
           id: 0,
           title: "预收账款靓丽，管理效率提升",
-          desc: "事件：公司发布年报，18年公司实现营收19.58亿元，同比增涨10.18%； 实现"
+          desc: "事件：公司发布年报，18年公司实现营收19.58亿元，同比增涨10.18%； 实现..."
         },
         {
           id: 1,
           title: "预收账款靓丽，管理效率提升",
-          desc: "事件：公司发布年报，18年公司实现营收19.58亿元，同比增涨10.18%； 实现"
+          desc: "事件：公司发布年报，18年公司实现营收19.58亿元，同比增涨10.18%； 实现..."
         },
         {
           id: 2,
           title: "预收账款靓丽，管理效率提升",
-          desc: "事件：公司发布年报，18年公司实现营收19.58亿元，同比增涨10.18%； 实现"
+          desc: "事件：公司发布年报，18年公司实现营收19.58亿元，同比增涨10.18%； 实现..."
         },
         {
           id: 3,
           title: "预收账款靓丽，管理效率提升",
-          desc: "事件：公司发布年报，18年公司实现营收19.58亿元，同比增涨10.18%； 实现"
+          desc: "事件：公司发布年报，18年公司实现营收19.58亿元，同比增涨10.18%； 实现..."
         },
         {
           id: 4,
           title: "预收账款靓丽，管理效率提升",
-          desc: "事件：公司发布年报，18年公司实现营收19.58亿元，同比增涨10.18%； 实现"
+          desc: "事件：公司发布年报，18年公司实现营收19.58亿元，同比增涨10.18%； 实现..."
         }
       ]
     };
@@ -193,9 +198,16 @@ export default {
   },
   methods: {
     /**
+     * 下拉菜单是否展示
+     */
+    onSelectDialog(status){
+      this.isSelectDialogShow = status
+    },
+    /**
      * tab切换
      */
     tabChangeTop(index) {
+      this.$refs.chooseLites.hide();
       this.TabCur = index;
       if(index===1){
         this.cateCurrentIndex=0;
@@ -284,7 +296,11 @@ export default {
 
 <style lang="scss">
 .news {
-  
+  &.no-scroll{
+    height: 100vh;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
   .flex-items {
     display: flex;
     justify-content: center;
