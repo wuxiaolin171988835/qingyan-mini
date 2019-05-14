@@ -1,7 +1,7 @@
 <template>
   <view>
     <view class="search">
-      <text class="searc-desc" style="display: inline-block;width:304upx;">请选择机构，支持多选</text>
+      <text class="searc-desc" style="display: inline-block;width:340upx;">请选择机构，支持多选</text>
       <view class="search-block">
         <span class="icon-search"></span>
         <input @input="handleInput" class="search-input" type="text">

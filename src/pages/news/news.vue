@@ -47,7 +47,6 @@
                     </view>
                   </view>
                 </scroll-view>
-
               </view>
               <!-- 内容区 -->
               <view class="grace-news-list">
@@ -69,7 +68,7 @@
                         </view>
                         <text class="grace-news-list-title-desc" v-if="cateCurrentIndex!==1">
                           {{item.desc}}
-                          <text class="btn" v-if="cateCurrentIndex!==1" style="margin-left: 20upx;top:0;">宏观研究</text>
+                          <text class="btn" v-if="cateCurrentIndex!==1" style="margin-left: 20upx;">宏观研究</text>
                         </text>
                       </view>
                     </view>

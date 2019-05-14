@@ -55,7 +55,7 @@ view{font-size:28upx;}
 .grace-news-list-info text{font-size:24upx; }
 .grace-news-list-info text.btn{
   position: relative;
-  top:-10upx;
+  top:0;
   display: inline-block;
   font-size:22upx; 
   color: rgba(59, 143, 209, 1);

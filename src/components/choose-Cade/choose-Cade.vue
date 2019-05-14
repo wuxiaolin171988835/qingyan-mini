@@ -152,12 +152,12 @@
 				console.log(e)
 			},
 			alertnum(i) {
+				this.show = !this.show;
 				if (this.i1 != i) {
 					this.listchild = [];
 					this.i1 = i;
 					this.listchild = this.arr[i];
 					this.i2 = 0;
-					this.show = true;
 					let ins = this.listchild.indexOf(this.newlist[i]);
 					if (ins > -1) {
 						this.i2 = ins

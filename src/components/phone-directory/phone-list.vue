@@ -59,11 +59,10 @@ export default {
   },
   mounted() {
     // #ifndef APP-PLUS
-    this.winHeight = uni.getSystemInfoSync().windowHeight - 49.5;
-    //#endif
-
-    //#ifdef APP-PLUS
-    this.winHeight = uni.getSystemInfoSync().windowHeight - 100;
+    // this.winHeight = uni.getSystemInfoSync().windowHeight - 49.5;
+    // //#endif
+    // //#ifdef APP-PLUS
+    // this.winHeight = uni.getSystemInfoSync().windowHeight - 100;
     //#endif
   },
   methods: {
@@ -71,32 +70,31 @@ export default {
       this.$emit("handleClick", e.target.dataset);
     },
     handleScroll(e) {
-      if (this.letterDetails.length === 0) {
-        let view = uni.createSelectorQuery().selectAll(".list-item");
-        view
-          .boundingClientRect(data => {
-            let top = data[0].top;
-            data.forEach((item, index) => {
-              item.top = item.top - top;
-              item.bottom = item.bottom - top;
-              this.letterDetails.push({
-                id: item.id,
-                top: item.top,
-                bottom: item.bottom
-              });
-            });
-          })
-          .exec();
-      }
-
-      const scrollTop = e.detail.scrollTop;
-      this.letterDetails.some((item, index) => {
-        if (scrollTop >= item.top && scrollTop <= item.bottom - 5) {
-          this.$emit("change", item.id);
-          this.$emit("reset", true);
-          return true;
-        }
-      });
+      // if (this.letterDetails.length === 0) {
+      //   let view = uni.createSelectorQuery().selectAll(".list-item");
+      //   view
+      //     .boundingClientRect(data => {
+      //       let top = data[0].top;
+      //       data.forEach((item, index) => {
+      //         item.top = item.top - top;
+      //         item.bottom = item.bottom - top;
+      //         this.letterDetails.push({
+      //           id: item.id,
+      //           top: item.top,
+      //           bottom: item.bottom
+      //         });
+      //       });
+      //     })
+      //     .exec();
+      // }
+      // const scrollTop = e.detail.scrollTop;
+      // this.letterDetails.some((item, index) => {
+      //   if (scrollTop >= item.top && scrollTop <= item.bottom - 5) {
+      //     this.$emit("change", item.id);
+      //     this.$emit("reset", true);
+      //     return true;
+      //   }
+      // });
     }
   },
   /**
