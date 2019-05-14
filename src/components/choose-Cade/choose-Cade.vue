@@ -28,6 +28,8 @@
 			<view class="hideA" @tap="hide">
 			</view>
 		</view>
+		<!-- <view class="mask" :style="{display:show?'block':'none'}">
+		</view> -->
 	</view>
 </template>
 
@@ -176,11 +178,19 @@
 	}
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 	.hideA {
 		height: calc(100% - 310upx);
 	}
-
+  .mask{
+		position: fixed;
+		top:366upx;
+		left:0;
+		right:0;
+		bottom: 0;
+		z-index: 86;
+		background-color: rgba(0, 0, 0, 0.55);
+	}
 	.mli {
 		/* border: 1upx solid red; */
 		display: flex;

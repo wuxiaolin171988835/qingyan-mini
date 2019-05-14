@@ -5,14 +5,14 @@
         <wuc-tab
           :tab-list="tabList"
           :tabCur.sync="TabCur"
-          tab-class="text-center"
+          tab-class="text-center fixedit"
           @change="tabChangeTop"
         ></wuc-tab>
         <!-- tab内容区 -->
         <div class="cu-bar bg-white solid-bottom" style="margin-top:100upx">
           <div class="content">
             <block>
-              <view class="search-box">
+              <view class="search-box fixedit">
                 <mSearch
                   placeholder="输入您想找的关键字"
                   :mode="2"
@@ -284,6 +284,7 @@ export default {
 
 <style lang="scss">
 .news {
+  
   .flex-items {
     display: flex;
     justify-content: center;

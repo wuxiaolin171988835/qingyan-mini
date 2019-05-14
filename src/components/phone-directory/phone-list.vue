@@ -160,7 +160,6 @@ export default {
   height: 92upx;
   line-height: 92upx;
   font-size: 28upx;
-  font-weight: bold;
   color: #4a4a4a;
   padding-right: 40upx;
 }
