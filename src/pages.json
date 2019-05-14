@@ -1,13 +1,6 @@
 {
 	"pages": [
 		{
-			"path": "pages/sss/sss",
-			"style": {
-				"navigationBarTitleText": "sss",
-				"enablePullDownRefresh": true
-			}
-		},
-		{
 			"path": "pages/news/news",
 			"style": {
 				"navigationBarTitleText": "青彦科技",
