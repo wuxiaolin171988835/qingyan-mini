@@ -12,18 +12,16 @@
 		<view  :style="{display:show?'block':'none'}" class="list_boxs2">
 			<view class="lione">
 				<block v-if="i1===2">
-					<view>
-						<phone-search-list :phones="phones" @paramClick="paramClick" @confirm="confirm"></phone-search-list>
-					</view>
+					<phone-search-list :phones="phones" @paramClick="paramClick" @confirm="confirm"></phone-search-list>
 				</block>
-				<view v-else class="lione-items">
+				<scroll-view v-else class="lione-items"  scroll-y="true">
 					<block v-for="(item,i) in listchild" :key="i">
 						<view class="mli" @tap="chooseOne(i)" :class="[i== i2?'actives':'']">
 							<text class="uni_14">{{item}}</text>
 							<!-- <image v-if="i == i2" class="ii" src="/static/choose-Cade/choose-Cadecc.png" mode=""></image> -->
 						</view>
 					</block>
-				</view>
+				</scroll-view>
 			</view>
 			<view class="hideA" @tap="hide">
 			</view>
@@ -187,23 +185,23 @@
 		height: calc(100% - 310upx);
 		position: fixed;
 	}
+	.lione-items{
+		max-height: 400upx;
+		overflow: auto;
+	}
   
 	.mli {
 		/* border: 1upx solid red; */
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		padding: 22upx 0;
+		padding: 22upx 70upx 22upx 20upx;
 		border-bottom: 1px solid #d5d5d5;
 		color: #4a4a4a;
 	}
 
 	.lione {
 		background-color: #fff;
-		&-items{
-			padding: 0 70upx 0 20upx;
-		}
-		/* height: 262upx; */
 	}
 
 	.list_boxs {

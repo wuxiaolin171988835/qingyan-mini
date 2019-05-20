@@ -113,7 +113,6 @@ export default {
   flex: 1;
   max-height: 400upx;
   overflow: auto;
-  padding: 20upx 40upx 0;
 }
 
 .phone-list {
@@ -122,6 +121,8 @@ export default {
   flex-direction: column;
   position: relative;
   width: 100%;
+  padding: 20upx 40upx 0;
+  box-sizing: border-box;
 }
 
 .list-item {

@@ -3,51 +3,51 @@
 		{
 			"path": "pages/news/news",
 			"style": {
-				"navigationBarTitleText": "青彦科技",
+				"navigationBarTitleText": "千寻研报",
 				"enablePullDownRefresh": true
 			}
 		},
 		{
 			"path": "pages/news/detail",
 			"style": {
-				"navigationBarTitleText": "内容详情"
+				"navigationBarTitleText": "千寻研报"
 			}
 		},
 		{
 			"path": "pages/user/user",
 			"style": {
-				"navigationBarTitleText": "青彦科技"
+				"navigationBarTitleText": "千寻研报"
 			}
 		},
 		{
 			"path": "pages/user/validateTel",
 			"style": {
-				"navigationBarTitleText": "验证手机"
+				"navigationBarTitleText": "千寻研报"
 			}
 		},
 		{
 			"path": "pages/user/updateTel",
 			"style": {
-				"navigationBarTitleText": "修改手机"
+				"navigationBarTitleText": "千寻研报"
 			}
 		},
 		{
 			"path": "pages/user/updateName",
 			"style": {
-				"navigationBarTitleText": "修改姓名"
+				"navigationBarTitleText": "千寻研报"
 			}
 		},
 		{
 			"path": "pages/about/about",
 			"style": {
-				"navigationBarTitleText": "关于我们",
+				"navigationBarTitleText": "千寻研报",
 				"enablePullDownRefresh": true
 			}
 		},
 		{
 			"path": "pages/about/position",
 			"style": {
-				"navigationBarTitleText": "热招职位"
+				"navigationBarTitleText": "千寻研报"
 			}
 		}
 	],

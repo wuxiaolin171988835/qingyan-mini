@@ -133,8 +133,8 @@ export default {
       TabCur: 0, //一级tab选中项
       list: ["行业", "类别", "机构", "日期", "页数"], //select选项卡
       arr: [
-        ["全部行业", "石油石化", "石油石化", "石油石化", "石油石化"],
-        ["全部类别", "晨会", "周报", "东北证券", "东北证券"],
+        ["全部行业"],
+        ["全部类别"],
         ["全部机构", "5k以下", "5k-10k", "10k以上"],
         ["全部日期", "1个月内", "3个月内", "6个月内", "1年以内"],
         ["全部页数", "1-5页", "6-20页", "20页以上"]
@@ -183,6 +183,8 @@ export default {
     page = 1;
     // artList: [];
     this.getNewsList();
+    this.getIndustry();
+    this.getType();
   },
   //下拉刷新
   onPullDownRefresh: function() {
@@ -196,6 +198,30 @@ export default {
     this.getNewsList();
   },
   methods: {
+    /**
+     * 获取行业
+     */
+    async getIndustry () {
+      var [error, res] = await uni.request({
+          url: 'https://api.qxsearch.net/api/res/industry'
+      });
+      // console.log('行业：',res.data);
+      res.data.hits.forEach(item => {
+          this.arr[0].push(item.name)
+      });
+    },
+    /**
+     * 获取类别
+     */
+    async getType () {
+      var [error, res] = await uni.request({
+          url: 'https://api.qxsearch.net/api/res/type'
+      });
+      // console.log('行业：',res.data);
+      res.data.hits.forEach(item => {
+          this.arr[1].push(item.name)
+      });
+    },
     /**
      * 下拉菜单是否展示
      */
