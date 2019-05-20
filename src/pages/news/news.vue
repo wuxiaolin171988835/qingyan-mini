@@ -23,7 +23,7 @@
               ></mSearch>
               <text @click="resetSearch" class="btn-reset">重置</text>
             </view>
-            <ChooseLits :list="list" :arr="arr" @chooseLike="chooseLike" @onSelectDialog="onSelectDialog"></ChooseLits>
+            <ChooseLits :list="list" :arr="arr" @chooseLike="chooseLike" @onSelectDialog="onSelectDialog" :institutions="institutions"></ChooseLits>
             <!-- tab项 -->
             <view>
               <view class="fixedit" :style="{top:top}">
@@ -135,13 +135,13 @@ export default {
       arr: [
         ["全部行业"],
         ["全部类别"],
-        ["全部机构", "5k以下", "5k-10k", "10k以上"],
+        [],
         ["全部日期", "1个月内", "3个月内", "6个月内", "1年以内"],
         ["全部页数", "1-5页", "6-20页", "20页以上"]
       ], //select选项值
+      institutions: {},//机构
       keyword: "", //搜索关键字
       top: 0,
-      
       categories: [
         { cateid: 0, name: "摘要" },
         { cateid: 1, name: "正文" },
@@ -185,6 +185,7 @@ export default {
     this.getNewsList();
     this.getIndustry();
     this.getType();
+    this.getCompany();
   },
   //下拉刷新
   onPullDownRefresh: function() {
@@ -205,7 +206,6 @@ export default {
       var [error, res] = await uni.request({
           url: 'https://api.qxsearch.net/api/res/industry'
       });
-      // console.log('行业：',res.data);
       res.data.hits.forEach(item => {
           this.arr[0].push(item.name)
       });
@@ -217,10 +217,25 @@ export default {
       var [error, res] = await uni.request({
           url: 'https://api.qxsearch.net/api/res/type'
       });
-      // console.log('行业：',res.data);
       res.data.hits.forEach(item => {
           this.arr[1].push(item.name)
       });
+    },
+    /**
+     * 获取机构
+     */
+    async getCompany () {
+      var [error, res] = await uni.request({
+          url: 'https://api.qxsearch.net/api/res/company'
+      });
+      let lists = res.data.hits;
+      let keys = [];
+      lists.map(v=>keys.push(v.firstChar));
+      keys = [...new Set(keys)].sort(); //顺序获取首字母
+      keys.map(u=>{
+         let target=lists.filter(v=>v.firstChar===u);
+         this.institutions[u]=target;
+      })
     },
     /**
      * 下拉菜单是否展示

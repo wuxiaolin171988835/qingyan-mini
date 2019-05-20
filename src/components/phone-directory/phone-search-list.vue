@@ -58,7 +58,6 @@ export default {
       }
       if (!this.keyword) {
         this.phonesCopy = JSON.parse(JSON.stringify(this.phones));
-        console.log("清空筛选：", this.phonesCopy);
         return;
       }
       this.timer = setTimeout(() => {
@@ -66,7 +65,7 @@ export default {
         for (let i in this.phones) {
           this.phones[i].forEach(item => {
             if (
-              item.spell.indexOf(this.keyword) === 0 ||
+              item.abbr.indexOf(this.keyword.toUpperCase()) === 0 ||
               item.name.indexOf(this.keyword) === 0
             ) {
               result.push(item);
@@ -74,7 +73,7 @@ export default {
           });
         }
         if (result.length > 0) {
-          this.phoneListIndex = result[0].spell.slice(0, 1).toUpperCase();
+          this.phoneListIndex = result[0].firstChar;
           this.phonesCopy = { [this.phoneListIndex]: result };
         } else {
           this.phonesCopy = {};
