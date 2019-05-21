@@ -273,32 +273,32 @@ export default {
     },
     // 数据和分页是模拟的，实际也是这样写
     getNewsList: function() {
-      // uni.showLoading({});
-      // // 假设已经到底，实际根据api接口返回值判断
-      // if (page >= 3) {
-      //   uni.showToast({ title: "已经加载全部", icon: "none" });
-      //   return;
-      // }
-      // uni.request({
-      //   url:
-      //     "https://www.easy-mock.com/mock/5cb9655c01e2e57715d324b0/example/imgnewlist?page=" +
-      //     page +
-      //     "#!method=get&cate=" +
-      //     cate,
-      //   method: "GET",
-      //   data: {},
-      //   success: res => {
-      //     console.log(res);
-      //     var newsList = res.data.data;
-      //     this.artList = this.artList.concat(newsList);
-      //     uni.hideLoading();
-      //     page++;
-      //   },
-      //   complete: res => {
-      //     uni.hideLoading();
-      //     uni.stopPullDownRefresh();
-      //   }
-      // });
+      uni.showLoading({});
+      // 假设已经到底，实际根据api接口返回值判断
+      if (page >= 3) {
+        uni.showToast({ title: "已经加载全部", icon: "none" });
+        return;
+      }
+      uni.request({
+        url:
+          "https://api.qxsearch.net/api/search/rptSearch?page=" +
+          page +
+          "#!method=get&cate=" +
+          cate,
+        method: "POST",
+        data: {},
+        success: res => {
+          console.log(res);
+          // var newsList = res.data.data;
+          // this.artList = this.artList.concat(newsList);
+          // uni.hideLoading();
+          // page++;
+        },
+        complete: res => {
+          uni.hideLoading();
+          uni.stopPullDownRefresh();
+        }
+      });
     },
 
     tabChangeBottom: function(e) {
