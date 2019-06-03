@@ -23,10 +23,10 @@
               ></mSearch>
               <text @click="resetSearch" class="btn-reset">重置</text>
             </view>
-            <ChooseLits :list="list" :arr="arr" @chooseLike="chooseLike" @onSelectDialog="onSelectDialog" :institutions="institutions"></ChooseLits>
+            <ChooseLits :list="list" :arr="selectList" @chooseLike="chooseLike" @onSelectDialog="onSelectDialog" :institutions="institutions"></ChooseLits>
             <!-- tab项 -->
             <view>
-              <view class="fixedit" :style="{top:top}">
+              <view class="fixedit">
                 <scroll-view
                   class="grace-tab-title grace-center"
                   scroll-x="true"
@@ -39,7 +39,7 @@
                       :data-cateid="cate.cateid"
                       :data-index="index"
                       :class="[cateCurrentIndex == index ? 'grace-tab-current' : '']"
-                      @tap="tabChangeBottom"
+                      @tap="tabChangeBottom(cate)"
                     >
                       <text class="grace-tab-text">
                         {{cate.name}}
@@ -54,39 +54,39 @@
                   <navigator url="./detail" open-type="navigate" class="grace-news-list-items">
                     <view class="grace-news-list-img-news">
                       <view class="grace-news-list-img-big"  v-if="cateCurrentIndex===2">
-                        <image src="../../static/demo.jpg" mode="widthFix" class="img"></image>
+                        <image :src="imgsList[index]" mode="widthFix" class="img"></image>
                         <image
                           src="../../static/icon_magnifier.png"
                           class="icon_magnifier"
-                          @click.stop="magnifierImg"
+                          @click.stop="magnifierImg(index)"
                         ></image>
                       </view>
                       <view class="grace-news-list-info" :style="{'margin-top': cateCurrentIndex!==2?0:'10upx'}">
                         <view>
-                          <text class="grace-news-list-title-main">{{item.title}}</text>
-                          <text class="btn" v-if="cateCurrentIndex===1" style="margin-left: 31upx;">宏观研究</text>
+                          <text class="grace-news-list-title-main">{{item.parse_titeitem.parse_chart_title}}</text>
+                          <text class="btn" v-if="cateCurrentIndex===1" style="margin-left: 31upx;">{{item.type}}</text>
                         </view>
                         <text class="grace-news-list-title-desc" v-if="cateCurrentIndex!==1">
-                          {{item.desc}}
-                          <text class="btn" v-if="cateCurrentIndex!==1" style="margin-left: 20upx;">宏观研究</text>
+                          {{item.parse_keypoint.replace(/[\r\n]/g,"")}}
+                          <text class="btn" v-if="cateCurrentIndex!==1" style="margin-left: 20upx;">{{item.type}}</text>
                         </text>
                       </view>
                     </view>
                     <view class="flex-items">
                       <view class="item">
                         <image src="../../static/icon_building.png" class="item-img"></image>
-                        <text class="item-text">东北证券</text>
+                        <text class="item-text">{{item.parse_orgnization}}</text>
                       </view>
                       <view class="item">
                         <image src="../../static/icon_person.png" class="item-img"></image>
-                        <text class="item-text">王悦</text>
+                        <text class="item-text">{{item.parse_authors}}</text>
                       </view>
                       <view class="item">
                         <image src="../../static/icon_page.png" class="item-img"></image>
-                        <text class="item-text">25P</text>
+                        <text class="item-text">{{item.parse_pagecount}}P</text>
                       </view>
                       <view class="item">
-                        <text class="item-text">2019-03-01</text>
+                        <text class="item-text">{{item.parse_reportdate}}</text>
                       </view>
                     </view>
                   </navigator>
@@ -100,9 +100,7 @@
       <!-- 图片放大弹窗 -->
       <min-modal ref="modal">
         <img
-          src="../../static/demo.jpg"
-          alt
-          srcset="../../static/demo.jpg"
+          :src="bigImgUrl"
           style="width:100%;height:100%;"
         >
       </min-modal>
@@ -115,9 +113,9 @@ import wucTab from "@/components/wuc-tab/wuc-tab.vue";
 import ChooseLits from "@/components/choose-Cade/choose-Cade.vue";
 import mSearch from "@/components/mehaotian-search/mehaotian-search.vue";
 import minModal from "@/components/min-modal/min-modal";
-
-let page = 1,
-  cate = 0;
+import btoa from 'btoa'
+import { setTimeout } from 'timers';
+let page = 0;
 export default {
   components: {
     cmdPageBody,
@@ -132,7 +130,7 @@ export default {
       tabList: [{ name: "研报查询" }, { name: "研报精选" }], //顶级tab
       TabCur: 0, //一级tab选中项
       list: ["行业", "类别", "机构", "日期", "页数"], //select选项卡
-      arr: [
+      selectList: [
         ["全部行业"],
         ["全部类别"],
         [],
@@ -140,48 +138,28 @@ export default {
         ["全部页数", "1-5页", "6-20页", "20页以上"]
       ], //select选项值
       institutions: {},//机构
-      keyword: "", //搜索关键字
-      top: 0,
       categories: [
-        { cateid: 0, name: "摘要" },
-        { cateid: 1, name: "正文" },
-        { cateid: 2, name: "图表" }
+        { cateid: 0, name: "摘要", value: 'keypoint' },
+        { cateid: 1, name: "正文", value: 'content' },
+        { cateid: 2, name: "图表", value: 'chart' }
       ],//二级tab
       cateCurrentIndex: 0,//二级tab选中项
-      // mock数据
-      artList: [
-        {
-          id: 0,
-          title: "预收账款靓丽，管理效率提升",
-          desc: "事件：公司发布年报，18年公司实现营收19.58亿元，同比增涨10.18%； 实现..."
-        },
-        {
-          id: 1,
-          title: "预收账款靓丽，管理效率提升",
-          desc: "事件：公司发布年报，18年公司实现营收19.58亿元，同比增涨10.18%； 实现..."
-        },
-        {
-          id: 2,
-          title: "预收账款靓丽，管理效率提升",
-          desc: "事件：公司发布年报，18年公司实现营收19.58亿元，同比增涨10.18%； 实现..."
-        },
-        {
-          id: 3,
-          title: "预收账款靓丽，管理效率提升",
-          desc: "事件：公司发布年报，18年公司实现营收19.58亿元，同比增涨10.18%； 实现..."
-        },
-        {
-          id: 4,
-          title: "预收账款靓丽，管理效率提升",
-          desc: "事件：公司发布年报，18年公司实现营收19.58亿元，同比增涨10.18%； 实现..."
-        }
-      ]
+      artList: [],
+      total: '',
+      queryParams: {
+        industries: "",
+        rptTypes: "",
+        stockCompanies: "",
+        reportDate: "",
+        pageCount: "",
+        queryType: "chart",
+        content: "",
+      },
+      imgsList: [],
+      bigImgUrl: ''
     };
   },
   onLoad() {
-    this.top = "44px";
-    page = 1;
-    // artList: [];
     this.getNewsList();
     this.getIndustry();
     this.getType();
@@ -190,35 +168,63 @@ export default {
   //下拉刷新
   onPullDownRefresh: function() {
     // 重置分页及数据
-    page = 1;
-    this.artList = [];
-    this.getNewsList();
+    // page = 1;
+    // this.artList = [];
+    // this.getNewsList();
   },
   // 加载更多
   onReachBottom: function() {
     this.getNewsList();
   },
+  watch: {
+    queryParams: {
+      handler(newVal, oldVal) {
+        this.getNewsList();
+      },
+      deep: true,
+
+    }
+  },
   methods: {
+    /**
+     * 获取图片地址
+     */
+     async getImgUrl(url){
+       var [error,res]= await uni.request({
+          url: `http://39.98.37.245:8083/api/res/image/${url}`,
+          method: "GET", 
+          header: {
+            'Content-Type' : 'text/plain;charset=utf-8',
+          },
+          responseType: 'arraybuffer'
+        })
+        let img_url='data:image/png;base64,' + btoa( new Uint8Array(res.data).reduce((data, byte) => data + String.fromCharCode(byte), '') )
+        return img_url;
+    },
     /**
      * 获取行业
      */
     async getIndustry () {
       var [error, res] = await uni.request({
-          url: 'https://api.qxsearch.net/api/res/industry'
+          url: 'http://39.98.37.245:8083/api/res/industry',
+          method: "GET", 
+          header: {
+            'Content-Type' : 'text/plain;charset=utf-8'
+          },
       });
       res.data.hits.forEach(item => {
-          this.arr[0].push(item.name)
+          this.selectList[0].push(item.name)
       });
     },
     /**
-     * 获取类别
+     * 获取类别     
      */
     async getType () {
       var [error, res] = await uni.request({
-          url: 'https://api.qxsearch.net/api/res/type'
+          url: 'http://39.98.37.245:8083/api/res/type'
       });
       res.data.hits.forEach(item => {
-          this.arr[1].push(item.name)
+          this.selectList[1].push(item.name)
       });
     },
     /**
@@ -226,7 +232,7 @@ export default {
      */
     async getCompany () {
       var [error, res] = await uni.request({
-          url: 'https://api.qxsearch.net/api/res/company'
+          url: 'http://39.98.37.245:8083/api/res/company'
       });
       let lists = res.data.hits;
       let keys = [];
@@ -242,7 +248,7 @@ export default {
      */
     onSelectDialog(status){
       this.isSelectDialogShow = status
-    },
+    },h
     /**
      * tab切换
      */
@@ -263,71 +269,76 @@ export default {
      * 确认搜索框
      */
     doSearch(e) {
-      this.keyword = e;
+      this.queryParams.content = e;
     },
     /**
      * 重置搜索项
      */
     resetSearch() {
-      this.keyword = "";
+      this.queryParams={
+        industries: "",
+        rptTypes: "",
+        stockCompanies: "",
+        reportDate: "",
+        pageCount: "",
+        queryType: "keypoint",
+        content: "",
+        from: 0,
+        size: 10
+      }
     },
     // 数据和分页是模拟的，实际也是这样写
-    getNewsList: function() {
-      uni.showLoading({});
+    getNewsList() {
+      // uni.showLoading({});
       // 假设已经到底，实际根据api接口返回值判断
-      if (page >= 3) {
+      if (this.queryParams.from+1 >= this.total/this.queryParams.size) {
         uni.showToast({ title: "已经加载全部", icon: "none" });
         return;
       }
       uni.request({
         url:
-          "https://api.qxsearch.net/api/search/rptSearch?page=" +
-          page +
-          "#!method=get&cate=" +
-          cate,
-        method: "POST",
-        data: {},
+          "http://39.98.37.245:8083/api/search/rptSearch",
+        method: "POST", 
+        header: {
+          'Content-Type' : 'application/x-www-form-urlencoded'
+        },
+        data: {...this.queryParams,from: page, size:10},
         success: res => {
-          console.log(res);
-          // var newsList = res.data.data;
-          // this.artList = this.artList.concat(newsList);
+          this.total = res.total;
+          var newsList = res.data.hits;
+          this.artList = this.artList.concat(newsList);
           // uni.hideLoading();
-          // page++;
+          this.imgsList = [];
+          this.artList.map(item=>{
+            if(item.parse_chart_filepath){
+              this.getImgUrl(item.parse_chart_filepath).then(res=>{
+                this.imgsList.push(res)
+              })
+            }
+          })
+          this.page++;
         },
         complete: res => {
-          uni.hideLoading();
+          // uni.hideLoading();
           uni.stopPullDownRefresh();
         }
       });
     },
 
-    tabChangeBottom: function(e) {
+    tabChangeBottom(cate) {
       // 选中的索引
-      var index = e.currentTarget.dataset.index;
-      // 具体的分类id
-      var cateid = e.currentTarget.dataset.cateid;
-      this.cateCurrentIndex = index;
-      // 动态替换内容
-      this.content = this.categories[index].name;
-
-      // 读取分类数据
-      cate = cateid; //把分类信息发送给api接口即可读取对应分类的数据
-      // 重置分页及数据
-      page = 1;
-      // this.artList = [];
-      // 加载对应分类数据覆盖上一个分类的展示数据 加载更多是继续使用这个分类
-      // this.getNewsList();
+      this.cateCurrentIndex = cate.cateid;
+      this.queryParams.queryType = cate.value;
+      this.artList = [];
+      page = 0;
     },
     /**
      * 图片放大
      */
-    magnifierImg(e) {
+    async magnifierImg(index) {
+      this.bigImgUrl = this.imgsList[index];
       this.$refs.modal.handleShow({
-        title: "",
         maskClose: "true",
-        success: res => {
-          console.log(res);
-        }
       });
     }
   }
@@ -350,7 +361,10 @@ export default {
       height: 82upx;
       flex: 1;
       position: relative;
-      padding-left: 36upx;
+      width: 100%;
+      overflow: hidden;
+      text-overflow:ellipsis;
+      white-space: nowrap;
       font-size: 24upx;
       color: #9b9b9b;
       text-align: center;

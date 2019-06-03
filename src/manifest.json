@@ -1,6 +1,6 @@
 {
 	"name": "hello uni-app",
-	"appid": "",
+	"appid": "wx0f61888d6e082d8e",
 	"description": "应用描述",
 	"versionName": "1.0.0",
 	"versionCode": "100",
@@ -64,8 +64,13 @@
 			},
 			/* ios打包配置 */
 			"ios": {
-				"UIBackgroundModes": ["audio"],
-				"urlschemewhitelist" : ["baidumap", "iosamap"]
+				"UIBackgroundModes": [
+					"audio"
+				],
+				"urlschemewhitelist": [
+					"baidumap",
+					"iosamap"
+				]
 			},
 			/* SDK配置 */
 			"sdkConfigs": {
@@ -73,7 +78,9 @@
 					"ifly": {}
 				}
 			},
-			"orientation": ["portrait-primary"]
+			"orientation": [
+				"portrait-primary"
+			]
 		}
 	},
 	/* 快应用特有相关 */

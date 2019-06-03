@@ -59,7 +59,7 @@ view{font-size:28upx;}
   display: inline-block;
   font-size:22upx; 
   color: rgba(59, 143, 209, 1);
-  width: 124upx;
+  padding: 0 20upx;
   height: 36upx;
   border-radius: 18upx;
   text-align: center;
