@@ -12,10 +12,9 @@
         <view class="list-item" v-for="(item, key) of phones" :key="key" :id="key">
           <view class="list-item-content">
             <view class="list-item-title">{{key}}</view>
-            <checkbox-group>
+            <checkbox-group @change="handleClick">
               <label
                 class="list-item-phone"
-                @click="handleClick"
                 hover-class="commonly-hover"
                 :hover-start-time="20"
                 :hover-stay-time="70"
@@ -25,7 +24,7 @@
                 :data-id="innerItem.id"
                 :data-phoneNumber="innerItem.phoneNumber"
               >
-                <checkbox value/>
+                <checkbox :value="innerItem.name"/>
                 {{innerItem.name}}
               </label>
             </checkbox-group>
@@ -49,7 +48,8 @@ export default {
       winHeight: 0,
       scrollTop: 0,
       letterDetails: [],
-      timer: null
+      timer: null,
+      institutions: []
     };
   },
   computed: {
@@ -66,8 +66,8 @@ export default {
     //#endif
   },
   methods: {
-    handleClick(e) {
-      this.$emit("handleClick", e.target.dataset);
+    handleClick: function(e) {
+      this.$emit("handleClick", e.detail.value);
     },
     handleScroll(e) {
       // if (this.letterDetails.length === 0) {

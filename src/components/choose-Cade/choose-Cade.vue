@@ -2,9 +2,9 @@
 	<view class="boxa">
 		<view class="top_kbox">
 			<block v-for="(item,i) in newlist" :key="i">
-				<view class="ibox" @tap="alertnum(i)" :class="[i== i1?'actives-title':'']">
+				<view class="ibox" @tap="alertnum(i)" :class="[show && i== i1?'actives-title':'']">
 					<text class="uni_14">{{item}}</text>
-					<image v-if="i != i1" class="ii" src="../../static/icon_arrow_b.png" mode=""></image>
+					<image v-if="!show || i != i1" class="ii" src="../../static/icon_arrow_b.png" mode=""></image>
 					<image v-else class="ii" src="../../static/icon_arrow_b_selected.png" mode=""></image>
 				</view>
 			</block>
@@ -14,14 +14,16 @@
 				<block v-if="i1===2">
 					<phone-search-list :phones="institutions" @paramClick="paramClick" @confirm="confirm"></phone-search-list>
 				</block>
-				<scroll-view v-else class="lione-items"  scroll-y="true">
-					<block v-for="(item,i) in listchild" :key="i">
-						<view class="mli" @tap="chooseOne(i)" :class="[i== i2?'actives':'']">
-							<text class="uni_14">{{item}}</text>
-							<!-- <image v-if="i == i2" class="ii" src="/static/choose-Cade/choose-Cadecc.png" mode=""></image> -->
-						</view>
-					</block>
-				</scroll-view>
+				<block  v-else>
+					<scroll-view class="lione-items"  scroll-y="true">
+						<block v-for="(item,i) in listchild" :key="i">
+							<view class="mli" @tap="chooseItems(i)" :class="[i== i2?'actives':'']">
+								<text class="uni_14">{{item}}</text>
+							</view>
+						</block>
+					</scroll-view>
+				</block>
+				<button @click="confirm" class="btn-confirm">确定</button>
 			</view>
 			<view class="hideA" @tap="hide">
 			</view>
@@ -41,98 +43,6 @@
 				show: false,
 				listchild: [],
 				newlist: this.list,
-				// phones:{
-				// 	"A": [{
-				// 			"id": 56,
-				// 			"spell": "aba",
-				// 			"name": "阿坝"
-				// 	}, {
-				// 			"id": 57,
-				// 			"spell": "akesu",
-				// 			"name": "阿克苏"
-				// 	}, {
-				// 			"id": 58,
-				// 			"spell": "alashanmeng",
-				// 			"name": "阿拉善盟"
-				// 	}, {
-				// 			"id": 59,
-				// 			"spell": "aletai",
-				// 			"name": "阿勒泰"
-				// 	}, {
-				// 			"id": 60,
-				// 			"spell": "ali",
-				// 			"name": "阿里"
-				// 	}, {
-				// 			"id": 61,
-				// 			"spell": "ankang",
-				// 			"name": "安康"
-				// 	}, {
-				// 			"id": 62,
-				// 			"spell": "anqing",
-				// 			"name": "安庆"
-				// 	}, {
-				// 			"id": 63,
-				// 			"spell": "anshan",
-				// 			"name": "鞍山"
-				// 	}, {
-				// 			"id": 64,
-				// 			"spell": "anshun",
-				// 			"name": "安顺"
-				// 	}, {
-				// 			"id": 65,
-				// 			"spell": "anyang",
-				// 			"name": "安阳"
-				// 	}, {
-				// 			"id": 338,
-				// 			"spell": "acheng",
-				// 			"name": "阿城"
-				// 	}, {
-				// 			"id": 339,
-				// 			"spell": "anfu",
-				// 			"name": "安福"
-				// 	}, {
-				// 			"id": 340,
-				// 			"spell": "anji",
-				// 			"name": "安吉"
-				// 	}, {
-				// 			"id": 341,
-				// 			"spell": "anning",
-				// 			"name": "安宁"
-				// 	}, {
-				// 			"id": 342,
-				// 			"spell": "anqiu",
-				// 			"name": "安丘"
-				// 	}, {
-				// 			"id": 343,
-				// 			"spell": "anxi",
-				// 			"name": "安溪"
-				// 	}, {
-				// 			"id": 344,
-				// 			"spell": "anyi",
-				// 			"name": "安义"
-				// 	}, {
-				// 			"id": 345,
-				// 			"spell": "anyuan",
-				// 			"name": "安远"
-				// 	}],
-				// 	"B": [{
-				// 			"id": 1,
-				// 			"spell": "beijing",
-				// 			"name": "北京"
-				// 	}, {
-				// 			"id": 66,
-				// 			"spell": "baicheng",
-				// 			"name": "白城"
-				// 	}, {
-				// 			"id": 67,
-				// 			"spell": "baise",
-				// 			"name": "百色"
-				// 	}, {
-				// 			"id": 68,
-				// 			"spell": "baishan",
-				// 			"name": "白山"
-				// 	}]
-				// }
 			}
 		},
 		components:{
@@ -146,12 +56,13 @@
 			}
 		},
 		methods: {
-			paramClick (e) {
-				console.log(e)
+			paramClick (value) {
+				// console.log('checkbox:',value)
+				this.$emit('chooseCheckBox',value);
 			},
 			alertnum(i) {
-				this.show = !this.show;
 				if (this.i1 != i) {
+					this.show=true;
 					this.listchild = [];
 					this.i1 = i;
 					this.listchild = this.arr[i];
@@ -160,21 +71,21 @@
 					if (ins > -1) {
 						this.i2 = ins
 					}
+				}else{
+					this.show=!this.show;
 				}
+
 			},
-			chooseOne(i) {
+			chooseItems(i) {
 				this.i2 = i;
-				setTimeout(() => {
-					this.hide()
-				}, 300);
-				// this.newlist[this.i1] = this.listchild[i];
-				this.$emit('chooseLike', [this.i1, this.i2])
+				this.$emit('chooseLike', [this.i1, this.i2],isCheck)
 			},
 			hide() {
 				this.show = false;
 			},
 			confirm(){
 				this.hide();
+				this.$emit('handleConfirmSelect',this.i1)
 			}
 		}
 	}

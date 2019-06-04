@@ -18,7 +18,7 @@
         @handleClick="handleClick"
       ></phone-list>
     </view>
-    <button @click="confirm" class="btn-confirm">确定</button>
+    <!-- <button @click="confirm" class="btn-confirm">确定</button> -->
   </view>
 </template>
 
@@ -85,11 +85,8 @@ export default {
     handleInput(e) {
       this.keyword = e.detail.value;
     },
-    // handleClick(e) {
-    //   this.$emit("paramClick", e.target.dataset);
-    // },
-    handleClick(e) {
-      this.$emit("paramClick", e);
+    handleClick(value) {
+      this.$emit("paramClick", value);
     },
     handleDatasetKey(val) {
       this.letter = val;
@@ -107,10 +104,10 @@ export default {
         this.letter = "";
       }
       this.reset = val;
-    },
-    confirm() {
-      this.$emit("confirm");
     }
+    // confirm() {
+    //   this.$emit("confirm");
+    // }
   }
 };
 </script>

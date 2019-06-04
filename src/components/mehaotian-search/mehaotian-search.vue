@@ -14,11 +14,11 @@
         <!-- <view v-if="!active && mode === 2" class="input sub" @click="getFocus">请输入搜索内容</view> -->
         <text v-if="isDelShow" class="icon icon-del" @click="clear">&#xe644;</text>
       </view>
-      <!-- <view
+      <view
         v-show="(active && show && button === 'inside') || (isDelShow && button === 'inside')"
         class="searchBtn"
         @click="search"
-      >搜索</view>-->
+      >搜索</view>
     </view>
     <view
       v-if="button === 'outside'"
@@ -89,7 +89,6 @@ export default {
     },
     search() {
       if (!this.inputVal) return;
-      console.log(this.inputVal);
       this.$emit("search", this.inputVal);
     }
   },

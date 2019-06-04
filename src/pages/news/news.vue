@@ -23,7 +23,7 @@
               ></mSearch>
               <text @click="resetSearch" class="btn-reset">重置</text>
             </view>
-            <ChooseLits :list="list" :arr="selectList" @chooseLike="chooseLike" @onSelectDialog="onSelectDialog" :institutions="institutions"></ChooseLits>
+            <ChooseLits :list="list" :arr="selectList" @chooseLike="chooseLike" @chooseCheckBox="chooseCheckBox" @onSelectDialog="onSelectDialog" :institutions="institutions" @handleConfirmSelect="handleConfirmSelect"></ChooseLits>
             <!-- tab项 -->
             <view>
               <view class="fixedit">
@@ -51,7 +51,7 @@
               <!-- 内容区 -->
               <view class="grace-news-list">
                 <block v-for="(item, index) in artList" :key="index">
-                  <navigator url="./detail" open-type="navigate" class="grace-news-list-items">
+                  <navigator :url="'./detail?detail=' + JSON.stringify(item)" open-type="navigate" class="grace-news-list-items">
                     <view class="grace-news-list-img-news">
                       <view class="grace-news-list-img-big"  v-if="cateCurrentIndex===2">
                         <image :src="imgsList[index]" mode="widthFix" class="img"></image>
@@ -63,7 +63,7 @@
                       </view>
                       <view class="grace-news-list-info" :style="{'margin-top': cateCurrentIndex!==2?0:'10upx'}">
                         <view>
-                          <text class="grace-news-list-title-main">{{item.parse_titeitem.parse_chart_title}}</text>
+                          <text class="grace-news-list-title-main">{{item.parse_title || item.parse_chart_title}}</text>
                           <text class="btn" v-if="cateCurrentIndex===1" style="margin-left: 31upx;">{{item.type}}</text>
                         </view>
                         <text class="grace-news-list-title-desc" v-if="cateCurrentIndex!==1">
@@ -116,6 +116,9 @@ import minModal from "@/components/min-modal/min-modal";
 import btoa from 'btoa'
 import { setTimeout } from 'timers';
 let page = 0;
+const TAB_TEXT=['industries','rptTypes','stockCompanies','reportDate','pageCount'];
+const DATE_MAP=["","1m","3m","6m","1Y"];
+const PAGE_MAP=["","1p","6p","20p"];
 export default {
   components: {
     cmdPageBody,
@@ -152,11 +155,18 @@ export default {
         stockCompanies: "",
         reportDate: "",
         pageCount: "",
-        queryType: "chart",
+        queryType: "keypoint",
         content: "",
       },
       imgsList: [],
-      bigImgUrl: ''
+      bigImgUrl: '',
+      keep_value: {
+        'industries':{},
+        'rptTypes':[],
+        'stockCompanies':[],
+        'reportDate':[],
+        'pageCount': []
+      }
     };
   },
   onLoad() {
@@ -191,7 +201,7 @@ export default {
      */
      async getImgUrl(url){
        var [error,res]= await uni.request({
-          url: `http://39.98.37.245:8083/api/res/image/${url}`,
+          url: `https://api.qxsearch.net/api/res/image/${url}`,
           method: "GET", 
           header: {
             'Content-Type' : 'text/plain;charset=utf-8',
@@ -206,7 +216,7 @@ export default {
      */
     async getIndustry () {
       var [error, res] = await uni.request({
-          url: 'http://39.98.37.245:8083/api/res/industry',
+          url: 'https://api.qxsearch.net/api/res/industry',
           method: "GET", 
           header: {
             'Content-Type' : 'text/plain;charset=utf-8'
@@ -221,7 +231,7 @@ export default {
      */
     async getType () {
       var [error, res] = await uni.request({
-          url: 'http://39.98.37.245:8083/api/res/type'
+          url: 'https://api.qxsearch.net/api/res/type'
       });
       res.data.hits.forEach(item => {
           this.selectList[1].push(item.name)
@@ -232,7 +242,7 @@ export default {
      */
     async getCompany () {
       var [error, res] = await uni.request({
-          url: 'http://39.98.37.245:8083/api/res/company'
+          url: 'https://api.qxsearch.net/api/res/company'
       });
       let lists = res.data.hits;
       let keys = [];
@@ -248,7 +258,7 @@ export default {
      */
     onSelectDialog(status){
       this.isSelectDialogShow = status
-    },h
+    },
     /**
      * tab切换
      */
@@ -263,7 +273,47 @@ export default {
      * select选择
      */
     chooseLike(key) {
-      console.log(key[0], key[1]);
+      let values = this.keep_value[TAB_TEXT[key[0]]];
+      let current = this.selectList[key[0]][key[1]];
+      if(key[0]===3){
+        //单选（日期）
+        // velues[0]=DATE_MAP[key[1]]
+        this.keep_value.reportDate[0] = DATE_MAP[key[1]]
+      }else if(key[0]!=2){
+        //多选（行业、类别、页数）
+        let index=values.indexOf(current);
+        if(index>-1){
+            values.splice(index,1);
+        }else{
+          if(key[0]===4){
+            values.push(PAGE_MAP[key[1]])
+          }else{
+            values.push(current);
+          }
+        }
+      }
+
+    },
+    chooseCheckBox(value){
+      this.keep_value.stockCompanies = [...value];
+    },
+    /**
+     * 确认选择
+     */
+    handleConfirmSelect(i){
+      let selectedTab=TAB_TEXT[i];
+      if(i===3){
+        this.queryParams[selectedTab]=this.keep_value[selectedTab][0]
+      }else if(i===2){
+        this.queryParams.stockCompanies = [...this.keep_value.stockCompanies]
+      }else{
+        Object.keys(this.keep_value).forEach((item)=>{
+          if(item!=selectedTab){
+            this.keep_value[item]=[];
+          }
+        });
+        this.queryParams[selectedTab]=JSON.stringify(Object.values({...this.keep_value[selectedTab]}));
+      }
     },
     /**
      * 确认搜索框
@@ -289,7 +339,7 @@ export default {
     },
     // 数据和分页是模拟的，实际也是这样写
     getNewsList() {
-      // uni.showLoading({});
+      uni.showLoading({});
       // 假设已经到底，实际根据api接口返回值判断
       if (this.queryParams.from+1 >= this.total/this.queryParams.size) {
         uni.showToast({ title: "已经加载全部", icon: "none" });
@@ -297,7 +347,7 @@ export default {
       }
       uni.request({
         url:
-          "http://39.98.37.245:8083/api/search/rptSearch",
+          "https://api.qxsearch.net/api/search/rptSearch",
         method: "POST", 
         header: {
           'Content-Type' : 'application/x-www-form-urlencoded'
@@ -307,9 +357,10 @@ export default {
           this.total = res.total;
           var newsList = res.data.hits;
           this.artList = this.artList.concat(newsList);
-          // uni.hideLoading();
+          uni.hideLoading();
           this.imgsList = [];
-          this.artList.map(item=>{
+          
+          this.artList.length && this.artList.map(item=>{
             if(item.parse_chart_filepath){
               this.getImgUrl(item.parse_chart_filepath).then(res=>{
                 this.imgsList.push(res)
@@ -319,13 +370,16 @@ export default {
           this.page++;
         },
         complete: res => {
-          // uni.hideLoading();
+          uni.hideLoading();
           uni.stopPullDownRefresh();
         }
       });
     },
 
     tabChangeBottom(cate) {
+      if(cate.cateid===this.cateCurrentIndex){
+          return false;
+      }
       // 选中的索引
       this.cateCurrentIndex = cate.cateid;
       this.queryParams.queryType = cate.value;
