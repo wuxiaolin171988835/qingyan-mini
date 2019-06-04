@@ -119,6 +119,13 @@ let page = 0;
 const TAB_TEXT=['industries','rptTypes','stockCompanies','reportDate','pageCount'];
 const DATE_MAP=["","1m","3m","6m","1Y"];
 const PAGE_MAP=["","1p","6p","20p"];
+let keep_value={
+    'industries':[],
+    'rptTypes':[],
+    'stockCompanies':[],
+    'reportDate':[],
+    'pageCount': []
+  }
 export default {
   components: {
     cmdPageBody,
@@ -160,13 +167,6 @@ export default {
       },
       imgsList: [],
       bigImgUrl: '',
-      keep_value: {
-        'industries':{},
-        'rptTypes':[],
-        'stockCompanies':[],
-        'reportDate':[],
-        'pageCount': []
-      }
     };
   },
   onLoad() {
@@ -273,17 +273,26 @@ export default {
      * select选择
      */
     chooseLike(key) {
-      let values = this.keep_value[TAB_TEXT[key[0]]];
+      let values = keep_value[TAB_TEXT[key[0]]];
       let current = this.selectList[key[0]][key[1]];
       if(key[0]===3){
         //单选（日期）
-        // velues[0]=DATE_MAP[key[1]]
-        this.keep_value.reportDate[0] = DATE_MAP[key[1]]
+        keep_value.reportDate[0] = DATE_MAP[key[1]]
       }else if(key[0]!=2){
         //多选（行业、类别、页数）
-        let index=values.indexOf(current);
-        if(index>-1){
-            values.splice(index,1);
+        if(values.length>0){
+          let index=values.indexOf(current);
+          console.log(current,values,values.indexOf(current))
+
+          if(index>-1){
+            values.splice(index,1)
+          }else{
+            if(key[0]===4){
+              values.push(PAGE_MAP[key[1]])
+            }else{
+              values.push(current);
+            } 
+          }
         }else{
           if(key[0]===4){
             values.push(PAGE_MAP[key[1]])
@@ -295,7 +304,7 @@ export default {
 
     },
     chooseCheckBox(value){
-      this.keep_value.stockCompanies = [...value];
+      keep_value.stockCompanies = [...value];
     },
     /**
      * 确认选择
@@ -303,16 +312,16 @@ export default {
     handleConfirmSelect(i){
       let selectedTab=TAB_TEXT[i];
       if(i===3){
-        this.queryParams[selectedTab]=this.keep_value[selectedTab][0]
+        this.queryParams.reportDate=keep_value.reportDate
       }else if(i===2){
-        this.queryParams.stockCompanies = [...this.keep_value.stockCompanies]
+        this.queryParams.stockCompanies = [...keep_value.stockCompanies]
       }else{
-        Object.keys(this.keep_value).forEach((item)=>{
+        Object.keys(keep_value).forEach((item)=>{
           if(item!=selectedTab){
-            this.keep_value[item]=[];
+            keep_value[item]=[];
           }
         });
-        this.queryParams[selectedTab]=JSON.stringify(Object.values({...this.keep_value[selectedTab]}));
+        this.queryParams[selectedTab]=JSON.stringify(...keep_value[selectedTab]);
       }
     },
     /**

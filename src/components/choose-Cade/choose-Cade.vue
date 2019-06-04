@@ -78,7 +78,7 @@
 			},
 			chooseItems(i) {
 				this.i2 = i;
-				this.$emit('chooseLike', [this.i1, this.i2],isCheck)
+				this.$emit('chooseLike', [this.i1, this.i2])
 			},
 			hide() {
 				this.show = false;
