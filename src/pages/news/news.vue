@@ -123,7 +123,7 @@ let keep_value={
     'industries':[],
     'rptTypes':[],
     'stockCompanies':[],
-    'reportDate':[],
+    'reportDate':'',
     'pageCount': []
   }
 export default {
@@ -277,31 +277,20 @@ export default {
       let current = this.selectList[key[0]][key[1]];
       if(key[0]===3){
         //单选（日期）
-        keep_value.reportDate[0] = DATE_MAP[key[1]]
+        keep_value.reportDate = DATE_MAP[key[1]]
       }else if(key[0]!=2){
         //多选（行业、类别、页数）
-        if(values.length>0){
-          let index=values.indexOf(current);
-          console.log(current,values,values.indexOf(current))
-
-          if(index>-1){
-            values.splice(index,1)
-          }else{
-            if(key[0]===4){
-              values.push(PAGE_MAP[key[1]])
-            }else{
-              values.push(current);
-            } 
-          }
+        let index=values.indexOf(current);
+        if(index>-1){
+          values.splice(index,1)
         }else{
           if(key[0]===4){
             values.push(PAGE_MAP[key[1]])
           }else{
             values.push(current);
-          }
+          } 
         }
       }
-
     },
     chooseCheckBox(value){
       keep_value.stockCompanies = [...value];
@@ -314,14 +303,14 @@ export default {
       if(i===3){
         this.queryParams.reportDate=keep_value.reportDate
       }else if(i===2){
-        this.queryParams.stockCompanies = [...keep_value.stockCompanies]
+        this.queryParams.stockCompanies = keep_value.stockCompanies.join();
       }else{
         Object.keys(keep_value).forEach((item)=>{
           if(item!=selectedTab){
             keep_value[item]=[];
           }
         });
-        this.queryParams[selectedTab]=JSON.stringify(...keep_value[selectedTab]);
+        this.queryParams[selectedTab]=keep_value[selectedTab].join();
       }
     },
     /**
@@ -345,6 +334,7 @@ export default {
         from: 0,
         size: 10
       }
+      this.cateCurrentIndex = 0;
     },
     // 数据和分页是模拟的，实际也是这样写
     getNewsList() {

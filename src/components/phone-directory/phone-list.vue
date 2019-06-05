@@ -9,10 +9,10 @@
       @scroll="handleScroll"
     >
       <view class="phone-list">
-        <view class="list-item" v-for="(item, key) of phones" :key="key" :id="key">
-          <view class="list-item-content">
-            <view class="list-item-title">{{key}}</view>
-            <checkbox-group @change="handleClick">
+        <checkbox-group @change="handleClick">
+          <view class="list-item" v-for="(item, key) of phones" :key="key" :id="key">
+            <view class="list-item-content">
+              <view class="list-item-title">{{key}}</view>
               <label
                 class="list-item-phone"
                 hover-class="commonly-hover"
@@ -27,9 +27,9 @@
                 <checkbox :value="innerItem.name"/>
                 {{innerItem.name}}
               </label>
-            </checkbox-group>
+            </view>
           </view>
-        </view>
+        </checkbox-group>
       </view>
     </scroll-view>
   </view>
