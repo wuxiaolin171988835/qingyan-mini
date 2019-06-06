@@ -91,6 +91,9 @@
                     </view>
                   </navigator>
                 </block>
+                <view v-if="!artList.length" class="empty">
+                  暂无相关数据！
+                </view>
               </view>
             </view>
           </block>
@@ -113,7 +116,8 @@ import wucTab from "@/components/wuc-tab/wuc-tab.vue";
 import ChooseLits from "@/components/choose-Cade/choose-Cade.vue";
 import mSearch from "@/components/mehaotian-search/mehaotian-search.vue";
 import minModal from "@/components/min-modal/min-modal";
-import btoa from 'btoa'
+import btoa from 'btoa';
+import qs from 'qs';
 import { setTimeout } from 'timers';
 let page = 0;
 const TAB_TEXT=['industries','rptTypes','stockCompanies','reportDate','pageCount'];
@@ -189,7 +193,7 @@ export default {
   watch: {
     queryParams: {
       handler(newVal, oldVal) {
-        this.getNewsList();
+        this.getNewsList(true);
       },
       deep: true,
 
@@ -337,24 +341,28 @@ export default {
       this.cateCurrentIndex = 0;
     },
     // 数据和分页是模拟的，实际也是这样写
-    getNewsList() {
+    getNewsList(query=false) {
       uni.showLoading({});
       // 假设已经到底，实际根据api接口返回值判断
       if (this.queryParams.from+1 >= this.total/this.queryParams.size) {
         uni.showToast({ title: "已经加载全部", icon: "none" });
         return;
       }
+      let data = qs.stringify({...this.queryParams,from: page, size:10})
       uni.request({
         url:
           "https://api.qxsearch.net/api/search/rptSearch",
+        data: data,
         method: "POST", 
         header: {
-          'Content-Type' : 'application/x-www-form-urlencoded'
+          'content-type':'application/x-www-form-urlencoded',
         },
-        data: {...this.queryParams,from: page, size:10},
         success: res => {
           this.total = res.total;
           var newsList = res.data.hits;
+          if(query){
+            this.artList = [];
+          }
           this.artList = this.artList.concat(newsList);
           uni.hideLoading();
           this.imgsList = [];
@@ -400,6 +408,11 @@ export default {
 
 <style lang="scss">
 .news {
+  .empty{
+    text-align: center;
+    padding: 40upx;
+    color:#9B9B9B;
+  }
   &.no-scroll{
     height: 100vh;
     overflow: hidden;

@@ -77,7 +77,7 @@ export default {
   .header {
     .title {
       font-size: 32upx;
-      padding: 33upx 0 34upx;
+      padding: 33upx 40upx 34upx;
       text-align: center;
     }
     .flex-items {
