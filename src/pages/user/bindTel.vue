@@ -4,19 +4,12 @@
       <view v-if="status">
         <view class="validate-phone">
           <view class="label">手机号</view>
-          <input
-            type="number"
-            focus
-            maxlength="11"
-            :value="phone.mobile"
-            disabled
-            placeholder="请输入手机号"
-          >
+          <input type="number" focus maxlength="11" v-model="phone.mobile" placeholder="请输入手机号">
           <view style="width:180upx;"></view>
         </view>
         <view class="validate-code">
           <view class="label">验证码</view>
-          <input v-model="phone.verityCode" type="number" maxlength="4" placeholder="请输入验证码">
+          <input v-model="phone.verityCode" type="number" maxlength="6" placeholder="请输入验证码">
           <view class="validate-code-getcode" @tap="fnGetPhoneCode()">获取验证码</view>
         </view>
         <button
@@ -50,9 +43,6 @@ export default {
       status: true // true手机注册,false账号注册
     };
   },
-  onLoad(options) {
-    this.phone.mobile = options.mobile;
-  },
   watch: {
     /**
      * 监听手机注册数值
@@ -78,7 +68,7 @@ export default {
     fnRegister() {
       //先跳转
       uni.request({
-        url: "https://apitest.qxsearch.net/api/user/verityMobile",
+        url: "https://apitest.qxsearch.net/api/user/appBindMobile",
         data: this.phone,
         method: "POST",
         header: {
@@ -86,13 +76,15 @@ export default {
         },
         success: res => {
           if (res.data.code == "OK" && res.data.status == "Success") {
+            uni.setStorageSync("token", res.data.token);
+            uni.setStorageSync("mobile", this.phone.mobile);
             uni.showToast({
               title: res.data.message,
               icon: "none"
             });
             setTimeout(() => {
-              uni.navigateTo({
-                url: "./updateTel"
+              uni.reLaunch({
+                url: "/pages/user/user"
               });
             }, 800);
           } else {
@@ -121,6 +113,12 @@ export default {
           success: res => {
             uni.showToast({
               title: res.data.message,
+              icon: "none"
+            });
+          },
+          err: e => {
+            uni.showToast({
+              title: "发送失败",
               icon: "none"
             });
           }

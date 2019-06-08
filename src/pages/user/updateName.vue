@@ -5,34 +5,74 @@
         <input v-model="username">
         <button class="btn-save" @tap="save">保存</button>
       </view>
+      <view class="tips">2到9个字符，只包含数字，字母，汉字</view>
     </view>
   </cmd-page-body>
 </template>
 
 <script>
 import cmdPageBody from "@/components/cmd-page-body/cmd-page-body.vue";
-import { setTimeout } from "timers";
 export default {
   components: {
     cmdPageBody
   },
   data() {
     return {
-      username: "某某"
+      username: ""
     };
   },
-  onLoad() {},
+  onLoad(options) {
+    this.username = options.username;
+  },
   methods: {
     /**
      * 保存用户名
      */
     save() {
-      uni.showToast({ title: "姓名修改成功", icon: "success" });
-      setTimeout(() => {
-        uni.reLaunch({
-          url: "/pages/user/user"
-        });
-      }, 500);
+      uni.request({
+        url: "https://apitest.qxsearch.net/api/user/update",
+        data: {
+          token: uni.getStorageSync("token"),
+          field: "name",
+          value: this.username
+        },
+        method: "POST",
+        header: {
+          "content-type": "application/x-www-form-urlencoded"
+        },
+        success: res => {
+          if (res.data.code == "OK" && res.data.status == "Success") {
+            uni.showToast({
+              title: res.data.message,
+              icon: "none"
+            });
+            setTimeout(() => {
+              uni.reLaunch({
+                url: "/pages/user/user"
+              });
+            }, 800);
+          } else if (
+            res.data.code == "INVALID_TOKEN" &&
+            res.data.status == "Failure"
+          ) {
+            //token过期
+            uni.showToast({
+              title: res.data.message,
+              icon: "none"
+            });
+            setTimeout(() => {
+              uni.navigateTo({
+                url: "./bindTel"
+              });
+            }, 800);
+          } else {
+            uni.showToast({
+              title: res.data.message,
+              icon: "none"
+            });
+          }
+        }
+      });
     }
   }
 };
@@ -41,6 +81,12 @@ export default {
 <style lang="scss">
 .update-name {
   padding: 0 30upx;
+  .tips {
+    height: 37rpx;
+    color: #9b9b9b;
+    font-size: 26rpx;
+    font-family: PingFangSC-Regular;
+  }
   .content {
     padding-top: 46upx;
     border-bottom: 1upx #3e4a72 solid;

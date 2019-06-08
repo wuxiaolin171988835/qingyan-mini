@@ -12,7 +12,7 @@
           @blur="blur"
         >
         <!-- <view v-if="!active && mode === 2" class="input sub" @click="getFocus">请输入搜索内容</view> -->
-        <!-- <text v-if="isDelShow" class="icon icon-del" @click="clear">&#xe644;</text> -->
+        <text v-if="isDelShow" class="icon icon-del" @click="clear">&#xe644;</text>
       </view>
       <view
         v-show="(active && show && button === 'inside') || (isDelShow && button === 'inside')"

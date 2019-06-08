@@ -205,7 +205,7 @@ export default {
      */
      async getImgUrl(url){
        var [error,res]= await uni.request({
-          url: `https://api.qxsearch.net/api/res/image/${url}`,
+          url: `http://39.98.37.245:8083/api/res/image/${url}`,
           method: "GET", 
           header: {
             'Content-Type' : 'text/plain;charset=utf-8',
@@ -220,7 +220,7 @@ export default {
      */
     async getIndustry () {
       var [error, res] = await uni.request({
-          url: 'https://api.qxsearch.net/api/res/industry',
+          url: 'http://39.98.37.245:8083/api/res/industry',
           method: "GET", 
           header: {
             'Content-Type' : 'text/plain;charset=utf-8'
@@ -235,7 +235,7 @@ export default {
      */
     async getType () {
       var [error, res] = await uni.request({
-          url: 'https://api.qxsearch.net/api/res/type'
+          url: 'http://39.98.37.245:8083/api/res/type'
       });
       res.data.hits.forEach(item => {
           this.selectList[1].push(item.name)
@@ -246,7 +246,7 @@ export default {
      */
     async getCompany () {
       var [error, res] = await uni.request({
-          url: 'https://api.qxsearch.net/api/res/company'
+          url: 'http://39.98.37.245:8083/api/res/company'
       });
       let lists = res.data.hits;
       let keys = [];
@@ -291,7 +291,16 @@ export default {
           if(key[0]===4){
             values.push(PAGE_MAP[key[1]])
           }else{
-            values.push(current);
+            if(k[0]===0){
+              //行业中任意行业，类别变成行业研究
+              current != '全部行业'?keep_value.rptTypes='行业研究': '';
+            }
+            if(k[0]===1){
+              //用户直接选择“类别”中的某一项时，“行业”的默认值都是ALL（因为客户选择非“行业研究”类别时，“行业”选项是没有意义的）。
+              current != '全部类别'?keep_value.industries = '全部行业':'';
+            }else{
+              values.push(current);
+            }
           } 
         }
       }
@@ -351,7 +360,7 @@ export default {
       let data = qs.stringify({...this.queryParams,from: page, size:10})
       uni.request({
         url:
-          "https://api.qxsearch.net/api/search/rptSearch",
+          "http://39.98.37.245:8083/api/search/rptSearch",
         data: data,
         method: "POST", 
         header: {

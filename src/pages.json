@@ -26,6 +26,12 @@
 			}
 		},
 		{
+			"path": "pages/user/bindTel",
+			"style": {
+				"navigationBarTitleText": "千寻研报"
+			}
+		},
+		{
 			"path": "pages/user/updateTel",
 			"style": {
 				"navigationBarTitleText": "千寻研报"

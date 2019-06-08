@@ -1,29 +1,24 @@
 <template>
   <cmd-page-body :backgroundColor="$uni-bg-color">
-    <view class="update">
+    <view class="validate">
       <view v-if="status">
-        <view class="update-phone">
+        <view class="validate-phone">
           <view class="label">新手机号</view>
-          <input type="number" focus maxlength="11" placeholder="请输入手机号">
+          <input type="number" focus maxlength="11" v-model="phone.newMobile" placeholder="请输入手机号">
           <view style="width:180upx;"></view>
         </view>
-        <view class="update-code">
+        <view class="validate-code">
           <view class="label">验证码</view>
-          <input v-model="mobile.code" type="number" maxlength="6" placeholder="请输入验证码">
-          <view
-            class="update-code-getcode"
-            @tap="!safety.state ? fnGetPhoneCode() : ''"
-          >{{!safety.state&&'获取验证码'||(safety.time+' s')}}</view>
-        </view>
-        <view class="tips">
-          <text>重新绑定后，原手机号码将不能用于登录</text>
+          <input v-model="phone.verityCode" type="number" maxlength="6" placeholder="请输入验证码">
+          <view class="validate-code-getcode" @tap="fnGetPhoneCode()">获取验证码</view>
         </view>
         <button
-          class="btn-update"
-          :class="registerMobile ? 'btn-update-active':''"
-          hover-class="btn-update-hover"
+          class="btn-validate"
+          :class="registerMobile ? 'btn-validate-active':''"
+          hover-class="btn-validate-hover"
           @tap="fnRegister"
-        >确定</button>
+          style="margin-top: 20upx;"
+        >确认</button>
       </view>
     </view>
   </cmd-page-body>
@@ -31,6 +26,7 @@
 
 <script>
 import cmdPageBody from "@/components/cmd-page-body/cmd-page-body.vue";
+import { setTimeout } from "timers";
 
 export default {
   components: {
@@ -38,24 +34,13 @@ export default {
   },
   data() {
     return {
-      account: {
-        username: "",
-        password: ""
-      },
-      usernameReg: /^[A-Za-z0-9]+$/,
-      passwordReg: /^\w+$/,
-      registerAccount: false,
-      mobile: {
-        phone: "",
-        code: ""
+      phone: {
+        newMobile: "",
+        verityCode: "",
+        token: uni.getStorageSync("token")
       },
       phoneReg: /^[1](([3][0-9])|([4][5-9])|([5][0-3,5-9])|([6][5,6])|([7][0-8])|([8][0-9])|([9][1,8,9]))[0-9]{8}$/,
       registerMobile: false,
-      safety: {
-        time: 60,
-        state: false,
-        interval: ""
-      },
       status: true // true手机注册,false账号注册
     };
   },
@@ -63,30 +48,15 @@ export default {
     /**
      * 监听手机注册数值
      */
-    mobile: {
+    phone: {
       handler(newValue) {
-        if (this.phoneReg.test(newValue.phone) && newValue.code.length === 6) {
+        if (
+          this.phoneReg.test(newValue.newMobile) &&
+          newValue.verityCode.length === 4
+        ) {
           this.registerMobile = true;
         } else {
           this.registerMobile = false;
-        }
-      },
-      deep: true
-    },
-    /**
-     * 监听账号注册数值
-     */
-    account: {
-      handler(newValue) {
-        if (
-          this.usernameReg.test(newValue.username) &&
-          newValue.username.length >= 8 &&
-          (this.passwordReg.test(newValue.password) &&
-            newValue.password.length >= 8)
-        ) {
-          this.registerAccount = true;
-        } else {
-          this.registerAccount = false;
         }
       },
       deep: true
@@ -97,62 +67,90 @@ export default {
      * 注册按钮点击执行
      */
     fnRegister() {
-      uni.showToast({ title: "手机号修改成功", icon: "success" });
-      setTimeout(() => {
-        uni.reLaunch({
-          url: "/pages/user/user"
-        });
-      }, 500);
-      if (this.status) {
-        console.log(JSON.stringify(this.mobile));
-      } else {
-        console.log(JSON.stringify(this.account));
-      }
+      //先跳转
+      uni.request({
+        url: "https://apitest.qxsearch.net/api/user/updateMobile",
+        data: this.phone,
+        method: "POST",
+        header: {
+          "content-type": "application/x-www-form-urlencoded"
+        },
+        success: res => {
+          if (res.data.code == "OK" && res.data.status == "Success") {
+            uni.setStorageSync("token", res.data.token);
+            uni.setStorageSync("mobile", this.phone.newMobile);
+            uni.showToast({
+              title: res.data.message,
+              icon: "none"
+            });
+            setTimeout(() => {
+              uni.reLaunch({
+                url: "/pages/user/user"
+              });
+            }, 800);
+          } else if (
+            res.data.code == "INVALID_TOKEN" &&
+            res.data.status == "Failure"
+          ) {
+            uni.showToast({
+              title: res.data.message,
+              icon: "none"
+            });
+            setTimeout(() => {
+              uni.navigateTo({
+                url: "./bindTel"
+              });
+            }, 800);
+          } else {
+            uni.showToast({
+              title: res.data.message,
+              icon: "none"
+            });
+          }
+        }
+      });
     },
     /**
      * 获取验证码
      */
     fnGetPhoneCode() {
-      if (this.phoneReg.test(this.mobile.phone)) {
-        uni.showToast({
-          title: "正在发送验证码",
-          icon: "loading",
-          success: () => {
-            // 成功后显示倒计时60s后可在点击
-            this.safety.state = true;
-            // 倒计时
-            this.safety.interval = setInterval(() => {
-              if (this.safety.time-- <= 0) {
-                this.safety.time = 60;
-                this.safety.state = false;
-                clearInterval(this.safety.interval);
-              }
-            }, 1000);
+      if (this.phoneReg.test(this.phone.newMobile)) {
+        uni.request({
+          url: "http://39.98.37.245:8083/api/user/verity",
+          data: {
+            mobile: this.phone.newMobile
+          },
+          method: "POST",
+          header: {
+            "content-type": "application/x-www-form-urlencoded"
+          },
+          success: res => {
             uni.showToast({
-              title: "发送成功",
-              icon: "success"
+              title: res.data.message,
+              icon: "none"
+            });
+          },
+          err: e => {
+            uni.showToast({
+              title: "发送失败",
+              icon: "none"
             });
           }
         });
       } else {
         uni.showToast({
-          title: "手机号不正确",
+          title: "手机号格式不正确",
           icon: "none"
         });
       }
     }
   },
-  beforeDestroy() {
-    /**
-     * 关闭页面清除轮询器
-     */
-    clearInterval(this.safety.interval);
-  }
+  beforeDestroy() {}
 };
 </script>
 
 <style lang="scss">
-.update {
+.validate {
   margin-top: 25upx;
   .tips {
     height: 37upx;
@@ -181,12 +179,12 @@ export default {
   }
   &-phone,
   &-code {
-    background: #fff;
     padding: 0 46upx 0 34upx;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    background: #fff;
     .label {
       color: #4a4a4a;
       font-size: 34upx;
@@ -208,20 +206,19 @@ export default {
 
   &-username {
     margin-bottom: 40upx;
-    border-bottom: 2upx #dedede solid;
+    border-bottom: 2upx #dfd3d3 solid;
   }
 
   &-password {
     border-bottom: 2upx #dedede solid;
   }
 
-  .btn-update {
+  .btn-validate {
     border-radius: 50upx;
     font-size: 36upx;
     margin: 0 40upx;
     color: #fff;
-    background: $uni-color-primary;
-
+    background: #dedede;
     &-active {
       background: $uni-color-primary;
     }
