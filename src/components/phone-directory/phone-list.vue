@@ -41,7 +41,8 @@ export default {
   props: {
     phones: Object,
     letter: String,
-    scrollAnimationOFF: Boolean
+    scrollAnimationOFF: Boolean,
+    stockCompanies: String
   },
   data() {
     return {

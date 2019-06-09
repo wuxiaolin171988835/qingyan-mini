@@ -23,7 +23,7 @@
               ></mSearch>
               <text @click="resetSearch" class="btn-reset">重置</text>
             </view>
-            <ChooseLits :list="list" :arr="selectList" @chooseLike="chooseLike" @chooseCheckBox="chooseCheckBox" @onSelectDialog="onSelectDialog" :institutions="institutions" @handleConfirmSelect="handleConfirmSelect"></ChooseLits>
+            <ChooseLits :list="list" :arr="selectList" @chooseLike="chooseLike" @chooseCheckBox="chooseCheckBox" @onSelectDialog="onSelectDialog" :institutions="institutions" @handleConfirmSelect="handleConfirmSelect" :queryParams="queryParams"></ChooseLits>
             <!-- tab项 -->
             <view>
               <view class="fixedit">
@@ -50,48 +50,50 @@
               </view>
               <!-- 内容区 -->
               <view class="grace-news-list">
-                <block v-for="(item, index) in artList" :key="index">
-                  <navigator :url="'./detail?detail=' + JSON.stringify(item)" open-type="navigate" class="grace-news-list-items">
-                    <view class="grace-news-list-img-news">
-                      <view class="grace-news-list-img-big"  v-if="cateCurrentIndex===2">
-                        <image :src="imgsList[index]" mode="widthFix" class="img"></image>
-                        <image
-                          src="../../static/icon_magnifier.png"
-                          class="icon_magnifier"
-                          @click.stop="magnifierImg(index)"
-                        ></image>
-                      </view>
-                      <view class="grace-news-list-info" :style="{'margin-top': cateCurrentIndex!==2?0:'10upx'}">
-                        <view>
-                          <text class="grace-news-list-title-main">{{item.parse_title || item.parse_chart_title}}</text>
-                          <text class="btn" v-if="cateCurrentIndex===1" style="margin-left: 31upx;">{{item.type}}</text>
+                <block v-if="artList.length">
+                  <block v-for="(item, index) in artList" :key="index">
+                    <navigator :url="'./detail?detail=' + JSON.stringify(item)" open-type="navigate" class="grace-news-list-items">
+                      <view class="grace-news-list-img-news">
+                        <view class="grace-news-list-img-big"  v-if="cateCurrentIndex===2">
+                          <image :src="imgsList[index]" mode="widthFix" class="img"></image>
+                          <image
+                            src="../../static/icon_magnifier.png"
+                            class="icon_magnifier"
+                            @click.stop="magnifierImg(index)"
+                          ></image>
                         </view>
-                        <text class="grace-news-list-title-desc" v-if="cateCurrentIndex!==1">
-                          {{item.parse_keypoint.replace(/[\r\n]/g,"")}}
-                          <text class="btn" v-if="cateCurrentIndex!==1" style="margin-left: 20upx;">{{item.type}}</text>
-                        </text>
+                        <view class="grace-news-list-info" :style="{'margin-top': cateCurrentIndex!==2?0:'10upx'}">
+                          <view>
+                            <text class="grace-news-list-title-main">{{item.parse_title || item.parse_chart_title}}</text>
+                            <text class="btn" v-if="cateCurrentIndex===1" style="margin-left: 31upx;">{{item.type}}</text>
+                          </view>
+                          <text class="grace-news-list-title-desc" v-if="cateCurrentIndex!==1 && item.parse_keypoint">
+                            {{item.parse_keypoint.replace(/[\r\n]/g,"")}}
+                            <text class="btn" v-if="cateCurrentIndex!==1" style="margin-left: 20upx;">{{item.type}}</text>
+                          </text>
+                        </view>
                       </view>
-                    </view>
-                    <view class="flex-items">
-                      <view class="item">
-                        <image src="../../static/icon_building.png" class="item-img"></image>
-                        <text class="item-text">{{item.parse_orgnization}}</text>
+                      <view class="flex-items">
+                        <view class="item">
+                          <image src="../../static/icon_building.png" class="item-img"></image>
+                          <text class="item-text">{{item.parse_orgnization}}</text>
+                        </view>
+                        <view class="item">
+                          <image src="../../static/icon_person.png" class="item-img"></image>
+                          <text class="item-text">{{item.parse_authors}}</text>
+                        </view>
+                        <view class="item">
+                          <image src="../../static/icon_page.png" class="item-img"></image>
+                          <text class="item-text">{{item.parse_pagecount}}P</text>
+                        </view>
+                        <view class="item">
+                          <text class="item-text">{{item.parse_reportdate}}</text>
+                        </view>
                       </view>
-                      <view class="item">
-                        <image src="../../static/icon_person.png" class="item-img"></image>
-                        <text class="item-text">{{item.parse_authors}}</text>
-                      </view>
-                      <view class="item">
-                        <image src="../../static/icon_page.png" class="item-img"></image>
-                        <text class="item-text">{{item.parse_pagecount}}P</text>
-                      </view>
-                      <view class="item">
-                        <text class="item-text">{{item.parse_reportdate}}</text>
-                      </view>
-                    </view>
-                  </navigator>
+                    </navigator>
+                  </block>
                 </block>
-                <view v-if="!artList.length" class="empty">
+                <view v-else class="empty">
                   暂无相关数据！
                 </view>
               </view>
@@ -123,13 +125,6 @@ let page = 0;
 const TAB_TEXT=['industries','rptTypes','stockCompanies','reportDate','pageCount'];
 const DATE_MAP=["","1m","3m","6m","1Y"];
 const PAGE_MAP=["","1p","6p","20p"];
-let keep_value={
-    'industries':[],
-    'rptTypes':[],
-    'stockCompanies':[],
-    'reportDate':'',
-    'pageCount': []
-  }
 export default {
   components: {
     cmdPageBody,
@@ -169,8 +164,10 @@ export default {
         queryType: "keypoint",
         content: "",
       },
+      phoneListMiddleVal: '',
       imgsList: [],
       bigImgUrl: '',
+
     };
   },
   onLoad() {
@@ -277,11 +274,18 @@ export default {
      * select选择
      */
     chooseLike(key) {
-      let values = keep_value[TAB_TEXT[key[0]]];
+      let values = this.queryParams[TAB_TEXT[key[0]]]?this.queryParams[TAB_TEXT[key[0]]].split(','):[];
       let current = this.selectList[key[0]][key[1]];
+      if(current.indexOf('全部')>-1){
+        if(current=='全部行业'){
+          this.queryParams.rptTypes = '';
+          }
+          this.queryParams[TAB_TEXT[key[0]]]='';
+          return;
+      }
       if(key[0]===3){
         //单选（日期）
-        keep_value.reportDate = DATE_MAP[key[1]]
+        this.queryParams.reportDate = DATE_MAP[key[1]];
       }else if(key[0]!=2){
         //多选（行业、类别、页数）
         let index=values.indexOf(current);
@@ -291,40 +295,28 @@ export default {
           if(key[0]===4){
             values.push(PAGE_MAP[key[1]])
           }else{
-            if(k[0]===0){
+            if(key[0]===0){
               //行业中任意行业，类别变成行业研究
-              current != '全部行业'?keep_value.rptTypes='行业研究': '';
-            }
-            if(k[0]===1){
+              current != '全部行业'?this.queryParams.rptTypes='行业研究': '';
+            }else if(key[0]===1){
               //用户直接选择“类别”中的某一项时，“行业”的默认值都是ALL（因为客户选择非“行业研究”类别时，“行业”选项是没有意义的）。
-              current != '全部类别'?keep_value.industries = '全部行业':'';
-            }else{
-              values.push(current);
+              current != '行业研究'?this.queryParams.industries = '':'';
             }
+
+            values.push(current);
           } 
         }
+        this.queryParams[TAB_TEXT[key[0]]]=values.join()
       }
     },
     chooseCheckBox(value){
-      keep_value.stockCompanies = [...value];
+      this.phoneListMiddleVal = value.join();
     },
     /**
      * 确认选择
      */
-    handleConfirmSelect(i){
-      let selectedTab=TAB_TEXT[i];
-      if(i===3){
-        this.queryParams.reportDate=keep_value.reportDate
-      }else if(i===2){
-        this.queryParams.stockCompanies = keep_value.stockCompanies.join();
-      }else{
-        Object.keys(keep_value).forEach((item)=>{
-          if(item!=selectedTab){
-            keep_value[item]=[];
-          }
-        });
-        this.queryParams[selectedTab]=keep_value[selectedTab].join();
-      }
+    handleConfirmSelect(){
+      this.queryParams.stockCompanies = this.phoneListMiddleVal;
     },
     /**
      * 确认搜索框

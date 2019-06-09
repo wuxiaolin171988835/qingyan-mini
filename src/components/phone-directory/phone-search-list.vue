@@ -16,9 +16,10 @@
         @change="handlePhoneListIndex"
         @reset="handleReset"
         @handleClick="handleClick"
+        :stockCompanies="stockCompanies"
       ></phone-list>
     </view>
-    <!-- <button @click="confirm" class="btn-confirm">确定</button> -->
+    <button @click="confirm" class="btn-confirm">确定</button>
   </view>
 </template>
 
@@ -29,7 +30,8 @@ import { constants } from "crypto";
 export default {
   name: "phone-search-list",
   props: {
-    phones: Object
+    phones: Object,
+    stockCompanies: String
   },
   components: {
     phoneList,
@@ -104,10 +106,10 @@ export default {
         this.letter = "";
       }
       this.reset = val;
+    },
+    confirm() {
+      this.$emit("confirm");
     }
-    // confirm() {
-    //   this.$emit("confirm");
-    // }
   }
 };
 </script>

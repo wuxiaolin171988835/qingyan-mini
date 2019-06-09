@@ -12,18 +12,17 @@
 		<view  :style="{display:show?'block':'none'}" class="list_boxs2">
 			<view class="lione">
 				<block v-if="i1===2">
-					<phone-search-list :phones="institutions" @paramClick="paramClick" @confirm="confirm"></phone-search-list>
+					<phone-search-list :phones="institutions" @paramClick="paramClick" @confirm="confirm" :stockCompanies="queryParams.stockCompanies"></phone-search-list>
 				</block>
 				<block  v-else>
 					<scroll-view class="lione-items"  scroll-y="true">
 						<block v-for="(item,i) in listchild" :key="i">
-							<view class="mli" @tap="chooseItems(i)" :class="[i== i2?'actives':'']">
+							<view class="mli" @tap="chooseItems(i)" :class="{'actives':(status[i1].indexOf(item)>-1 || (!status[i1][0] && !i))}">
 								<text class="uni_14">{{item}}</text>
 							</view>
 						</block>
 					</scroll-view>
 				</block>
-				<button @click="confirm" class="btn-confirm">确定</button>
 			</view>
 			<view class="hideA" @tap="hide">
 			</view>
@@ -35,7 +34,7 @@
 <script>
 	import phoneSearchList from '@/components/phone-directory/phone-search-list.vue'
 	export default {
-		props: ['list', 'arr', 'institutions'], //数组  arr
+		props: ['list', 'arr', 'institutions','queryParams'], //数组  arr
 		data() {
 			return {
 				i1: null,
@@ -43,21 +42,44 @@
 				show: false,
 				listchild: [],
 				newlist: this.list,
+				status: [[],[],[],[],[]]
 			}
 		},
 		components:{
 			phoneSearchList
+		},
+		onLoad(){
+				
 		},
 		watch:{
       show:{
 				handler(newVal,oldVal){
 					this.$emit('onSelectDialog',newVal)
 				}
+			},
+			queryParams: {
+				handler(newVal,oldVal){
+					const DATE_MAP={"1m":"1个月内",
+													"3m":"3个月内",
+													"6m":"6个月内",
+													"1Y":"1年以内",
+												};					
+					const PAGE_MAP={"1p":"1-5页",
+													"6p":"6-20页",
+													"20p":"20页以上"
+												};
+					this.status[0]=newVal.industries.split(',');
+					this.status[1]=newVal.rptTypes.split(',');
+					this.status[3]=newVal.reportDate.split(',').map(item=>DATE_MAP[item]);
+					this.status[4]=newVal.pageCount.split(',').map(item=>PAGE_MAP[item]);
+				console.log(this.status[this.i1]);
+
+				},
+				deep: true
 			}
 		},
 		methods: {
 			paramClick (value) {
-				// console.log('checkbox:',value)
 				this.$emit('chooseCheckBox',value);
 			},
 			alertnum(i) {
@@ -74,6 +96,7 @@
 				}else{
 					this.show=!this.show;
 				}
+				console.log('change:',this.status[this.i1])
 
 			},
 			chooseItems(i) {
@@ -85,7 +108,7 @@
 			},
 			confirm(){
 				this.hide();
-				this.$emit('handleConfirmSelect',this.i1)
+				this.$emit('handleConfirmSelect')
 			}
 		}
 	}
@@ -95,6 +118,7 @@
 	.hideA {
 		height: calc(100% - 310upx);
 		position: fixed;
+		width:100%;
 	}
 	.lione-items{
 		max-height: 400upx;
