@@ -47,7 +47,6 @@ export default {
   },
   onLoad(options) {
     this.detailInfo = JSON.parse(options.detail)
-    console.log(this.detailInfo)
     
 
   },

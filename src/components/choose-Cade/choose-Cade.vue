@@ -12,12 +12,12 @@
 		<view  :style="{display:show?'block':'none'}" class="list_boxs2">
 			<view class="lione">
 				<block v-if="i1===2">
-					<phone-search-list :phones="institutions" @paramClick="paramClick" @confirm="confirm" :stockCompanies="queryParams.stockCompanies"></phone-search-list>
+					<phone-search-list  :phones="institutions" @paramClick="paramClick" @confirm="confirm" :stockCompanies="queryParams.stockCompanies"></phone-search-list>
 				</block>
 				<block  v-else>
 					<scroll-view class="lione-items"  scroll-y="true">
 						<block v-for="(item,i) in listchild" :key="i">
-							<view class="mli" @tap="chooseItems(i)" :class="{'actives':(status[i1].indexOf(item)>-1 || (!status[i1][0] && !i))}">
+							<view class="mli" @tap="chooseItems(i)" :class="{'actives':(status[i1].includes(item) || (!status[i1][0] && !i))}">
 								<text class="uni_14">{{item}}</text>
 							</view>
 						</block>
@@ -72,8 +72,7 @@
 					this.status[1]=newVal.rptTypes.split(',');
 					this.status[3]=newVal.reportDate.split(',').map(item=>DATE_MAP[item]);
 					this.status[4]=newVal.pageCount.split(',').map(item=>PAGE_MAP[item]);
-				console.log(this.status[this.i1]);
-
+					this.$forceUpdate();
 				},
 				deep: true
 			}
@@ -96,8 +95,6 @@
 				}else{
 					this.show=!this.show;
 				}
-				console.log('change:',this.status[this.i1])
-
 			},
 			chooseItems(i) {
 				this.i2 = i;
@@ -106,9 +103,9 @@
 			hide() {
 				this.show = false;
 			},
-			confirm(){
+			confirm(company=""){
 				this.hide();
-				this.$emit('handleConfirmSelect')
+				this.$emit('handleConfirmSelect',company)
 			}
 		}
 	}

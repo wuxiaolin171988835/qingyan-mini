@@ -4,13 +4,25 @@
       <text class="searc-desc" style="display: inline-block;width:340upx;">请选择机构，支持多选</text>
       <view class="search-block">
         <span class="icon-search"></span>
-        <input @input="handleInput" class="search-input" type="text">
+        <input class="search-input" type="text" v-model="keyword">
+        <view class="search-result">
+          <ul v-if="isShowResult">
+            <li
+              v-for="(item,index) in serachResult"
+              :key="index"
+              :data-cid="item.id"
+              :data-index="index"
+              @click="selectedCompany(item)"
+            >{{item.name}}</li>
+          </ul>
+          <view class="no-data" v-if="keyword && serachResult.length==0">未匹配到数据！</view>
+        </view>
       </view>
     </view>
     <view class="search-main" style="display: flex;">
       <view class="search-main-errtitle" v-if="hasNoData">无搜索结果</view>
       <phone-list
-        :phones="phonesCopy"
+        :phones="phones"
         :letter="letter"
         :scrollAnimationOFF="scrollAnimationOFF"
         @change="handlePhoneListIndex"
@@ -26,7 +38,6 @@
 <script>
 import phoneList from "./phone-list.vue";
 import phoneAlphabet from "./phone-alphabet.vue";
-import { constants } from "crypto";
 export default {
   name: "phone-search-list",
   props: {
@@ -39,53 +50,41 @@ export default {
   },
   data() {
     return {
-      phonesCopy: JSON.parse(JSON.stringify(this.phones)),
       keyword: "",
       timer: null,
       letter: "A",
       scrollAnimationOFF: true,
       phoneListIndex: "A",
-      reset: true
+      reset: true,
+      serachResult: [],
+      isShowResult: false
     };
   },
-  computed: {
-    hasNoData() {
-      return JSON.stringify(this.phonesCopy) == "{}";
-    }
-  },
+  computed: {},
   watch: {
     keyword() {
-      if (this.timer) {
-        clearTimeout(this.timer);
+      this.serachResult = [];
+      for (let i in this.phones) {
+        this.phones[i].forEach(item => {
+          if (
+            item.abbr.indexOf(this.keyword.toUpperCase()) === 0 ||
+            item.name.indexOf(this.keyword) === 0
+          ) {
+            this.serachResult.push(item);
+          }
+        });
       }
       if (!this.keyword) {
-        this.phonesCopy = JSON.parse(JSON.stringify(this.phones));
-        return;
+        this.serachResult = [];
       }
-      this.timer = setTimeout(() => {
-        const result = [];
-        for (let i in this.phones) {
-          this.phones[i].forEach(item => {
-            if (
-              item.abbr.indexOf(this.keyword.toUpperCase()) === 0 ||
-              item.name.indexOf(this.keyword) === 0
-            ) {
-              result.push(item);
-            }
-          });
-        }
-        if (result.length > 0) {
-          this.phoneListIndex = result[0].firstChar;
-          this.phonesCopy = { [this.phoneListIndex]: result };
-        } else {
-          this.phonesCopy = {};
-        }
-      }, 100);
+      this.isShowResult = this.serachResult.length ? true : false;
     }
   },
   methods: {
-    handleInput(e) {
-      this.keyword = e.detail.value;
+    selectedCompany(company) {
+      this.isShowResult = false;
+      this.keyword = "";
+      this.$emit("confirm", company);
     },
     handleClick(value) {
       this.$emit("paramClick", value);
@@ -132,8 +131,9 @@ export default {
     margin-left: 38upx;
     margin-top: 18upx;
     background: #fff;
-    left: 382px;
+    left: 166px;
     border-radius: 5px;
+    position: absolute;
     border: 1px solid rgba(231, 230, 230, 1);
     .icon-search {
       display: inline-block;
@@ -142,6 +142,29 @@ export default {
       margin: 13upx 29upx 0 27upx;
       background-image: url("../../static/icon_search.png");
       background-size: 100% 100%;
+    }
+  }
+  &-result {
+    position: absolute;
+    top: 65rpx;
+    left: 0;
+    width: 100%;
+    z-index: 3;
+    max-height: 300upx;
+    overflow: auto;
+    background: #fff;
+    border: 1px solid rgba(231, 230, 230, 1);
+    border-top: 0;
+    li {
+      width: 100%;
+      padding: 8rpx 20rpx;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .no-data {
+      color: rgba(231, 230, 230, 1);
+      padding: 30rpx;
     }
   }
 }

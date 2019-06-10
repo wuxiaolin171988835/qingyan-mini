@@ -20,6 +20,7 @@
                 button="inside"
                 @search="doSearch($event)"
                 class="input-block"
+                ref="input"
               ></mSearch>
               <text @click="resetSearch" class="btn-reset">重置</text>
             </view>
@@ -55,11 +56,11 @@
                     <navigator :url="'./detail?detail=' + JSON.stringify(item)" open-type="navigate" class="grace-news-list-items">
                       <view class="grace-news-list-img-news">
                         <view class="grace-news-list-img-big"  v-if="cateCurrentIndex===2">
-                          <image :src="imgsList[index]" mode="widthFix" class="img"></image>
+                          <image :src="`https://apitest.qxsearch.net/api/res/image/${item.parse_chart_filepath}`" mode="widthFix" class="img"></image>
                           <image
                             src="../../static/icon_magnifier.png"
                             class="icon_magnifier"
-                            @click.stop="magnifierImg(index)"
+                            @click.stop="magnifierImg(`https://apitest.qxsearch.net/api/res/image/${item.parse_chart_filepath}`)"
                           ></image>
                         </view>
                         <view class="grace-news-list-info" :style="{'margin-top': cateCurrentIndex!==2?0:'10upx'}">
@@ -164,8 +165,7 @@ export default {
         queryType: "keypoint",
         content: "",
       },
-      phoneListMiddleVal: '',
-      imgsList: [],
+      phoneListMiddleVal: [],
       bigImgUrl: '',
 
     };
@@ -175,13 +175,6 @@ export default {
     this.getIndustry();
     this.getType();
     this.getCompany();
-  },
-  //下拉刷新
-  onPullDownRefresh: function() {
-    // 重置分页及数据
-    // page = 1;
-    // this.artList = [];
-    // this.getNewsList();
   },
   // 加载更多
   onReachBottom: function() {
@@ -198,26 +191,11 @@ export default {
   },
   methods: {
     /**
-     * 获取图片地址
-     */
-     async getImgUrl(url){
-       var [error,res]= await uni.request({
-          url: `http://39.98.37.245:8083/api/res/image/${url}`,
-          method: "GET", 
-          header: {
-            'Content-Type' : 'text/plain;charset=utf-8',
-          },
-          responseType: 'arraybuffer'
-        })
-        let img_url='data:image/png;base64,' + btoa( new Uint8Array(res.data).reduce((data, byte) => data + String.fromCharCode(byte), '') )
-        return img_url;
-    },
-    /**
      * 获取行业
      */
     async getIndustry () {
       var [error, res] = await uni.request({
-          url: 'http://39.98.37.245:8083/api/res/industry',
+          url: 'https://apitest.qxsearch.net/api/res/industry',
           method: "GET", 
           header: {
             'Content-Type' : 'text/plain;charset=utf-8'
@@ -232,7 +210,7 @@ export default {
      */
     async getType () {
       var [error, res] = await uni.request({
-          url: 'http://39.98.37.245:8083/api/res/type'
+          url: 'https://apitest.qxsearch.net/api/res/type'
       });
       res.data.hits.forEach(item => {
           this.selectList[1].push(item.name)
@@ -243,7 +221,7 @@ export default {
      */
     async getCompany () {
       var [error, res] = await uni.request({
-          url: 'http://39.98.37.245:8083/api/res/company'
+          url: 'https://apitest.qxsearch.net/api/res/company'
       });
       let lists = res.data.hits;
       let keys = [];
@@ -310,13 +288,20 @@ export default {
       }
     },
     chooseCheckBox(value){
-      this.phoneListMiddleVal = value.join();
+      this.phoneListMiddleVal = value;
+      console.log(value)
     },
     /**
      * 确认选择
      */
-    handleConfirmSelect(){
-      this.queryParams.stockCompanies = this.phoneListMiddleVal;
+    handleConfirmSelect(company=""){
+      if(company){
+        let target=[];
+        let isExit=this.phoneListMiddleVal.includes(company.name);
+        !isExit?this.phoneListMiddleVal.push(company.name):''
+      }
+      this.queryParams.stockCompanies = this.phoneListMiddleVal.join();
+      
     },
     /**
      * 确认搜索框
@@ -340,6 +325,7 @@ export default {
         size: 10
       }
       this.cateCurrentIndex = 0;
+      this.$refs.input.resetInput()
     },
     // 数据和分页是模拟的，实际也是这样写
     getNewsList(query=false) {
@@ -352,7 +338,7 @@ export default {
       let data = qs.stringify({...this.queryParams,from: page, size:10})
       uni.request({
         url:
-          "http://39.98.37.245:8083/api/search/rptSearch",
+          "https://apitest.qxsearch.net/api/search/rptSearch",
         data: data,
         method: "POST", 
         header: {
@@ -366,15 +352,6 @@ export default {
           }
           this.artList = this.artList.concat(newsList);
           uni.hideLoading();
-          this.imgsList = [];
-          
-          this.artList.length && this.artList.map(item=>{
-            if(item.parse_chart_filepath){
-              this.getImgUrl(item.parse_chart_filepath).then(res=>{
-                this.imgsList.push(res)
-              })
-            }
-          })
           this.page++;
         },
         complete: res => {
@@ -397,8 +374,8 @@ export default {
     /**
      * 图片放大
      */
-    async magnifierImg(index) {
-      this.bigImgUrl = this.imgsList[index];
+    async magnifierImg(img_url) {
+      this.bigImgUrl = img_url;
       this.$refs.modal.handleShow({
         maskClose: "true",
       });

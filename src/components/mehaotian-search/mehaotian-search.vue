@@ -70,6 +70,9 @@ export default {
     };
   },
   methods: {
+    resetInput() {
+      this.inputVal = "";
+    },
     focus() {
       this.active = true;
     },

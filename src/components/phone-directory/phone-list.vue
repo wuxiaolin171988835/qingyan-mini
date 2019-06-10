@@ -10,7 +10,7 @@
     >
       <view class="phone-list">
         <checkbox-group @change="handleClick">
-          <view class="list-item" v-for="(item, key) of phones" :key="key" :id="key">
+          <view class="list-item" v-for="(item, key) of phonesCopy" :key="key" :id="key">
             <view class="list-item-content">
               <view class="list-item-title">{{key}}</view>
               <label
@@ -24,7 +24,7 @@
                 :data-id="innerItem.id"
                 :data-phoneNumber="innerItem.phoneNumber"
               >
-                <checkbox :value="innerItem.name"/>
+                <checkbox :value="innerItem.name" :checked="innerItem.checked"/>
                 {{innerItem.name}}
               </label>
             </view>
@@ -50,12 +50,25 @@ export default {
       scrollTop: 0,
       letterDetails: [],
       timer: null,
-      institutions: []
+      phonesCopy: this.phones
     };
   },
+  watch: {},
   computed: {
     scrollViewId() {
       return this.letter;
+    },
+    selected() {
+      for (let i in this.phonesCopy) {
+        this.phonesCopy[i].forEach(item => {
+          if (this.stockCompanies.indexOf(item.name) > -1) {
+            item.checked = true;
+          } else {
+            item.checked = false;
+          }
+        });
+      }
+      this.$forceUpdate();
     }
   },
   mounted() {
@@ -162,5 +175,9 @@ export default {
   font-size: 28upx;
   color: #4a4a4a;
   padding-right: 40upx;
+  width: 280upx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>

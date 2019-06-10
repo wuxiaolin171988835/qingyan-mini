@@ -110,7 +110,7 @@ export default {
     fnGetPhoneCode() {
       if (this.phoneReg.test(this.phone.mobile)) {
         uni.request({
-          url: "http://39.98.37.245:8083/api/user/verity",
+          url: "https://apitest.qxsearch.net/api/user/verity",
           data: {
             mobile: this.phone.mobile
           },
