@@ -76,7 +76,7 @@
 				"pagePath": "pages/news/news",
 				"iconPath": "static/icon_news.png",
 				"selectedIconPath": "static/icon_news_selected.png",
-				"text": "全部公告"
+				"text": "所有研报"
 			},
 			{
 				"pagePath": "pages/user/user",

@@ -37,8 +37,9 @@ view{font-size:28upx;}
 .grace-news-list-img{width:200upx; flex-shrink:0;}
 .grace-news-list-title{width:100%; overflow:hidden;}
 .grace-news-list-title-main{ font-size:32upx; 
-  max-width:70%;
+  width:100%;
   display: inline-block;
+  font-weight: bold;
   line-height: 45upx;
   color: rgba(56, 70, 110, 1);
   overflow: hidden;
@@ -57,7 +58,7 @@ view{font-size:28upx;}
   position: relative;
   top:0;
   display: inline-block;
-  font-size:22upx; 
+  font-size:20upx; 
   color: rgba(59, 143, 209, 1);
   padding: 0 20upx;
   height: 36upx;

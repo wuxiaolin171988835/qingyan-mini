@@ -17,7 +17,7 @@
 				<block  v-else>
 					<scroll-view class="lione-items"  scroll-y="true">
 						<block v-for="(item,i) in listchild" :key="i">
-							<view class="mli" @tap="chooseItems(i)" :class="{'actives':(status[i1].includes(item) || (!status[i1][0] && !i))}">
+							<view class="mli" @tap="chooseItems(i)" :class="{'actives':(status[i1]===item || (!status[i1] && !i))}">
 								<text class="uni_14">{{item}}</text>
 							</view>
 						</block>
@@ -42,7 +42,7 @@
 				show: false,
 				listchild: [],
 				newlist: this.list,
-				status: [[],[],[],[],[]]
+				status: []
 			}
 		},
 		components:{
@@ -59,19 +59,19 @@
 			},
 			queryParams: {
 				handler(newVal,oldVal){
-					const DATE_MAP={"1m":"1个月内",
-													"3m":"3个月内",
-													"6m":"6个月内",
-													"1Y":"1年以内",
+					const DATE_MAP={"1m":"<1M",
+													"3m":"<3M",
+													"6m":"<6M",
+													"1Y":"<1Y",
 												};					
-					const PAGE_MAP={"1p":"1-5页",
-													"6p":"6-20页",
-													"20p":"20页以上"
+					const PAGE_MAP={"1p":"1-5P",
+													"6p":"6-20P",
+													"20p":">20P"
 												};
-					this.status[0]=newVal.industries.split(',');
-					this.status[1]=newVal.rptTypes.split(',');
-					this.status[3]=newVal.reportDate.split(',').map(item=>DATE_MAP[item]);
-					this.status[4]=newVal.pageCount.split(',').map(item=>PAGE_MAP[item]);
+					this.status[0]=newVal.industries;
+					this.status[1]=newVal.rptTypes;
+					this.status[3]=DATE_MAP[newVal.reportDate];
+					this.status[4]=PAGE_MAP[newVal.pageCount];
 					this.$forceUpdate();
 				},
 				deep: true
@@ -98,7 +98,8 @@
 			},
 			chooseItems(i) {
 				this.i2 = i;
-				this.$emit('chooseLike', [this.i1, this.i2])
+				this.$emit('chooseLike', [this.i1, this.i2]);
+				this.hide();
 			},
 			hide() {
 				this.show = false;
@@ -118,7 +119,7 @@
 		width:100%;
 	}
 	.lione-items{
-		max-height: 400upx;
+		max-height: 660upx;
 		overflow: auto;
 	}
   
@@ -165,8 +166,9 @@
 	}
 
 	.actives {
-		color: $uni-color-primary;
+		color: #fff;
 		border-color: $uni-color-primary;
+		background-color: $uni-color-primary;
 		&-title{
 			color: #F5A623;
 			border-bottom: none;

@@ -65,12 +65,11 @@
                         </view>
                         <view class="grace-news-list-info" :style="{'margin-top': cateCurrentIndex!==2?0:'10upx'}">
                           <view>
-                            <text class="grace-news-list-title-main">{{item.parse_title || item.parse_chart_title}}</text>
-                            <text class="btn" v-if="cateCurrentIndex===1" style="margin-left: 31upx;">{{item.type}}</text>
+                            <text class="grace-news-list-title-main"><text class="btn" v-if="cateCurrentIndex===1" style="margin-right: 8upx;">{{item.type_short_name}}</text>{{item.parse_title || item.parse_chart_title}}</text>
                           </view>
                           <text class="grace-news-list-title-desc" v-if="cateCurrentIndex!==1 && item.parse_keypoint">
-                            {{item.parse_keypoint.replace(/[\r\n]/g,"")}}
-                            <text class="btn" v-if="cateCurrentIndex!==1" style="margin-left: 20upx;">{{item.type}}</text>
+                            <text class="btn" v-if="cateCurrentIndex!==1" style="margin-right: 8upx;">{{item.type_short_name}}</text>
+                            {{item.parse_keypoint}}
                           </text>
                         </view>
                       </view>
@@ -124,8 +123,8 @@ import qs from 'qs';
 import { setTimeout } from 'timers';
 let page = 0;
 const TAB_TEXT=['industries','rptTypes','stockCompanies','reportDate','pageCount'];
-const DATE_MAP=["","1m","3m","6m","1Y"];
-const PAGE_MAP=["","1p","6p","20p"];
+const DATE_MAP=["全部日期","1m","3m","6m","1Y"];
+const PAGE_MAP=["全部页数","1p","6p","20p"];
 export default {
   components: {
     cmdPageBody,
@@ -144,8 +143,8 @@ export default {
         ["全部行业"],
         ["全部类别"],
         [],
-        ["全部日期", "1个月内", "3个月内", "6个月内", "1年以内"],
-        ["全部页数", "1-5页", "6-20页", "20页以上"]
+        ["全部日期", "<1M", "<3M", "<6M", "<1Y"],
+        ["全部页数", "1-5P", "6-20P", ">20P"]
       ], //select选项值
       institutions: {},//机构
       categories: [
@@ -252,44 +251,27 @@ export default {
      * select选择
      */
     chooseLike(key) {
-      let values = this.queryParams[TAB_TEXT[key[0]]]?this.queryParams[TAB_TEXT[key[0]]].split(','):[];
-      let current = this.selectList[key[0]][key[1]];
-      if(current.indexOf('全部')>-1){
-        if(current=='全部行业'){
-          this.queryParams.rptTypes = '';
-          }
-          this.queryParams[TAB_TEXT[key[0]]]='';
-          return;
+      let value = this.selectList[key[0]][key[1]];
+      //日期
+      value= key[0]===3?DATE_MAP[key[1]]:value;
+      //页数
+      value= key[0]===4?PAGE_MAP[key[1]]:value;
+      //全部
+      if(value.indexOf('全部')>-1){
+        value=''
       }
-      if(key[0]===3){
-        //单选（日期）
-        this.queryParams.reportDate = DATE_MAP[key[1]];
-      }else if(key[0]!=2){
-        //多选（行业、类别、页数）
-        let index=values.indexOf(current);
-        if(index>-1){
-          values.splice(index,1)
-        }else{
-          if(key[0]===4){
-            values.push(PAGE_MAP[key[1]])
-          }else{
-            if(key[0]===0){
-              //行业中任意行业，类别变成行业研究
-              current != '全部行业'?this.queryParams.rptTypes='行业研究': '';
-            }else if(key[0]===1){
-              //用户直接选择“类别”中的某一项时，“行业”的默认值都是ALL（因为客户选择非“行业研究”类别时，“行业”选项是没有意义的）。
-              current != '行业研究'?this.queryParams.industries = '':'';
-            }
-
-            values.push(current);
-          } 
-        }
-        this.queryParams[TAB_TEXT[key[0]]]=values.join()
+      this.queryParams[TAB_TEXT[key[0]]]=value;
+        console.log(key[0],value)
+      if(key[0]===0){
+        //行业中任意行业，类别变成行业研究,点击全部行业，类别为全部类别
+        this.queryParams.rptTypes=value?'行业研究':'';
+      }else if(key[0]===1){
+        //用户直接选择“类别”中的某一项时，“行业”的默认值都是ALL（因为客户选择非“行业研究”类别时，“行业”选项是没有意义的）。
+        value != '行业研究'?this.queryParams.industries = '':'';
       }
     },
     chooseCheckBox(value){
       this.phoneListMiddleVal = value;
-      console.log(value)
     },
     /**
      * 确认选择
@@ -457,7 +439,7 @@ export default {
 .search-box {
   display: flex;
   background-color: rgba(98, 183, 233, 1);
-  padding: 23upx 40upx 20upx;
+  padding: 10upx 40upx 8upx;
   .input-block {
     flex: 1;
   }
