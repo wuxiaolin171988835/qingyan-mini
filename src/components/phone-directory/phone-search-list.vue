@@ -23,6 +23,7 @@
       <view class="search-main-errtitle" v-if="hasNoData">无搜索结果</view>
       <phone-list
         :phones="phones"
+        :hotPhones="hotPhones"
         :letter="letter"
         :scrollAnimationOFF="scrollAnimationOFF"
         @change="handlePhoneListIndex"
@@ -42,7 +43,8 @@ export default {
   name: "phone-search-list",
   props: {
     phones: Object,
-    stockCompanies: String
+    stockCompanies: String,
+    hotPhones: Array
   },
   components: {
     phoneList,

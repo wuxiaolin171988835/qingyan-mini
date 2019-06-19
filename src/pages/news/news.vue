@@ -11,7 +11,7 @@
       ></wuc-tab>
       <!-- tab内容区 -->
       <div class="cu-bar bg-white solid-bottom" style="margin-top:100upx">
-        <div class="content">
+        <div class="search-content" v-if="!TabCur">
           <block>
             <view class="search-box fixedit">
               <mSearch
@@ -24,7 +24,7 @@
               ></mSearch>
               <text @click="resetSearch" class="btn-reset">重置</text>
             </view>
-            <ChooseLits :list="list" :arr="selectList" @chooseLike="chooseLike" @chooseCheckBox="chooseCheckBox" @onSelectDialog="onSelectDialog" :institutions="institutions" @handleConfirmSelect="handleConfirmSelect" :queryParams="queryParams"></ChooseLits>
+            <ChooseLits :list="list" :arr="selectList" @chooseLike="chooseLike" @chooseCheckBox="chooseCheckBox" @onSelectDialog="onSelectDialog" :institutions="institutions" @handleConfirmSelect="handleConfirmSelect" :hotInstitutions="hotInstitutions" :queryParams="queryParams"></ChooseLits>
             <!-- tab项 -->
             <view>
               <view class="fixedit">
@@ -65,11 +65,15 @@
                         </view>
                         <view class="grace-news-list-info" :style="{'margin-top': cateCurrentIndex!==2?0:'10upx'}">
                           <view>
-                            <text class="grace-news-list-title-main"><text class="btn" v-if="cateCurrentIndex===1" style="margin-right: 8upx;">{{item.type_short_name}}</text>{{item.parse_title || item.parse_chart_title}}</text>
+                            <text class="grace-news-list-title-main">
+                              <text class="btn" v-if="cateCurrentIndex===1" style="margin-right: 8upx;">{{item.type_short_name}}</text>
+                              <text class="btn" v-if="cateCurrentIndex===1 && item.industry" style="margin-right: 8upx;">{{item.industry}}</text>
+                              <text>{{item.parse_title || item.parse_chart_title}}</text></text>
                           </view>
-                          <text class="grace-news-list-title-desc" v-if="cateCurrentIndex!==1 && item.parse_keypoint">
+                          <text class="grace-news-list-title-desc" v-if="cateCurrentIndex!==1 && item.abstractText">
                             <text class="btn" v-if="cateCurrentIndex!==1" style="margin-right: 8upx;">{{item.type_short_name}}</text>
-                            {{item.parse_keypoint}}
+                            <text class="btn" v-if="cateCurrentIndex!==1 && item.industry" style="margin-right: 8upx;">{{item.industry}}</text>
+                            <text>{{item.abstractText.replace(/[\r\n]/g,'')}}</text>
                           </text>
                         </view>
                       </view>
@@ -80,7 +84,7 @@
                         </view>
                         <view class="item">
                           <image src="../../static/icon_person.png" class="item-img"></image>
-                          <text class="item-text">{{item.parse_authors}}</text>
+                          <text class="item-text" v-if="item.parse_authors">{{item.parse_authors[0]}}</text>
                         </view>
                         <view class="item">
                           <image src="../../static/icon_page.png" class="item-img"></image>
@@ -101,6 +105,9 @@
           </block>
           
         </div>
+        <div v-else class="selection-content">
+          敬请期待...
+        </div>
       </div>
       <!-- 图片放大弹窗 -->
       <min-modal ref="modal">
@@ -118,13 +125,8 @@ import wucTab from "@/components/wuc-tab/wuc-tab.vue";
 import ChooseLits from "@/components/choose-Cade/choose-Cade.vue";
 import mSearch from "@/components/mehaotian-search/mehaotian-search.vue";
 import minModal from "@/components/min-modal/min-modal";
-import btoa from 'btoa';
 import qs from 'qs';
-import { setTimeout } from 'timers';
 let page = 0;
-const TAB_TEXT=['industries','rptTypes','stockCompanies','reportDate','pageCount'];
-const DATE_MAP=["全部日期","1m","3m","6m","1Y"];
-const PAGE_MAP=["全部页数","1p","6p","20p"];
 export default {
   components: {
     cmdPageBody,
@@ -136,24 +138,58 @@ export default {
   data() {
     return {
       isSelectDialogShow: false,
-      tabList: [{ name: "研报查询" }, { name: "研报精选" }], //顶级tab
+      tabList: [{ name: "研报查询" }, { name: "研报精选" }], 
       TabCur: 0, //一级tab选中项
-      list: ["行业", "类别", "机构", "日期", "页数"], //select选项卡
+      list: ["行业", "类别", "机构", "日期", "页数"], 
       selectList: [
-        ["全部行业"],
-        ["全部类别"],
+        [{
+          name: '全部',
+          value: ''
+        }],
+        [{
+          name: '全部',
+          value: ''
+        }],
         [],
-        ["全部日期", "<1M", "<3M", "<6M", "<1Y"],
-        ["全部页数", "1-5P", "6-20P", ">20P"]
-      ], //select选项值
+        [{
+          name: '全部',
+          value: ''
+        },{
+          name: '1个月以内',
+          value: '1m'
+        },{
+          name: '3个月以内',
+          value: '3m'
+        },{
+          name: '6个月以内',
+          value: '6m'
+        },{
+          name: '1年以内',
+          value: '1Y'
+        }],
+        [{
+          name: '全部',
+          value: ''
+        },{
+          name: '1-5页',
+          value: '1p'
+        },{
+          name: '6-20页',
+          value: '6p'
+        },{
+          name: '20页以上',
+          value: '20p'
+        }]
+      ],
       institutions: {},//机构
+      hotInstitutions: [],//热门机构
       categories: [
         { cateid: 0, name: "摘要", value: 'keypoint' },
         { cateid: 1, name: "正文", value: 'content' },
         { cateid: 2, name: "图表", value: 'chart' }
-      ],//二级tab
-      cateCurrentIndex: 0,//二级tab选中项
-      artList: [],
+      ],
+      cateCurrentIndex: 0,
+      artList: [],//研报列表
       total: '',
       queryParams: {
         industries: "",
@@ -163,7 +199,7 @@ export default {
         pageCount: "",
         queryType: "keypoint",
         content: "",
-      },
+      },//查询参数
       phoneListMiddleVal: [],
       bigImgUrl: '',
 
@@ -201,7 +237,10 @@ export default {
           },
       });
       res.data.hits.forEach(item => {
-          this.selectList[0].push(item.name)
+          this.selectList[0].push({
+            name: item.short_name,
+            value: item.short_name
+          })
       });
     },
     /**
@@ -212,7 +251,10 @@ export default {
           url: 'https://apitest.qxsearch.net/api/res/type'
       });
       res.data.hits.forEach(item => {
-          this.selectList[1].push(item.name)
+          this.selectList[1].push({
+            name: item.short_name,
+            value: item.short_name
+          })
       });
     },
     /**
@@ -230,6 +272,7 @@ export default {
          let target=lists.filter(v=>v.firstChar===u);
          this.institutions[u]=target;
       })
+      this.hotInstitutions = res.data.hots;
     },
     /**
      * 下拉菜单是否展示
@@ -241,33 +284,22 @@ export default {
      * tab切换
      */
     tabChangeTop(index) {
-      this.$refs.chooseLites.hide();
       this.TabCur = index;
-      if(index===1){
-        this.cateCurrentIndex=0;
-      }
     },
     /**
      * select选择
      */
     chooseLike(key) {
-      let value = this.selectList[key[0]][key[1]];
-      //日期
-      value= key[0]===3?DATE_MAP[key[1]]:value;
-      //页数
-      value= key[0]===4?PAGE_MAP[key[1]]:value;
-      //全部
-      if(value.indexOf('全部')>-1){
-        value=''
-      }
-      this.queryParams[TAB_TEXT[key[0]]]=value;
-        console.log(key[0],value)
-      if(key[0]===0){
+      let selectedIndex=key[0];
+      let value = key[1];
+      let currentKey = Object.keys(this.queryParams)[key[0]];
+      this.queryParams[currentKey]=value;
+      if(!selectedIndex){
         //行业中任意行业，类别变成行业研究,点击全部行业，类别为全部类别
-        this.queryParams.rptTypes=value?'行业研究':'';
-      }else if(key[0]===1){
+        this.queryParams.rptTypes=value?'行研':'';
+      }else if(selectedIndex===1){
         //用户直接选择“类别”中的某一项时，“行业”的默认值都是ALL（因为客户选择非“行业研究”类别时，“行业”选项是没有意义的）。
-        value != '行业研究'?this.queryParams.industries = '':'';
+        value != '行研'?this.queryParams.industries = '':'';
       }
     },
     chooseCheckBox(value){
@@ -366,8 +398,12 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .news {
+  .selection-content{
+    padding-top: 200upx;
+    text-align: center;
+  }
   .empty{
     text-align: center;
     padding: 40upx;

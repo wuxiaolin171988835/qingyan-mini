@@ -29,7 +29,7 @@
           <button type="default" class="btn" @click="checkResource">查看原文</button>
         </view>
         <view class="desc">
-          {{detailInfo.parse_keypoint}}
+          {{detailInfo.abstractText}}
         </view>
       </div>
     </view>
@@ -154,6 +154,7 @@ export default {
       line-height: 48upx;
       color: #4a4a4a;
       font-size: 24upx;
+      text-indent: 2em;
     }
   }
 }

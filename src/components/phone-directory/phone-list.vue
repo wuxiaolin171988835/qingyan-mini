@@ -2,15 +2,43 @@
   <view>
     <scroll-view
       class="scroll-list"
-      :scroll-top="1"
       scroll-y="true"
-      :scroll-with-animation="scrollAnimationOFF"
-      :scroll-into-view="scrollViewId"
-      @scroll="handleScroll"
     >
       <view class="phone-list">
         <checkbox-group @change="handleClick">
-          <view class="list-item" v-for="(item, key) of phonesCopy" :key="key" :id="key">
+          <view class="selected-phones list-item" v-if="selectedPhones.length">
+            <view class="list-item-content">
+              <view class="list-item-title">已选</view>
+              <label
+                class="list-item-phone"
+                hover-class="commonly-hover"
+                :hover-start-time="20"
+                :hover-stay-time="70"
+                v-for="(item,index) in selectedPhones"
+                :key="index"
+              >
+                <checkbox :value="item.name" :checked="item.checked"/>
+                {{item.name}}
+              </label>
+            </view>
+          </view>
+          <view class="hot-phones list-item" v-if="hotPhones.length">
+            <view class="list-item-content">
+              <view class="list-item-title">热门</view>
+              <label
+                class="list-item-phone"
+                hover-class="commonly-hover"
+                :hover-start-time="20"
+                :hover-stay-time="70"
+                v-for="(item,index) in hotPhones"
+                :key="index"
+              >
+                <checkbox :value="item.name" :checked="item.checked"/>
+                {{item.name}}
+              </label>
+            </view>
+          </view>
+          <view class="phones list-item" v-for="(item, key) of phonesCopy" :key="key" :id="key">
             <view class="list-item-content">
               <view class="list-item-title">{{key}}</view>
               <label
@@ -18,11 +46,8 @@
                 hover-class="commonly-hover"
                 :hover-start-time="20"
                 :hover-stay-time="70"
-                v-for="innerItem in item"
-                :key="innerItem.id"
-                :data-name="innerItem.name"
-                :data-id="innerItem.id"
-                :data-phoneNumber="innerItem.phoneNumber"
+                v-for="(innerItem,index) in item"
+                :key="index"
               >
                 <checkbox :value="innerItem.name" :checked="innerItem.checked"/>
                 {{innerItem.name}}
@@ -40,29 +65,24 @@ export default {
   name: "phone-list",
   props: {
     phones: Object,
-    letter: String,
-    scrollAnimationOFF: Boolean,
+    hotPhones: Array,
     stockCompanies: String
   },
   data() {
     return {
-      winHeight: 0,
-      scrollTop: 0,
-      letterDetails: [],
-      timer: null,
-      phonesCopy: this.phones
+      phonesCopy: this.phones,
+      selectedPhones: []
     };
   },
   watch: {},
   computed: {
-    scrollViewId() {
-      return this.letter;
-    },
     selected() {
+      this.selectedPhones = []
       for (let i in this.phonesCopy) {
         this.phonesCopy[i].forEach(item => {
           if (this.stockCompanies.indexOf(item.name) > -1) {
             item.checked = true;
+            this.selectedPhones.push(item);
           } else {
             item.checked = false;
           }
@@ -72,49 +92,15 @@ export default {
     }
   },
   mounted() {
-    // #ifndef APP-PLUS
-    // this.winHeight = uni.getSystemInfoSync().windowHeight - 49.5;
-    // //#endif
-    // //#ifdef APP-PLUS
-    // this.winHeight = uni.getSystemInfoSync().windowHeight - 100;
-    //#endif
+    
   },
   methods: {
     handleClick: function(e) {
       this.$emit("handleClick", e.detail.value);
     },
-    handleScroll(e) {
-      // if (this.letterDetails.length === 0) {
-      //   let view = uni.createSelectorQuery().selectAll(".list-item");
-      //   view
-      //     .boundingClientRect(data => {
-      //       let top = data[0].top;
-      //       data.forEach((item, index) => {
-      //         item.top = item.top - top;
-      //         item.bottom = item.bottom - top;
-      //         this.letterDetails.push({
-      //           id: item.id,
-      //           top: item.top,
-      //           bottom: item.bottom
-      //         });
-      //       });
-      //     })
-      //     .exec();
-      // }
-      // const scrollTop = e.detail.scrollTop;
-      // this.letterDetails.some((item, index) => {
-      //   if (scrollTop >= item.top && scrollTop <= item.bottom - 5) {
-      //     this.$emit("change", item.id);
-      //     this.$emit("reset", true);
-      //     return true;
-      //   }
-      // });
-    }
+    
   },
-  /**
-   * 确定
-   */
-  confirm() {}
+ 
 };
 </script>
 
@@ -146,7 +132,7 @@ export default {
   height: 100%;
   &-content {
     width: 100%;
-    padding-left: 56upx;
+    padding-left: 80upx;
     display: flex;
     align-items: center;
     flex-wrap: wrap;
@@ -174,8 +160,7 @@ export default {
   line-height: 92upx;
   font-size: 28upx;
   color: #4a4a4a;
-  padding-right: 40upx;
-  width: 280upx;
+  width: 48%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
