@@ -26,35 +26,39 @@
             <view class="title-hot">
               <text>热招职位</text>
             </view>
-            <navigator url="../about/position" open-type="navigate">
+            <!-- <navigator url="../about/position" open-type="navigate"> -->
               <cmd-cell-item
-                v-for="i in 10"
-                :key="i"
-                title="销售经理"
-                brief="职位类别：采销类"
-                addon="2019-03-01"
+                v-for="position in positionList"
+                :key="position.id"
+                :title="position.name"
+                :addon="position.release_time"
                 arrowDefined
+                @click="goDetail(position.id)"
               ></cmd-cell-item>
-            </navigator>
+            <!-- </navigator> -->
           </view>
           <view v-else class="produce-container">
             <view class="title">
               <text>公司简介</text>
             </view>
             <text class="desc">
-              北京青彦科技有限公司投身于金融科技（Fintech）领域，矢志于为金融投资研究工作提供智慧分析的服务与工具。公司口号为“让投资更智慧”，通过大数据分析、人工智能、知识图谱等IT技术赋能金融投资，让投资经理与分析师们能够更高效、更便捷的获取价值数据及深度分析结果，从而领先市场一步。
+              北京青彦科技有限公司投身于金融科技（Fintech）领域，矢志于为金融投资研究提供智慧分析的服务与工具。公司口号为“智慧投研”，通过大数据分析、人工智能、知识图谱等IT技术赋能金融投资，让投资人员与分析师能够更高效、更便捷的获取价值数据及深度分析报告，从而领先市场一步。
             </text>
             \n 
             <text class="desc" style="margin-top: 50upx;">
               公司坐落于北京市朝阳区三元桥曙光大厦，毗邻三元桥地铁站。公司是新型创业型公司，已获得种子轮融资，创始人为在金融投资领域浸淫多年的投资专家，对金融投资行业的趋势变化有着深刻的行业理解。
             </text>
+            \n 
+            <text class="desc" style="margin-top: 50upx;">
+              业务联系请联系<text style="color:#3B8FD1;">contact@qxsearch.net</text>
+            </text>
             <view class="title">
-              <text>公司团队</text>
+              <text>创始人简介</text>
             </view>
-            <span>龙红亮，创始人：</span>
+            <span>龙红亮，CFA，金融系博士：</span>
               \n
             <text class="desc"  style="margin-top: 50upx;">
-              CFA，中国社科院金融系博士，中科院数学院硕士。商业银行多年的FICC投资管理经验，管理规模超过500亿元；亦曾服务于汤森路透世界级的金融资讯集团。积累了丰富的金融投资行业经验，对Fintech领域有着深刻的理解。出版个人专著《债券投资实战》。
+              商业银行多年的FICC投资管理经验，管理规模超过500亿元；亦曾服务于世界级的金融资讯集团汤森路透。积累了丰富的金融投资行业经验，对Fintech领域有着深刻的理解。出版个人专著《债券投资实战》。
             </text>
             <view class="logo">
               <image src="../../static/logo.png"></image>
@@ -86,57 +90,41 @@ export default {
         { cateid: 1, name: "关于我们" }
       ],
       // 当前选中tab
-      cateCurrentIndex: 0
+      cateCurrentIndex: 0,
+      positionList:[
+        {
+          id: 1,
+          name: '产品总监',
+          release_time: '2019-06-13'
+        },
+        {
+          id: 2,
+          name: '技术总监',
+          release_time: '2019-06-13'
+        },
+        {
+          id: 3,
+          name: '金融实习生',
+          release_time: '2019-06-13'
+        },
+        {
+          id: 4,
+          name: '技术实习生',
+          release_time: '2019-06-13'
+        }
+      ],//职位列表
     };
   },
-  onLoad() {
-    this.top = "44px";
-    page = 1;
-    // artList: [];
-    this.getNewsList();
+  onLoad(options) {
   },
   //下拉刷新
   onPullDownRefresh: function() {
-    // 重置分页及数据
-    page = 1;
-    this.artList = [];
-    this.getNewsList();
+    
   },
   // 加载更多
   onReachBottom: function() {
-    this.getNewsList();
   },
   methods: {
-    // 数据和分页是模拟的，实际也是这样写
-    getNewsList: function() {
-      // uni.showLoading({});
-      // // 假设已经到底，实际根据api接口返回值判断
-      // if (page >= 3) {
-      //   uni.showToast({ title: "已经加载全部", icon: "none" });
-      //   return;
-      // }
-      // uni.request({
-      //   url:
-      //     "https://www.easy-mock.com/mock/5cb9655c01e2e57715d324b0/example/imgnewlist?page=" +
-      //     page +
-      //     "#!method=get&cate=" +
-      //     cate,
-      //   method: "GET",
-      //   data: {},
-      //   success: res => {
-      //     console.log(res);
-      //     var newsList = res.data.data;
-      //     this.artList = this.artList.concat(newsList);
-      //     uni.hideLoading();
-      //     page++;
-      //   },
-      //   complete: res => {
-      //     uni.hideLoading();
-      //     uni.stopPullDownRefresh();
-      //   }
-      // });
-    },
-
     tabChange: function(e) {
       // 选中的索引
       var index = e.currentTarget.dataset.index;
@@ -145,15 +133,17 @@ export default {
       this.cateCurrentIndex = index;
       // 动态替换内容
       this.content = this.categories[index].name;
-
       // 读取分类数据
       cate = cateid; //把分类信息发送给api接口即可读取对应分类的数据
-      // 重置分页及数据
-      page = 1;
-      // this.artList = [];
-      // 加载对应分类数据覆盖上一个分类的展示数据 加载更多是继续使用这个分类
-      // this.getNewsList();
-    }
+    },
+  goDetail(position){
+    debugger
+    console.log('id:',position.id)
+    let position_id = JSON.stringify(position.id);
+    uni.navigateTo({
+      url: './position?position_id='+position_id,
+    })
+  }
   }
 };
 </script>
