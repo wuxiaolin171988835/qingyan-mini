@@ -53,7 +53,7 @@
               <view class="grace-news-list">
                 <block v-if="artList.length">
                   <block v-for="(item, index) in artList" :key="index">
-                    <navigator :url="'./detail?detail=' + JSON.stringify(item)" open-type="navigate" class="grace-news-list-items">
+                    <navigator :url="'./detail?id=' + item.id+'&queryType='+queryParams.queryType" open-type="navigate" class="grace-news-list-items">
                       <view class="grace-news-list-img-news">
                         <view class="grace-news-list-img-big"  v-if="cateCurrentIndex===2">
                           <image :src="`https://apitest.qxsearch.net/api/res/image/${item.parse_chart_filepath}`" mode="widthFix" class="img"></image>
