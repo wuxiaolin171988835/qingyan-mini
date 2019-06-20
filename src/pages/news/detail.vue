@@ -2,7 +2,10 @@
   <cmd-page-body>
     <view class="detail">
       <div class="header">
-        <h3 class="title">{{detailInfo.parse_title || detailInfo.parse_chart_title}}</h3>
+        <h3 class="title">
+          <text v-if="queryType==='chart'">{{detailInfo.parse_chart_title}}</text>
+          <text v-else>{{detailInfo.parse_title}}</text>
+        </h3>
         <view class="flex-items">
           <view class="item">
             <text class="item-text">{{detailInfo.type}}</text>
@@ -28,9 +31,8 @@
           </view>
           <button type="default" class="btn" @click="checkResource">查看原文</button>
         </view>
-        <view class="desc">
-          {{detailInfo.abstractText}}
-        </view>
+        <rich-text class="desc" :nodes="detailInfo.abstractRichText">
+        </rich-text>
       </div>
     </view>
   </cmd-page-body>
@@ -42,11 +44,24 @@ export default {
   components: { cmdPageBody },
   data() {
     return {
-      detailInfo: {}
+      detailInfo: {},
+      queryType:''
     };
   },
   onLoad(options) {
-    this.detailInfo = JSON.parse(options.detail)
+    this.queryType=options.queryType;
+    uni.request({
+      url:
+        "https://apitest.qxsearch.net/api/search/rptSearchId",
+      data: {id:options.id,queryType:options.queryType},
+      method: "POST", 
+      header: {
+        'content-type':'application/x-www-form-urlencoded',
+      },
+      success: res => {
+        this.detailInfo=res.data.hits[0]
+      }
+    })
     
 
   },
@@ -57,7 +72,7 @@ export default {
      */
     checkResource(){
       uni.downloadFile({
-        url: `https://api.qxsearch.net/api/res/pdf/${this.detailInfo.parse_pdf_filepath}`,
+        url: `https://apitest.qxsearch.net/api/res/pdf/${this.detailInfo.parse_pdf_filepath}`,
         success: function (res) {
           var filePath = res.tempFilePath;
           uni.openDocument({

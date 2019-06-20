@@ -53,7 +53,7 @@
               <view class="grace-news-list">
                 <block v-if="artList.length">
                   <block v-for="(item, index) in artList" :key="index">
-                    <navigator :url="'./detail?detail=' + JSON.stringify(item)" open-type="navigate" class="grace-news-list-items">
+                    <navigator :url="'./detail?id=' + item.id+'&queryType='+queryParams.queryType" open-type="navigate" class="grace-news-list-items">
                       <view class="grace-news-list-img-news">
                         <view class="grace-news-list-img-big"  v-if="cateCurrentIndex===2">
                           <image :src="`https://apitest.qxsearch.net/api/res/image/${item.parse_chart_filepath}`" mode="widthFix" class="img"></image>
@@ -65,16 +65,17 @@
                         </view>
                         <view class="grace-news-list-info" :style="{'margin-top': cateCurrentIndex!==2?0:'10upx'}">
                           <view>
-                            <text class="grace-news-list-title-main">
+                            <view class="grace-news-list-title-main">
                               <text class="btn" v-if="cateCurrentIndex===1" style="margin-right: 8upx;">{{item.type_short_name}}</text>
                               <text class="btn" v-if="cateCurrentIndex===1 && item.industry" style="margin-right: 8upx;">{{item.industry}}</text>
-                              <text>{{item.parse_title || item.parse_chart_title}}</text></text>
+                              <rich-text :nodes="item.title"></rich-text>
+                            </view>
                           </view>
-                          <text class="grace-news-list-title-desc" v-if="cateCurrentIndex!==1 && item.abstractText">
+                          <view class="grace-news-list-title-desc" v-if="cateCurrentIndex!==1 && item.abstractText">
                             <text class="btn" v-if="cateCurrentIndex!==1" style="margin-right: 8upx;">{{item.type_short_name}}</text>
                             <text class="btn" v-if="cateCurrentIndex!==1 && item.industry" style="margin-right: 8upx;">{{item.industry}}</text>
-                            <text>{{item.abstractText.replace(/[\r\n]/g,'')}}</text>
-                          </text>
+                            <rich-text :nodes="item.abstractText.replace(/[\r\n]/g,'')"></rich-text>
+                          </view>
                         </view>
                       </view>
                       <view class="flex-items">
@@ -143,42 +144,42 @@ export default {
       list: ["行业", "类别", "机构", "日期", "页数"], 
       selectList: [
         [{
-          name: '全部',
-          value: ''
+          short_name: '全部',
+          name: ''
         }],
         [{
-          name: '全部',
-          value: ''
+          short_name: '全部',
+          name: ''
         }],
         [],
         [{
-          name: '全部',
-          value: ''
+          short_name: '全部',
+          name: ''
         },{
-          name: '1个月以内',
-          value: '1m'
+          short_name: '1个月以内',
+          name: '1m'
         },{
-          name: '3个月以内',
-          value: '3m'
+          short_name: '3个月以内',
+          name: '3m'
         },{
-          name: '6个月以内',
-          value: '6m'
+          short_name: '6个月以内',
+          name: '6m'
         },{
-          name: '1年以内',
-          value: '1Y'
+          short_name: '1年以内',
+          name: '1Y'
         }],
         [{
-          name: '全部',
-          value: ''
+          short_name: '全部',
+          name: ''
         },{
-          name: '1-5页',
-          value: '1p'
+          short_name: '1-5页',
+          name: '1p'
         },{
-          name: '6-20页',
-          value: '6p'
+          short_name: '6-20页',
+          name: '6p'
         },{
-          name: '20页以上',
-          value: '20p'
+          short_name: '20页以上',
+          name: '20p'
         }]
       ],
       institutions: {},//机构
@@ -236,12 +237,9 @@ export default {
             'Content-Type' : 'text/plain;charset=utf-8'
           },
       });
-      res.data.hits.forEach(item => {
-          this.selectList[0].push({
-            name: item.short_name,
-            value: item.short_name
-          })
-      });
+      res.data.hits.map(item=>{
+        this.selectList[0].push(item)
+      })
     },
     /**
      * 获取类别     
@@ -250,12 +248,9 @@ export default {
       var [error, res] = await uni.request({
           url: 'https://apitest.qxsearch.net/api/res/type'
       });
-      res.data.hits.forEach(item => {
-          this.selectList[1].push({
-            name: item.short_name,
-            value: item.short_name
-          })
-      });
+      res.data.hits.map(item=>{
+        this.selectList[1].push(item)
+      })
     },
     /**
      * 获取机构
@@ -291,15 +286,15 @@ export default {
      */
     chooseLike(key) {
       let selectedIndex=key[0];
-      let value = key[1];
+      let value = key[1].name;
       let currentKey = Object.keys(this.queryParams)[key[0]];
       this.queryParams[currentKey]=value;
       if(!selectedIndex){
         //行业中任意行业，类别变成行业研究,点击全部行业，类别为全部类别
-        this.queryParams.rptTypes=value?'行研':'';
+        this.queryParams.rptTypes=value?'行业研究':'';
       }else if(selectedIndex===1){
         //用户直接选择“类别”中的某一项时，“行业”的默认值都是ALL（因为客户选择非“行业研究”类别时，“行业”选项是没有意义的）。
-        value != '行研'?this.queryParams.industries = '':'';
+        value != '行业研究'?this.queryParams.industries = '':'';
       }
     },
     chooseCheckBox(value){
@@ -339,7 +334,7 @@ export default {
         size: 10
       }
       this.cateCurrentIndex = 0;
-      this.$refs.input.resetInput()
+      this.$refs.input.resetInput();
     },
     // 数据和分页是模拟的，实际也是这样写
     getNewsList(query=false) {
@@ -365,6 +360,13 @@ export default {
             this.artList = [];
           }
           this.artList = this.artList.concat(newsList);
+          this.artList.map(item=>{
+            if(this.queryParams.queryType==='chart'){
+              item.title=item.parse_chart_title
+            }else{
+              item.title=item.parse_title
+            }
+          })
           uni.hideLoading();
           this.page++;
         },

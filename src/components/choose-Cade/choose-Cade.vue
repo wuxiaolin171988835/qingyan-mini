@@ -17,7 +17,7 @@
 				<block  v-else>
 					<scroll-view class="lione-items"  scroll-y="true">
 							<view class="mli">
-								<text class="text" v-for="(item,i) in listchild" :key="i" @tap="chooseItems(i,item.value)" :class="{'actives':(status[i1]===item.value || (!status[i1] && !i))}">{{item.name}}</text>
+								<text class="text" v-for="(item,i) in listchild" :key="i" @tap="chooseItems(i,item)" :class="{'actives':(status[i1]===item.name || (!status[i1] && !i))}">{{item.short_name}}</text>
 							</view>
 					</scroll-view>
 				</block>
@@ -57,13 +57,18 @@
 			},
 			queryParams: {
 				handler(newVal,oldVal){
-					this.status=[newVal.industries,newVal.rptTypes,'',newVal.reportDate,newVal.pageCount]
-					if(!this.i1){
-						//行业中任意行业，类别变成行业研究,点击全部行业，类别为全部类别
-						this.newlist[1]=newVal.industries?'行研':this.list[1];
-					}else if(this.i1===1){
-						//用户直接选择“类别”中的某一项时，“行业”的默认值都是ALL（因为客户选择非“行业研究”类别时，“行业”选项是没有意义的）。
-						newVal.rptTypes != '行研'?this.newlist[0] = this.list[0]:'';
+					this.status=[newVal.industries,newVal.rptTypes,'',newVal.reportDate,newVal.pageCount];
+					if(!(newVal.industries || newVal.rptTypes || newVal.reportDate || newVal.pageCount)){
+						//重置
+						this.newlist=[...this.list];
+					}else{
+						if(!this.i1){
+							//行业中任意行业，类别变成行业研究,点击全部行业，类别为全部类别
+							this.newlist[1]=newVal.industries?'行研':this.list[1];
+						}else if(this.i1===1){
+							//用户直接选择“类别”中的某一项时，“行业”的默认值都是ALL（因为客户选择非“行业研究”类别时，“行业”选项是没有意义的）。
+							newVal.rptTypes != '行研'?this.newlist[0] = this.list[0]:'';
+						}
 					}
 					this.$forceUpdate();
 				},
@@ -89,10 +94,10 @@
 					this.show=!this.show;
 				}
 			},
-			chooseItems(i,value) {
+			chooseItems(i,item) {
 				this.i2 = i;
-				this.newlist[this.i1]=value?value:this.list[this.i1];
-				this.$emit('chooseLike', [this.i1, value]);
+				this.newlist[this.i1]=item.name?item.short_name:this.list[this.i1];
+				this.$emit('chooseLike', [this.i1, item]);
 				this.hide();
 			},
 			hide() {
