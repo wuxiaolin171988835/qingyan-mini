@@ -136,12 +136,9 @@ export default {
       // 读取分类数据
       cate = cateid; //把分类信息发送给api接口即可读取对应分类的数据
     },
-  goDetail(position){
-    debugger
-    console.log('id:',position.id)
-    let position_id = JSON.stringify(position.id);
+  goDetail(id){
     uni.navigateTo({
-      url: './position?position_id='+position_id,
+      url: './position?position_id='+id,
     })
   }
   }

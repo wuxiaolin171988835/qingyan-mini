@@ -37,7 +37,7 @@ const POSITION_DETAIL=[
     id:2,
     name: '技术总监',
     release_time: '2019-06-13',
-    duty: ['1.负责网络爬虫的开发及pdf/word及其他文档的内容解析；','2.负责金融垂直领域的搜索引擎的框架搭建及技术实现；'],
+    duty: ['1.负责网络爬虫的开发及pdf/word及其他文档的内容解析；','2.负责金融垂直领域的搜索引擎的框架搭建及技术实现。'],
     demand: ['1.熟悉垂直领域搜索引擎的搭建，及常见的技术框架；熟悉elastic-search；','2.精通JAVA、熟悉python;','3.熟悉MySQL, Mongo DB; 熟悉Linux平台开发。'],
     salary_range: '10-30K/月'
   },
@@ -45,8 +45,8 @@ const POSITION_DETAIL=[
     id:3,
     name: '金融实习生',
     release_time: '2019-06-13',
-    duty: ['1.负责对产品进行业务测试及用户体验测试，并撰写测试报告；','2.人工整理或撰写金融研究报告；'],
-    demand: ['1.金融、经济或相关专业的本科或研究生在读；','2.平均每天至少有4小时工作时间。可以接受远程办公；'],
+    duty: ['1.负责对产品进行业务测试及用户体验测试，并撰写测试报告；','2.人工整理或撰写金融研究报告。'],
+    demand: ['1.金融、经济或相关专业的本科或研究生在读；','2.平均每天至少有4小时工作时间。可以接受远程办公。'],
     salary_range: '100-400/天'
   },
   {
@@ -68,7 +68,6 @@ export default {
   onLoad(options) {
     let index = POSITION_DETAIL.findIndex(item=>item.id===JSON.parse(options.position_id));
     this.positionDetail=POSITION_DETAIL[index]
-    console.log(options.position_id,index)
   },
   methods: {}
 };
