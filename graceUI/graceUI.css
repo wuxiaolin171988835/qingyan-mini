@@ -55,9 +55,9 @@ view{font-size:28upx;}
 .grace-news-list-info view{font-size:24upx; color:#666;}
 .grace-news-list-info text{font-size:24upx; }
 .grace-news-list-info text.btn{
+  float: left;
   position: relative;
   top:0;
-  display: inline-block;
   font-size:20upx; 
   color: rgba(59, 143, 209, 1);
   padding: 0 20upx;
@@ -65,6 +65,7 @@ view{font-size:28upx;}
   border-radius: 18upx;
   text-align: center;
   line-height: 36upx;
+  display: inline-block;
   border: 1px solid rgba(59, 143, 209, 1);}
 .grace-news-list-img-news{width:100%; flex-wrap:wrap; display: flex; padding: 40upx 0 20upx;}
 .grace-news-list-imgs{justify-content:space-between; width:100%; display:flex; margin:18upx 0; align-items:flex-start;}
