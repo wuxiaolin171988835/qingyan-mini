@@ -5,23 +5,23 @@
       scroll-y="true"
     >
       <view class="phone-list">
-        <checkbox-group @change="handleClick">
-          <view class="selected-phones list-item" v-if="selectedPhones.length">
-            <view class="list-item-content">
-              <view class="list-item-title">已选</view>
-              <label
-                class="list-item-phone"
-                hover-class="commonly-hover"
-                :hover-start-time="20"
-                :hover-stay-time="70"
-                v-for="(item,index) in selectedPhones"
-                :key="index"
-              >
-                <checkbox :value="item" :checked="true"/>
-                {{item}}
-              </label>
-            </view>
+        <view class="selected-phones list-item" v-if="selectedPhones.length">
+          <view class="list-item-content">
+            <view class="list-item-title">已选</view>
+            <label
+              class="list-item-phone"
+              hover-class="commonly-hover"
+              :hover-start-time="20"
+              :hover-stay-time="70"
+              v-for="(item,index) in selectedPhones"
+              :key="index"
+            >
+              {{item}}
+              <icon type="clear"  size="14" @click="clearSelect(item)"/>
+            </label>
           </view>
+        </view>
+        <checkbox-group @change="handleClick">
           <view class="hot-phones list-item" v-if="hotPhones.length">
             <view class="list-item-content">
               <view class="list-item-title">热门</view>
@@ -97,10 +97,24 @@ export default {
   methods: {
     handleClick: function(e) {
       // this.$emit("handleClick", e.detail.value);
+      console.log('before:',this.selectedPhones)
       this.selectedPhones=[...new Set(e.detail.value)];
-      console.log(this.selectedPhones)
+      console.log('after:',this.selectedPhones)
+
       
     },
+    clearSelect(item){
+      this.selectedPhones = this.selectedPhones.filter(phone=>phone!==item);
+      this.hotPhones.forEach(item=>{
+        item.selected=this.selectedPhones.includes(item.name)?true:false;
+      })
+      for (const item of this.phonesCopy) {
+        item.forEach(phone=>{
+          phone.selected=this.selectedPhones.includes(phone.name)?true:false;
+        })
+      }
+
+    }
     
   },
  
