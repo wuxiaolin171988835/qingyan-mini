@@ -45,26 +45,23 @@ view{font-size:28upx;}
   overflow: hidden;
   text-overflow:ellipsis;
   white-space: nowrap;}
-.grace-news-list-title-desc{font-size:24upx; display:block; color:#666; margin-top:22upx;display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  overflow: hidden;
+.grace-news-list-title-desc{font-size:24upx; display:block; color:#666;
   line-height: 48upx;
+  margin-top: 8upx;
 }
-.grace-news-list-info{ width:100%;flex:1; margin-top:10upx; line-height:36upx; font-size:24upx; color:#666; justify-content:space-between;padding-left: 14upx;box-sizing: border-box;overflow: hidden;}
+.grace-news-list-info{ width:100%;flex:1; line-height:36upx; font-size:24upx; color:#666; justify-content:space-between;padding-left: 14upx;box-sizing: border-box;overflow: hidden;}
 .grace-news-list-info view{font-size:24upx; color:#666;}
 .grace-news-list-info text{font-size:24upx; }
 .grace-news-list-info text.btn{
-  float: left;
   position: relative;
   top:0;
   font-size:20upx; 
   color: rgba(59, 143, 209, 1);
-  padding: 0 20upx;
-  height: 36upx;
-  border-radius: 18upx;
+  padding: 0 16upx;
+  height: 30upx;
+  border-radius: 15upx;
   text-align: center;
-  line-height: 36upx;
+  line-height: 30upx;
   display: inline-block;
   border: 1px solid rgba(59, 143, 209, 1);}
 .grace-news-list-img-news{width:100%; flex-wrap:wrap; display: flex; padding: 40upx 0 20upx;}

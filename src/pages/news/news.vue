@@ -63,18 +63,20 @@
                             @click.stop="magnifierImg(`https://apitest.qxsearch.net/api/res/image/${item.parse_chart_filepath}`)"
                           ></image>
                         </view>
-                        <view class="grace-news-list-info" :style="{'margin-top': cateCurrentIndex!==2?0:'10upx'}">
+                        <view class="grace-news-list-info">
                           <view>
                             <view class="grace-news-list-title-main">
-                              <text class="btn" v-if="cateCurrentIndex===1" style="margin-right: 8upx;">{{item.type_short_name}}</text>
-                              <text class="btn" v-if="cateCurrentIndex===1 && item.industry" style="margin-right: 8upx;">{{item.industry}}</text>
-                              <rich-text :nodes="item.title"></rich-text>
+                              <text class="btn" v-if="cateCurrentIndex===1" style="margin-right: 8upx;margin-top:6upx;float:left;">{{item.type_short_name}}</text>
+                              <text class="btn" v-if="cateCurrentIndex===1 && item.industry" style="margin-right: 8upx;margin-top:6upx;float:left;">{{item.industry}}</text>
+                              <rich-text :nodes="item.title" class="title-text"></rich-text>
                             </view>
                           </view>
                           <view class="grace-news-list-title-desc" v-if="cateCurrentIndex!==1 && item.abstractText">
-                            <text class="btn" v-if="cateCurrentIndex!==1" style="margin-right: 8upx;">{{item.type_short_name}}</text>
-                            <text class="btn" v-if="cateCurrentIndex!==1 && item.industry" style="margin-right: 8upx;">{{item.industry}}</text>
-                            <rich-text :nodes="item.abstractText.replace(/[\r\n]/g,'')"></rich-text>
+                            <view style="text-align: right;">
+                              <text class="btn" v-if="cateCurrentIndex!==1" style="margin-right: 8upx;">{{item.type_short_name}}</text>
+                              <text class="btn" v-if="cateCurrentIndex!==1 && item.industry" style="margin-right: 8upx;">{{item.industry}}</text>
+                            </view>
+                            <rich-text :nodes="item.abstractText.replace(/[\r\n]/g,'')" class="desc-text"></rich-text>
                           </view>
                         </view>
                       </view>
@@ -98,7 +100,7 @@
                     </navigator>
                   </block>
                 </block>
-                <view v-else class="empty">
+                <view v-if="!loadingStatus && !artList.length" class="empty">
                   暂无相关数据！
                 </view>
               </view>
@@ -203,6 +205,7 @@ export default {
       },//查询参数
       phoneListMiddleVal: [],
       bigImgUrl: '',
+      loadingStatus: true
 
     };
   },
@@ -335,15 +338,17 @@ export default {
       }
       this.cateCurrentIndex = 0;
       this.$refs.input.resetInput();
+      page=0;
     },
     // 数据和分页是模拟的，实际也是这样写
     getNewsList(query=false) {
-      uni.showLoading({});
       // 假设已经到底，实际根据api接口返回值判断
       if (this.queryParams.from+1 >= this.total/this.queryParams.size) {
         uni.showToast({ title: "已经加载全部", icon: "none" });
         return;
       }
+      uni.showLoading({});
+      this.loadingStatus=true;
       let data = qs.stringify({...this.queryParams,from: page, size:10})
       uni.request({
         url:
@@ -368,10 +373,12 @@ export default {
             }
           })
           uni.hideLoading();
-          this.page++;
+          this.loadingStatus=false;
+          page++;
         },
         complete: res => {
           uni.hideLoading();
+          this.loadingStatus=false;
           uni.stopPullDownRefresh();
         }
       });
@@ -402,6 +409,19 @@ export default {
 
 <style lang="scss" scoped>
 .news {
+  .desc-text{
+    display:-webkit-box;
+    -webkit-box-orient:vertical;
+    -webkit-line-clamp:2;
+    overflow:hidden;
+    line-height:36rpx;
+  }
+  .title-text{
+    width: 100%;
+    overflow: hidden;
+    text-overflow:ellipsis;
+    white-space: nowrap;
+  }
   .selection-content{
     padding-top: 200upx;
     text-align: center;

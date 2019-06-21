@@ -17,8 +17,8 @@
                 v-for="(item,index) in selectedPhones"
                 :key="index"
               >
-                <checkbox :value="item.name" :checked="item.checked"/>
-                {{item.name}}
+                <checkbox :value="item" :checked="true"/>
+                {{item}}
               </label>
             </view>
           </view>
@@ -77,17 +77,17 @@ export default {
   watch: {},
   computed: {
     selected() {
-      this.selectedPhones = []
-      for (let i in this.phonesCopy) {
-        this.phonesCopy[i].forEach(item => {
-          if (this.stockCompanies.indexOf(item.name) > -1) {
-            item.checked = true;
-            this.selectedPhones.push(item);
-          } else {
-            item.checked = false;
-          }
-        });
-      }
+      // this.selectedPhones = []
+      // for (let i in this.phonesCopy) {
+      //   this.phonesCopy[i].forEach(item => {
+      //     if (this.stockCompanies.indexOf(item.name) > -1) {
+      //       item.checked = true;
+      //       this.selectedPhones.push(item);
+      //     } else {
+      //       item.checked = false;
+      //     }
+      //   });
+      // }
       this.$forceUpdate();
     }
   },
@@ -96,7 +96,10 @@ export default {
   },
   methods: {
     handleClick: function(e) {
-      this.$emit("handleClick", e.detail.value);
+      // this.$emit("handleClick", e.detail.value);
+      this.selectedPhones=[...new Set(e.detail.value)];
+      console.log(this.selectedPhones)
+      
     },
     
   },

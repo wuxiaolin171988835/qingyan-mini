@@ -124,7 +124,7 @@
   
 	.mli {
 		align-items: center;
-		padding: 0 30upx 22upx 30upx;
+		padding: 0 30upx 30upx 30upx;
 		border-bottom: 1px solid #d5d5d5;
 		color: #4a4a4a;
 		.text{
