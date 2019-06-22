@@ -1,15 +1,16 @@
 <template>
   <cmd-page-body>
-    <view class="detail">
+    <view class="detail" v-if="detailInfo">
       <div class="header">
         <h3 class="title">
-          <text v-if="queryType==='chart'">{{detailInfo.parse_chart_title}}</text>
-          <text v-else>{{detailInfo.parse_title}}</text>
+          <view v-if="detailInfo.parse_chart_title">{{detailInfo.parse_chart_title}}</view>
+          <view style="font-size: 26upx;">{{detailInfo.parse_title}}</view>
         </h3>
         <view class="flex-items">
           <view class="item" v-if="detailInfo.type_short_name || detailInfo.industry_short_name">
             <text class="item-text">{{detailInfo.type_short_name}}</text>
             <text class="item-text" v-if="detailInfo.industry_short_name">{{detailInfo.industry_short_name}}</text>
+            <text class="item-text" v-if="detailInfo.company">{{detailInfo.company}}</text>
           </view>
           <view class="item">
             <image src="../../static/icon_building.png" class="item-img"></image>
@@ -98,6 +99,11 @@ export default {
       font-size: 32upx;
       padding: 33upx 40upx 34upx;
       text-align: center;
+      view{
+        overflow: hidden;
+        text-overflow:ellipsis;
+        white-space: nowrap;
+      }
     }
     .flex-items {
       display: flex;
@@ -112,28 +118,25 @@ export default {
         text-overflow:ellipsis;
         white-space: nowrap;
         &:first-child {
-          width: 150upx;
           color: $uni-color-primary;
           .item-text{
-            width: 75upx;
-            box-sizing: border-box;
-            overflow: hidden;
             border-radius: 18upx;
             border: 1upx solid rgba(59, 143, 209, 1);
+            display: inline-block;
             text-align: center;
             padding: 0 10upx;
+            box-sizing: border-box;
+            max-width: 120upx;
+            height: 34upx;
+            line-height: 32upx;
             &:first-child{
               margin-right: 6upx;
             }
           }
         }
         &:nth-child(3) {
-          width: 15%;
           text-align: center;
           color: $uni-color-primary;
-        }
-        &:last-child{
-          width:164upx;
         }
         &-img {
           width: 31upx;

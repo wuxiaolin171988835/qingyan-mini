@@ -72,7 +72,8 @@
                           <view class="grace-news-list-title-main">
                             <span style="float:left;">
                               <text class="btn" v-if="cateCurrentIndex!==2" style="margin-right: 8upx;">{{item.type_short_name}}</text>
-                              <text class="btn" v-if="cateCurrentIndex!==2 && item.industry" style="margin-right: 8upx;">{{item.industry_short_name}}</text>
+                              <text class="btn" v-if="cateCurrentIndex!==2 && item.industry_short_name" style="margin-right: 8upx;">{{item.industry_short_name}}</text>
+                              <text class="btn" v-if="cateCurrentIndex!==2 && item.company" style="margin-right: 8upx;">{{item.company}}</text>
                             </span>
                             <rich-text :nodes="item.parse_chart_title" class="title-text chart-title" v-if="item.parse_chart_title"></rich-text>
                             <rich-text :nodes="item.parse_title" class="title-text title"></rich-text>
@@ -80,7 +81,8 @@
                           <view class="grace-news-list-title-desc" v-if="cateCurrentIndex!==1 && item.abstractText">
                             <view style="text-align: right;">
                               <text class="btn" v-if="cateCurrentIndex===2" style="margin-right: 8upx;">{{item.type_short_name}}</text>
-                              <text class="btn" v-if="cateCurrentIndex===2 && item.industry" style="margin-right: 8upx;">{{item.industry_short_name}}</text>
+                              <text class="btn" v-if="cateCurrentIndex===2 && item.industry_short_name" style="margin-right: 8upx;">{{item.industry_short_name}}</text>
+                              <text class="btn" v-if="cateCurrentIndex===2 && item.company" style="margin-right: 8upx;">{{item.company}}</text>
                             </view>
                             <rich-text :nodes="item.abstractText.replace(/[\r\n]/g,'')" class="desc-text"></rich-text>
                           </view>
