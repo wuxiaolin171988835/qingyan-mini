@@ -67,6 +67,7 @@ view{font-size:28upx;}
 .grace-news-list-img-news{width:100%; flex-wrap:wrap; display: flex; padding: 40upx 0 20upx;}
 .grace-news-list-imgs{justify-content:space-between; width:100%; display:flex; margin:18upx 0; align-items:flex-start;}
 .grace-news-list-imgs image{width:31.3%; margin:0 1%;}
-.grace-news-list-img-big{ width: 105px;height: 98px;position: relative;}
+.grace-news-list-img-big{ width: 105px;height: 88px;position: relative;}
 .grace-news-list-img-big image.img{width:100%;height: 100%!important;border-radius:4upx;}
-.grace-news-list-img-big image.icon_magnifier{position: absolute;top:0;right:0;z-index:1;width: 45upx;height:44upx;}
+.grace-news-list-img-big .icon_magnifier{position: absolute;top:0;right:0;z-index:1;left: 0;bottom: 0;}
+.grace-news-list-img-big .icon_magnifier .img{position: absolute;top:0;right:0;width: 45upx;height:44upx!important;}

@@ -7,8 +7,9 @@
           <text v-else>{{detailInfo.parse_title}}</text>
         </h3>
         <view class="flex-items">
-          <view class="item">
-            <text class="item-text">{{detailInfo.type}}</text>
+          <view class="item" v-if="detailInfo.type_short_name || detailInfo.industry_short_name">
+            <text class="item-text">{{detailInfo.type_short_name}}</text>
+            <text class="item-text" v-if="detailInfo.industry_short_name">{{detailInfo.industry_short_name}}</text>
           </view>
           <view class="item">
             <image src="../../static/icon_building.png" class="item-img"></image>
@@ -103,22 +104,28 @@ export default {
       align-items: center;
       justify-content: space-around;
       border-bottom: 1upx solid rgba(227, 227, 227, 1);
-      padding: 0 40upx 12upx;
+      padding: 0 20upx 12upx;
       .item {
         font-size: 24upx;
         color: #9b9b9b;
         overflow: hidden;
         text-overflow:ellipsis;
         white-space: nowrap;
-        padding: 0 12upx;
         &:first-child {
-          width: 20%;
+          width: 150upx;
           color: $uni-color-primary;
-          height: 36upx;
-          border-radius: 18upx;
-          border: 1upx solid rgba(59, 143, 209, 1);
-          text-align: center;
-          line-height: 36upx;
+          .item-text{
+            width: 75upx;
+            box-sizing: border-box;
+            overflow: hidden;
+            border-radius: 18upx;
+            border: 1upx solid rgba(59, 143, 209, 1);
+            text-align: center;
+            padding: 0 10upx;
+            &:first-child{
+              margin-right: 6upx;
+            }
+          }
         }
         &:nth-child(3) {
           width: 15%;

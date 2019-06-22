@@ -61,24 +61,26 @@
                       <view class="grace-news-list-img-news">
                         <view class="grace-news-list-img-big"  v-if="cateCurrentIndex===2">
                           <image :src="`https://apitest.qxsearch.net/api/res/image/${item.parse_chart_filepath}`" mode="widthFix" class="img"></image>
-                          <image
-                            src="../../static/icon_magnifier.png"
-                            class="icon_magnifier"
-                            @click.stop="magnifierImg(`https://apitest.qxsearch.net/api/res/image/${item.parse_chart_filepath}`)"
-                          ></image>
+                          <view class="icon_magnifier" @click.stop="magnifierImg(`https://apitest.qxsearch.net/api/res/image/${item.parse_chart_filepath}`)">
+                            <image
+                              src="../../static/icon_magnifier.png"
+                              class="img"
+                            ></image>
+                          </view>
                         </view>
-                        <view class="grace-news-list-info">
-                          <view class="grace-news-list-title-main" :class="{'chartSelected':cateCurrentIndex===2}">
+                        <view class="grace-news-list-info" :class="{'chartSelected':cateCurrentIndex===2}">
+                          <view class="grace-news-list-title-main">
                             <span style="float:left;">
                               <text class="btn" v-if="cateCurrentIndex!==2" style="margin-right: 8upx;">{{item.type_short_name}}</text>
-                              <text class="btn" v-if="cateCurrentIndex!==2 && item.industry" style="margin-right: 8upx;">{{item.industry}}</text>
+                              <text class="btn" v-if="cateCurrentIndex!==2 && item.industry" style="margin-right: 8upx;">{{item.industry_short_name}}</text>
                             </span>
-                            <rich-text :nodes="item.title" class="title-text"></rich-text>
+                            <rich-text :nodes="item.parse_chart_title" class="title-text chart-title" v-if="item.parse_chart_title"></rich-text>
+                            <rich-text :nodes="item.parse_title" class="title-text title"></rich-text>
                           </view>
                           <view class="grace-news-list-title-desc" v-if="cateCurrentIndex!==1 && item.abstractText">
                             <view style="text-align: right;">
                               <text class="btn" v-if="cateCurrentIndex===2" style="margin-right: 8upx;">{{item.type_short_name}}</text>
-                              <text class="btn" v-if="cateCurrentIndex===2 && item.industry" style="margin-right: 8upx;">{{item.industry}}</text>
+                              <text class="btn" v-if="cateCurrentIndex===2 && item.industry" style="margin-right: 8upx;">{{item.industry_short_name}}</text>
                             </view>
                             <rich-text :nodes="item.abstractText.replace(/[\r\n]/g,'')" class="desc-text"></rich-text>
                           </view>
@@ -372,13 +374,6 @@ export default {
           this.total = res.data.total;
           var newsList = res.data.hits;
           this.artList = this.artList.concat(newsList);
-          this.artList.map(item=>{
-            if(this.queryParams.queryType==='chart'){
-              item.title=item.parse_chart_title
-            }else{
-              item.title=item.parse_title
-            }
-          })
           uni.hideLoading();
           this.loadingStatus=false;
           page++;
@@ -430,7 +425,18 @@ export default {
     }
   }
   .chartSelected{
-    height: 88upx;
+    .title-text{
+      display:-webkit-box;
+      -webkit-box-orient:vertical;
+      -webkit-line-clamp:1;
+      overflow:hidden;
+    }
+    .title{
+      font-size: 26upx;
+    }
+    .grace-news-list-title-desc{
+      margin-top: 0;
+    }
   }
   .desc-text{
     display:-webkit-box;
