@@ -71,13 +71,17 @@ export default {
      * 查看原文
      */
     checkResource(){
+      uni.showLoading();
       uni.downloadFile({
         url: `https://apitest.qxsearch.net/api/res/pdf/${this.detailInfo.parse_pdf_filepath}`,
         success: function (res) {
           var filePath = res.tempFilePath;
           uni.openDocument({
             filePath: filePath,
-            fileType: "pdf"
+            fileType: "pdf",
+            success: function(res) {
+              uni.hideLoading();
+            }
           });
         }
       });

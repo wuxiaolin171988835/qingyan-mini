@@ -68,15 +68,17 @@
                           ></image>
                         </view>
                         <view class="grace-news-list-info">
-                          <view class="grace-news-list-title-main">
-                            <text class="btn" v-if="cateCurrentIndex===1" style="margin-right: 8upx;margin-top:6upx;float:left;">{{item.type_short_name}}</text>
-                            <text class="btn" v-if="cateCurrentIndex===1 && item.industry" style="margin-right: 8upx;margin-top:6upx;float:left;">{{item.industry}}</text>
+                          <view class="grace-news-list-title-main" :class="{'chartSelected':cateCurrentIndex===2}">
+                            <span style="float:left;">
+                              <text class="btn" v-if="cateCurrentIndex!==2" style="margin-right: 8upx;">{{item.type_short_name}}</text>
+                              <text class="btn" v-if="cateCurrentIndex!==2 && item.industry" style="margin-right: 8upx;">{{item.industry}}</text>
+                            </span>
                             <rich-text :nodes="item.title" class="title-text"></rich-text>
                           </view>
                           <view class="grace-news-list-title-desc" v-if="cateCurrentIndex!==1 && item.abstractText">
                             <view style="text-align: right;">
-                              <text class="btn" v-if="cateCurrentIndex!==1" style="margin-right: 8upx;">{{item.type_short_name}}</text>
-                              <text class="btn" v-if="cateCurrentIndex!==1 && item.industry" style="margin-right: 8upx;">{{item.industry}}</text>
+                              <text class="btn" v-if="cateCurrentIndex===2" style="margin-right: 8upx;">{{item.type_short_name}}</text>
+                              <text class="btn" v-if="cateCurrentIndex===2 && item.industry" style="margin-right: 8upx;">{{item.industry}}</text>
                             </view>
                             <rich-text :nodes="item.abstractText.replace(/[\r\n]/g,'')" class="desc-text"></rich-text>
                           </view>
@@ -357,7 +359,7 @@ export default {
       }
       uni.showLoading({});
       this.loadingStatus=true;
-      let data = qs.stringify({...this.queryParams,from: page, size:10})
+      let data = qs.stringify({...this.queryParams,from: page*10, size:10})
       uni.request({
         url:
           `https://apitest.qxsearch.net/api/search/${url}`,
@@ -427,6 +429,9 @@ export default {
       }
     }
   }
+  .chartSelected{
+    height: 88upx;
+  }
   .desc-text{
     display:-webkit-box;
     -webkit-box-orient:vertical;
@@ -437,12 +442,12 @@ export default {
     font-size: 24upx;
   }
   .title-text{
-    display:-webkit-box;
-    -webkit-box-orient:vertical;
-    -webkit-line-clamp:1;
+    // display:-webkit-box;
+    // -webkit-box-orient:vertical;
+    // -webkit-line-clamp:2;
     overflow:hidden;
     font-size: 28upx;
-    max-height: 44upx;
+    max-height: 88upx;
   }
   .selection-content{
     padding-top: 200upx;

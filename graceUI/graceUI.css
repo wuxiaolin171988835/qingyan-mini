@@ -41,9 +41,13 @@ view{font-size:28upx;}
   font-weight: bold;
   line-height: 45upx;
   color: rgba(56, 70, 110, 1);
+  overflow:hidden;
+  font-size: 28upx;
+  max-height: 88upx;
   }
 .grace-news-list-title-desc{font-size:24upx; display:block; color:#666;
   line-height: 48upx;
+  margin-top: 8upx;
 }
 .grace-news-list-info{ width:100%;flex:1; line-height:36upx; font-size:24upx; color:#666; justify-content:space-between;padding-left: 14upx;box-sizing: border-box;overflow: hidden;}
 .grace-news-list-info view{font-size:24upx; color:#666;}
