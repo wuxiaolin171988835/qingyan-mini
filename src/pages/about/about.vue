@@ -12,6 +12,7 @@
                 :data-index="index"
                 :class="[cateCurrentIndex == index ? 'grace-tab-current' : '']"
                 @tap="tabChange"
+                style="flex:1"
               >
                 <text class="grace-tab-text">
                 {{cate.name}}
