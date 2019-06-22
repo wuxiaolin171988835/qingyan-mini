@@ -433,7 +433,7 @@ export default {
     -webkit-line-clamp:2;
     overflow:hidden;
     line-height:36rpx;
-    height: 36upx;
+    max-height: 72upx;
     font-size: 24upx;
   }
   .title-text{
@@ -442,8 +442,7 @@ export default {
     -webkit-line-clamp:1;
     overflow:hidden;
     font-size: 28upx;
-    height: 22upx;
-    line-height: 22upx;
+    max-height: 44upx;
   }
   .selection-content{
     padding-top: 200upx;
