@@ -10,6 +10,7 @@
             <view class="list-item-title">已选</view>
             <label
               class="list-item-phone"
+              style="width: 33%;"
               hover-class="commonly-hover"
               :hover-start-time="20"
               :hover-stay-time="70"
@@ -17,12 +18,12 @@
               :key="index"
             >
               {{item}}
-              <icon type="clear"  size="14" @click="clearSelect(item)"/>
+              <icon type="clear"  size="14" @click="clearSelect(item)" class="btn-clear"/>
             </label>
           </view>
         </view>
-        <checkbox-group @change="handleClick">
-          <view class="hot-phones list-item" v-if="hotPhones.length">
+        <checkbox-group @change="handleClickHot">
+          <view class="hot-phones list-item" v-if="hotPhonesCopy.length">
             <view class="list-item-content">
               <view class="list-item-title">热门</view>
               <label
@@ -30,7 +31,7 @@
                 hover-class="commonly-hover"
                 :hover-start-time="20"
                 :hover-stay-time="70"
-                v-for="(item,index) in hotPhones"
+                v-for="(item,index) in hotPhonesCopy"
                 :key="index"
               >
                 <checkbox :value="item.name" :checked="item.checked"/>
@@ -38,6 +39,8 @@
               </label>
             </view>
           </view>
+        </checkbox-group>
+        <checkbox-group @change="handleClick">
           <view class="phones list-item" v-for="(item, key) of phonesCopy" :key="key" :id="key">
             <view class="list-item-content">
               <view class="list-item-title">{{key}}</view>
@@ -57,6 +60,7 @@
         </checkbox-group>
       </view>
     </scroll-view>
+    <button @click="confirm" class="btn-confirm">确定</button>
   </view>
 </template>
 
@@ -71,49 +75,53 @@ export default {
   data() {
     return {
       phonesCopy: this.phones,
-      selectedPhones: []
+      hotPhonesCopy: [...this.hotPhones],
+      selectedPhones: [],
+      hotSelectedPhones: [],
+      normalSelectedPhones: []
     };
   },
-  watch: {},
-  computed: {
-    selected() {
-      // this.selectedPhones = []
-      // for (let i in this.phonesCopy) {
-      //   this.phonesCopy[i].forEach(item => {
-      //     if (this.stockCompanies.indexOf(item.name) > -1) {
-      //       item.checked = true;
-      //       this.selectedPhones.push(item);
-      //     } else {
-      //       item.checked = false;
-      //     }
-      //   });
-      // }
-      this.$forceUpdate();
-    }
+  watch: {
+    selectedPhones: {
+  　　 handler(newVal, oldVal) {
+      　this.hotPhonesCopy.forEach(item=>{
+          let checked=this.selectedPhones.includes(item.name)?true:false;
+          this.$set(item,'checked',checked);
+        })
+        for (const key in this.phonesCopy) {  
+          let item = this.phonesCopy[key];
+          item.forEach(phone=>{
+            let checked=this.selectedPhones.includes(phone.name)?true:false;
+            this.$set(phone,'checked',checked);
+          })
+        }
+　　 },
+      deep: true
+    },
   },
-  mounted() {
+  computed: {
     
   },
+  mounted() {
+    this.selectedPhones = this.stockCompanies?[...this.stockCompanies.split(',')]:[];
+  },
   methods: {
-    handleClick: function(e) {
-      // this.$emit("handleClick", e.detail.value);
-      console.log('before:',this.selectedPhones)
-      this.selectedPhones=[...new Set(e.detail.value)];
-      console.log('after:',this.selectedPhones)
-
-      
+    handleClick(e) {
+      this.normalSelectedPhones = e.detail.value;
+      this.selectedPhones = [...new Set([...this.normalSelectedPhones,...this.hotSelectedPhones])];
+    },
+    handleClickHot(e){
+      this.hotSelectedPhones = e.detail.value;
+      this.selectedPhones = [...new Set([...this.normalSelectedPhones,...this.hotSelectedPhones])];
     },
     clearSelect(item){
       this.selectedPhones = this.selectedPhones.filter(phone=>phone!==item);
-      this.hotPhones.forEach(item=>{
-        item.selected=this.selectedPhones.includes(item.name)?true:false;
-      })
-      for (const item of this.phonesCopy) {
-        item.forEach(phone=>{
-          phone.selected=this.selectedPhones.includes(phone.name)?true:false;
-        })
-      }
-
+    },
+    handlerCompany(company){
+      this.selectedPhones=[...new Set([...this.selectedPhones,company.name])];
+    },
+    confirm(){
+      this.$emit('confirm', this.selectedPhones)
     }
     
   },
@@ -121,7 +129,21 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+.btn-clear{
+  margin-left:2rpx;
+  top:-3px;
+  position:relative;
+}
+.btn-confirm {
+  width: 100%;
+  height: 102upx;
+  line-height: 102upx;
+  background-color: #f4f5f6;
+  color: $uni-color-primary;
+  font-size: 32upx;
+  border: none;
+}
 .commonly-hover {
   background-color: #eee;
 }

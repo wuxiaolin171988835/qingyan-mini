@@ -8,14 +8,14 @@
         <view class="search-result">
           <ul v-if="isShowResult">
             <li
-              v-for="(item,index) in serachResult"
+              v-for="(item,index) in searchResult"
               :key="index"
               :data-cid="item.id"
               :data-index="index"
               @click="selectedCompany(item)"
             >{{item.name}}</li>
           </ul>
-          <view class="no-data" v-if="keyword && serachResult.length==0">未匹配到数据！</view>
+          <view class="no-data" v-if="keyword && searchResult.length==0">未匹配到数据！</view>
         </view>
       </view>
     </view>
@@ -30,9 +30,10 @@
         @reset="handleReset"
         @handleClick="handleClick"
         :stockCompanies="stockCompanies"
+        @confirm="confirm"
+        ref="phonesList"
       ></phone-list>
     </view>
-    <button @click="confirm" class="btn-confirm">确定</button>
   </view>
 </template>
 
@@ -58,35 +59,35 @@ export default {
       scrollAnimationOFF: true,
       phoneListIndex: "A",
       reset: true,
-      serachResult: [],
+      searchResult: [],
       isShowResult: false
     };
   },
   computed: {},
   watch: {
     keyword() {
-      this.serachResult = [];
+      this.searchResult = [];
       for (let i in this.phones) {
         this.phones[i].forEach(item => {
           if (
             item.abbr.indexOf(this.keyword.toUpperCase()) === 0 ||
             item.name.indexOf(this.keyword) === 0
           ) {
-            this.serachResult.push(item);
+            this.searchResult.push(item);
           }
         });
       }
       if (!this.keyword) {
-        this.serachResult = [];
+        this.searchResult = [];
       }
-      this.isShowResult = this.serachResult.length ? true : false;
+      this.isShowResult = this.searchResult.length ? true : false;
     }
   },
   methods: {
     selectedCompany(company) {
       this.isShowResult = false;
       this.keyword = "";
-      this.$emit("confirm", company);
+      this.$refs.phonesList.handlerCompany(company);
     },
     handleClick(value) {
       this.$emit("paramClick", value);
@@ -108,8 +109,8 @@ export default {
       }
       this.reset = val;
     },
-    confirm() {
-      this.$emit("confirm");
+    confirm(selectedPhones) {
+      this.$emit("confirm",selectedPhones);
     }
   }
 };
@@ -194,14 +195,5 @@ export default {
     display: block;
     width: 100%;
   }
-}
-.btn-confirm {
-  width: 100%;
-  height: 102upx;
-  line-height: 102upx;
-  background-color: #f4f5f6;
-  color: $uni-color-primary;
-  font-size: 32upx;
-  border: none;
 }
 </style>

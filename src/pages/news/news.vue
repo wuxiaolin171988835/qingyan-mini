@@ -24,7 +24,7 @@
               ></mSearch>
               <text @click="resetSearch" class="btn-reset">重置</text>
             </view>
-            <ChooseLits :list="list" :arr="selectList" @chooseLike="chooseLike" @chooseCheckBox="chooseCheckBox" @onSelectDialog="onSelectDialog" :institutions="institutions" @handleConfirmSelect="handleConfirmSelect" :hotInstitutions="hotInstitutions" :queryParams="queryParams"></ChooseLits>
+            <ChooseLits :list="list" :arr="selectList" @chooseLike="chooseLike" @onSelectDialog="onSelectDialog" :institutions="institutions" @handleConfirmSelect="handleConfirmSelect" :hotInstitutions="hotInstitutions" :queryParams="queryParams"></ChooseLits>
             <!-- tab项 -->
             <view>
               <view class="fixedit">
@@ -47,6 +47,10 @@
                       </text>
                     </view>
                   </view>
+                  <view class="sort-block">
+                    <text @click="sort(0)" :class="{'active':sortCheckedIndex===0}">按相关性</text>
+                    <text @click="sort(1)" :class="{'active':sortCheckedIndex===1}">按时间</text>
+                  </view>
                 </scroll-view>
               </view>
               <!-- 内容区 -->
@@ -64,12 +68,10 @@
                           ></image>
                         </view>
                         <view class="grace-news-list-info">
-                          <view>
-                            <view class="grace-news-list-title-main">
-                              <text class="btn" v-if="cateCurrentIndex===1" style="margin-right: 8upx;margin-top:6upx;float:left;">{{item.type_short_name}}</text>
-                              <text class="btn" v-if="cateCurrentIndex===1 && item.industry" style="margin-right: 8upx;margin-top:6upx;float:left;">{{item.industry}}</text>
-                              <rich-text :nodes="item.title" class="title-text"></rich-text>
-                            </view>
+                          <view class="grace-news-list-title-main">
+                            <text class="btn" v-if="cateCurrentIndex===1" style="margin-right: 8upx;margin-top:6upx;float:left;">{{item.type_short_name}}</text>
+                            <text class="btn" v-if="cateCurrentIndex===1 && item.industry" style="margin-right: 8upx;margin-top:6upx;float:left;">{{item.industry}}</text>
+                            <rich-text :nodes="item.title" class="title-text"></rich-text>
                           </view>
                           <view class="grace-news-list-title-desc" v-if="cateCurrentIndex!==1 && item.abstractText">
                             <view style="text-align: right;">
@@ -140,6 +142,7 @@ export default {
   },
   data() {
     return {
+      sortCheckedIndex: 0,
       isSelectDialogShow: false,
       tabList: [{ name: "研报查询" }, { name: "研报精选" }], 
       TabCur: 0, //一级tab选中项
@@ -193,7 +196,7 @@ export default {
       ],
       cateCurrentIndex: 0,
       artList: [],//研报列表
-      total: '',
+      total: 0,
       queryParams: {
         industries: "",
         rptTypes: "",
@@ -203,7 +206,6 @@ export default {
         queryType: "keypoint",
         content: "",
       },//查询参数
-      phoneListMiddleVal: [],
       bigImgUrl: '',
       loadingStatus: true
 
@@ -222,13 +224,24 @@ export default {
   watch: {
     queryParams: {
       handler(newVal, oldVal) {
-        this.getNewsList(true);
+        this.artList = [];
+        page = 0;
+        this.getNewsList();
       },
       deep: true,
 
     }
   },
   methods: {
+    /**
+     * 排序
+     */
+    sort(type){
+      this.sortCheckedIndex = type;
+      this.artList = [];
+      page = 0;
+      this.getNewsList();
+    },
     /**
      * 获取行业
      */
@@ -306,14 +319,8 @@ export default {
     /**
      * 确认选择
      */
-    handleConfirmSelect(company=""){
-      if(company){
-        let target=[];
-        let isExit=this.phoneListMiddleVal.includes(company.name);
-        !isExit?this.phoneListMiddleVal.push(company.name):''
-      }
-      this.queryParams.stockCompanies = this.phoneListMiddleVal.join();
-      
+    handleConfirmSelect(selectedPhones){
+      this.queryParams.stockCompanies = selectedPhones.join();
     },
     /**
      * 确认搜索框
@@ -341,9 +348,10 @@ export default {
       page=0;
     },
     // 数据和分页是模拟的，实际也是这样写
-    getNewsList(query=false) {
+    getNewsList() {
+      let url = this.sortCheckedIndex?'rptSearchByTime':'rptSearch';
       // 假设已经到底，实际根据api接口返回值判断
-      if (this.queryParams.from+1 >= this.total/this.queryParams.size) {
+      if (page >= this.total/10 && this.total>0) {
         uni.showToast({ title: "已经加载全部", icon: "none" });
         return;
       }
@@ -352,18 +360,15 @@ export default {
       let data = qs.stringify({...this.queryParams,from: page, size:10})
       uni.request({
         url:
-          "https://apitest.qxsearch.net/api/search/rptSearch",
+          `https://apitest.qxsearch.net/api/search/${url}`,
         data: data,
         method: "POST", 
         header: {
           'content-type':'application/x-www-form-urlencoded',
         },
         success: res => {
-          this.total = res.total;
+          this.total = res.data.total;
           var newsList = res.data.hits;
-          if(query){
-            this.artList = [];
-          }
           this.artList = this.artList.concat(newsList);
           this.artList.map(item=>{
             if(this.queryParams.queryType==='chart'){
@@ -409,18 +414,33 @@ export default {
 
 <style lang="scss" scoped>
 .news {
+  .sort-block{
+    position: absolute;
+    right:0;
+    top:0;
+    text{
+      padding: 10upx 16upx;
+      border-radius: 4upx;
+      &.active{
+        background: $uni-color-primary;
+        color: #fff;
+      }
+    }
+  }
   .desc-text{
     display:-webkit-box;
     -webkit-box-orient:vertical;
     -webkit-line-clamp:2;
     overflow:hidden;
     line-height:36rpx;
+    font-size: 24upx;
   }
   .title-text{
-    width: 100%;
-    overflow: hidden;
-    text-overflow:ellipsis;
-    white-space: nowrap;
+    display:-webkit-box;
+    -webkit-box-orient:vertical;
+    -webkit-line-clamp:1;
+    overflow:hidden;
+    font-size: 28upx;
   }
   .selection-content{
     padding-top: 200upx;

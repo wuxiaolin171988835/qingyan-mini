@@ -12,7 +12,7 @@
 		<view  :style="{display:show?'block':'none'}" class="list_boxs2">
 			<view class="lione">
 				<block v-if="i1===2">
-					<phone-search-list :phones="institutions" :hotPhones="hotInstitutions" @paramClick="paramClick" @confirm="confirm" :stockCompanies="queryParams.stockCompanies"></phone-search-list>
+					<phone-search-list :phones="institutions" :hotPhones="hotInstitutions" @confirm="confirm" :stockCompanies="queryParams.stockCompanies"></phone-search-list>
 				</block>
 				<block  v-else>
 					<scroll-view class="lione-items"  scroll-y="true">
@@ -76,9 +76,6 @@
 			}
 		},
 		methods: {
-			paramClick (value) {
-				this.$emit('chooseCheckBox',value);
-			},
 			alertnum(i) {
 				if (this.i1 != i) {
 					this.show=true;
@@ -103,9 +100,9 @@
 			hide() {
 				this.show = false;
 			},
-			confirm(company=""){
+			confirm(selectedPhones){
 				this.hide();
-				this.$emit('handleConfirmSelect',company)
+				this.$emit('handleConfirmSelect',selectedPhones)
 			}
 		}
 	}
