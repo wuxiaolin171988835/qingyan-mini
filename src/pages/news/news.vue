@@ -60,8 +60,8 @@
                     <navigator :url="'./detail?id=' + item.id+'&queryType='+queryParams.queryType" open-type="navigate" class="grace-news-list-items">
                       <view class="grace-news-list-img-news">
                         <view class="grace-news-list-img-big"  v-if="cateCurrentIndex===2">
-                          <image :src="`https://apitest.qxsearch.net/api/res/image/${item.parse_chart_filepath}`" mode="widthFix" class="img"></image>
-                          <view class="icon_magnifier" @click.stop="magnifierImg(`https://apitest.qxsearch.net/api/res/image/${item.parse_chart_filepath}`)">
+                          <image :src="`https://api.qxsearch.net /api/res/image/${item.parse_chart_filepath}`" mode="widthFix" class="img"></image>
+                          <view class="icon_magnifier" @click.stop="magnifierImg(`https://api.qxsearch.net /api/res/image/${item.parse_chart_filepath}`)">
                             <image
                               src="../../static/icon_magnifier.png"
                               class="img"
@@ -253,7 +253,7 @@ export default {
      */
     async getIndustry () {
       var [error, res] = await uni.request({
-          url: 'https://apitest.qxsearch.net/api/res/industry',
+          url: 'https://api.qxsearch.net /api/res/industry',
           method: "GET", 
           header: {
             'Content-Type' : 'text/plain;charset=utf-8'
@@ -268,7 +268,7 @@ export default {
      */
     async getType () {
       var [error, res] = await uni.request({
-          url: 'https://apitest.qxsearch.net/api/res/type'
+          url: 'https://api.qxsearch.net /api/res/type'
       });
       res.data.hits.map(item=>{
         this.selectList[1].push(item)
@@ -279,7 +279,7 @@ export default {
      */
     async getCompany () {
       var [error, res] = await uni.request({
-          url: 'https://apitest.qxsearch.net/api/res/company'
+          url: 'https://api.qxsearch.net /api/res/company'
       });
       let lists = res.data.hits;
       let keys = [];
@@ -366,7 +366,7 @@ export default {
       let data = qs.stringify({...this.queryParams,from: page*10, size:10})
       uni.request({
         url:
-          `https://apitest.qxsearch.net/api/search/${url}`,
+          `https://api.qxsearch.net /api/search/${url}`,
         data: data,
         method: "POST", 
         header: {

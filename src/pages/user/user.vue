@@ -72,7 +72,7 @@ export default {
      */
     getUserInfo(token, mobile) {
       uni.request({
-        url: "https://apitest.qxsearch.net/api/user/userInfo",
+        url: "https://api.qxsearch.net /api/user/userInfo",
         data: {
           token: token,
           mobile: mobile

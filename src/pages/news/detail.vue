@@ -54,7 +54,7 @@ export default {
     this.queryType=options.queryType;
     uni.request({
       url:
-        "https://apitest.qxsearch.net/api/search/rptSearchId",
+        "https://api.qxsearch.net /api/search/rptSearchId",
       data: {id:options.id,queryType:options.queryType},
       method: "POST", 
       header: {
@@ -75,7 +75,7 @@ export default {
     checkResource(){
       uni.showLoading();
       uni.downloadFile({
-        url: `https://apitest.qxsearch.net/api/res/pdf/${this.detailInfo.parse_pdf_filepath}`,
+        url: `https://api.qxsearch.net /api/res/pdf/${this.detailInfo.parse_pdf_filepath}`,
         success: function (res) {
           var filePath = res.tempFilePath;
           uni.openDocument({
