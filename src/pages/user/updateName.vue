@@ -30,7 +30,7 @@ export default {
      */
     save() {
       uni.request({
-        url: "https://api.qxsearch.net /api/user/update",
+        url: "https://api.qxsearch.net/api/user/update",
         data: {
           token: uni.getStorageSync("token"),
           field: "name",

@@ -69,7 +69,7 @@ export default {
     fnRegister() {
       //先跳转
       uni.request({
-        url: "https://api.qxsearch.net /api/user/updateMobile",
+        url: "https://api.qxsearch.net/api/user/updateMobile",
         data: this.phone,
         method: "POST",
         header: {
@@ -116,7 +116,7 @@ export default {
     fnGetPhoneCode() {
       if (this.phoneReg.test(this.phone.newMobile)) {
         uni.request({
-          url: "https://api.qxsearch.net /api/user/verity",
+          url: "https://api.qxsearch.net/api/user/verity",
           data: {
             mobile: this.phone.newMobile
           },
