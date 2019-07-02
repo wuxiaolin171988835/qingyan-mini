@@ -10,7 +10,9 @@
         <cmd-cell-item title="姓名" :addon="userInfo.name" arrow></cmd-cell-item>
       </view>
       <view style="margin-top:20upx">
-        <cmd-cell-item title="邮箱" :addon="userInfo.email" arrow/>
+        <view @tap="updateEmail">
+          <cmd-cell-item title="邮箱" :addon="userInfo.email" arrow/>
+        </view>
         <view @tap="updateTel">
           <cmd-cell-item title="手机" :addon="userInfo.mobile" arrow/>
         </view>
@@ -163,7 +165,27 @@ export default {
           url: `../user/validateTel?mobile=${this.userInfo.mobile}`
         });
       }
-    }
+    },
+    /**
+     * 修改邮箱
+     */
+    updateEmail() {
+      if (!this.checkIsLogin()) {
+        uni.showToast({
+          title: "请绑定手机号",
+          icon: "none"
+        });
+        setTimeout(() => {
+          uni.navigateTo({
+            url: "../user/bindTel" //跳转页面的路径，可带参数 ？隔开，不同参数用 & 分隔；相对路径，不需要.wxml后缀
+          });
+        }, 500);
+      } else {
+        uni.navigateTo({
+          url: `../user/bindEmail?email=${this.userInfo.email}`
+        });
+      }
+    },
   }
 };
 </script>
