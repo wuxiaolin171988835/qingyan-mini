@@ -4,7 +4,7 @@
       <view>
         <view class="validate-phone">
           <view class="label">邮箱</view>
-          <input type="number" focus v-model="email" placeholder="请输入邮箱">
+          <input type="text" focus v-model="email" placeholder="请输入邮箱">
           <view style="width:180upx;"></view>
         </view>
         <button
@@ -35,7 +35,7 @@ export default {
     };
   },
   onLoad(options) {
-    this.email = options.email ? options.name : "";
+    this.email = options.email ? options.email : "";
   },
   watch: {
     /**
