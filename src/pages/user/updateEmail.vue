@@ -4,7 +4,7 @@
       <view>
         <view class="validate-phone">
           <view class="label">邮箱</view>
-          <input type="number" focus maxlength="11" v-model="email" placeholder="请输入邮箱">
+          <input type="number" focus v-model="email" placeholder="请输入邮箱">
           <view style="width:180upx;"></view>
         </view>
         <button
@@ -29,13 +29,13 @@ export default {
   },
   data() {
     return {
-      email: '',
+      email: "",
       emailReg: /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/,
-      validateStatus: false,
+      validateStatus: false
     };
   },
   onLoad(options) {
-    this.email = options.email;
+    this.email = options.email ? options.name : "";
   },
   watch: {
     /**
@@ -43,9 +43,7 @@ export default {
      */
     email: {
       handler(newValue) {
-        if (
-          this.emailReg.test(newValue.email)
-        ) {
+        if (this.emailReg.test(newValue)) {
           this.validateStatus = true;
         } else {
           this.validateStatus = false;
@@ -90,13 +88,13 @@ export default {
           }
         }
       });
-    },
+    }
   },
   beforeDestroy() {}
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .validate {
   margin-top: 25upx;
   .tips {

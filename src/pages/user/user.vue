@@ -182,7 +182,7 @@ export default {
         }, 500);
       } else {
         uni.navigateTo({
-          url: `../user/bindEmail?email=${this.userInfo.email}`
+          url: `../user/updateEmail?email=${this.userInfo.email}`
         });
       }
     },

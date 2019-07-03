@@ -266,9 +266,9 @@ $cmd-cell-item-border-color: #e2e4ea;
     color: $cmd-cell-item-right-color;
     font-size: $cmd-cell-item-right-font-size;
 
-    .cmd-cell-addon-text {
-      font-size: $cmd-cell-item-brief-font-size;
-    }
+    // .cmd-cell-addon-text {
+    //   font-size: $cmd-cell-item-brief-font-size;
+    // }
 
     .cmd-cell-icon-arrow-right {
       margin-left: 6upx;
