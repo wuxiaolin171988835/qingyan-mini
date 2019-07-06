@@ -200,6 +200,7 @@ export default {
         { cateid: 1, name: "正文", value: 'content' },
         { cateid: 2, name: "图表", value: 'chart' }
       ],
+    
       cateCurrentIndex: 0,
       artList: [],//研报列表
       total: 0,
@@ -439,6 +440,7 @@ export default {
     .grace-news-list-title-desc{
       margin-top: 0;
     }
+    
   }
   .desc-text{
     display:-webkit-box;

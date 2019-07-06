@@ -1,9 +1,6 @@
 <template>
   <view>
-    <scroll-view
-      class="scroll-list"
-      scroll-y="true"
-    >
+    <scroll-view class="scroll-list" scroll-y="true">
       <view class="phone-list">
         <view class="selected-phones list-item" v-if="selectedPhones.length">
           <view class="list-item-content">
@@ -18,7 +15,7 @@
               :key="index"
             >
               {{item}}
-              <icon type="clear"  size="14" @click="clearSelect(item)" class="btn-clear"/>
+              <icon type="clear" size="14" @click="clearSelect(item)" class="btn-clear" />
             </label>
           </view>
         </view>
@@ -34,7 +31,7 @@
                 v-for="(item,index) in hotPhonesCopy"
                 :key="index"
               >
-                <checkbox :value="item.name" :checked="item.checked"/>
+                <checkbox :value="item.name" :checked="item.checked" />
                 {{item.name}}
               </label>
             </view>
@@ -52,7 +49,7 @@
                 v-for="(innerItem,index) in item"
                 :key="index"
               >
-                <checkbox :value="innerItem.name" :checked="innerItem.checked"/>
+                <checkbox :value="innerItem.name" :checked="innerItem.checked" />
                 {{innerItem.name}}
               </label>
             </view>
@@ -83,57 +80,71 @@ export default {
   },
   watch: {
     selectedPhones: {
-  　　 handler(newVal, oldVal) {
-      　this.hotPhonesCopy.forEach(item=>{
-          let checked=this.selectedPhones.includes(item.name)?true:false;
-          this.$set(item,'checked',checked);
-        })
-        for (const key in this.phonesCopy) {  
+      handler(newVal, oldVal) {
+        this.hotPhonesCopy.forEach(item => {
+          let checked = this.selectedPhones.includes(item.name) ? true : false;
+          this.$set(item, "checked", checked);
+        });
+        for (const key in this.phonesCopy) {
           let item = this.phonesCopy[key];
-          item.forEach(phone=>{
-            let checked=this.selectedPhones.includes(phone.name)?true:false;
-            this.$set(phone,'checked',checked);
-          })
+          item.forEach(phone => {
+            let checked = this.selectedPhones.includes(phone.name)
+              ? true
+              : false;
+            this.$set(phone, "checked", checked);
+          });
         }
-　　 },
+      },
       deep: true
     },
+    stockCompanies: {
+      handler(newVal, oldVal) {
+        this.selectedPhones = this.stockCompanies
+          ? [...this.stockCompanies.split(",")]
+          : [];
+      },
+      deep: true
+    }
   },
-  computed: {
-    
-  },
+  computed: {},
   mounted() {
-    this.selectedPhones = this.stockCompanies?[...this.stockCompanies.split(',')]:[];
+    this.selectedPhones = this.stockCompanies
+      ? [...this.stockCompanies.split(",")]
+      : [];
   },
   methods: {
     handleClick(e) {
       this.normalSelectedPhones = e.detail.value;
-      this.selectedPhones = [...new Set([...this.normalSelectedPhones,...this.hotSelectedPhones])];
+      this.selectedPhones = [
+        ...new Set([...this.normalSelectedPhones, ...this.hotSelectedPhones])
+      ];
     },
-    handleClickHot(e){
+    handleClickHot(e) {
       this.hotSelectedPhones = e.detail.value;
-      this.selectedPhones = [...new Set([...this.normalSelectedPhones,...this.hotSelectedPhones])];
+      this.selectedPhones = [
+        ...new Set([...this.normalSelectedPhones, ...this.hotSelectedPhones])
+      ];
     },
-    clearSelect(item){
-      this.selectedPhones = this.selectedPhones.filter(phone=>phone!==item);
+    clearSelect(item) {
+      this.selectedPhones = this.selectedPhones.filter(phone => phone !== item);
     },
-    handlerCompany(company){
-      this.selectedPhones=[...new Set([...this.selectedPhones,company.name])];
+    handlerCompany(company) {
+      this.selectedPhones = [
+        ...new Set([...this.selectedPhones, company.name])
+      ];
     },
-    confirm(){
-      this.$emit('confirm', this.selectedPhones)
+    confirm() {
+      this.$emit("confirm", this.selectedPhones);
     }
-    
-  },
- 
+  }
 };
 </script>
 
 <style lang="scss" scoped>
-.btn-clear{
-  margin-left:2rpx;
-  top:-3px;
-  position:relative;
+.btn-clear {
+  margin-left: 2rpx;
+  top: -3px;
+  position: relative;
 }
 .btn-confirm {
   width: 100%;
